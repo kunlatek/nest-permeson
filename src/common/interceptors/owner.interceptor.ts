@@ -6,12 +6,9 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { InvitationService } from '../../modules/invitation/invitation.service';
 
 @Injectable()
 export class OwnerInterceptor implements NestInterceptor {
-  constructor(private readonly invitationService: InvitationService) {}
-
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -22,15 +19,12 @@ export class OwnerInterceptor implements NestInterceptor {
     if (request.method === 'POST' && user) {
       const body = request.body;
 
+      // Sempre define createdBy como o userId do usuário logado
       body.createdBy = user.userId;
-
-      const invitation = await this.invitationService.findByEmail(user.email);
       
-      if (invitation) {
-        body.ownerId = invitation.createdBy;
-      } else {
-        body.ownerId = user.userId;
-      }
+      // Por padrão, ownerId é o mesmo que createdBy
+      // Se precisar de lógica específica para invitation, isso deve ser feito no controller
+      body.ownerId = user.userId;
     }
 
     return next.handle();

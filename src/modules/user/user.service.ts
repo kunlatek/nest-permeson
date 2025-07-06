@@ -84,7 +84,7 @@ export class UserService {
         password: hashedPassword,
       });
 
-      await this.invitationService.acceptInvitation(invitation.id);
+      await this.invitationService.acceptInvitation(invitation._id);
 
       return newUser.save();
     } catch (error) {

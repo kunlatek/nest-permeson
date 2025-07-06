@@ -34,7 +34,7 @@ import {
 import { PersonProfileService } from './person-profile.service';
 import { IPersonProfileHttpResponse, IPersonProfileHttpResponseCreate, IPersonProfileHttpResponsePaginated } from './interfaces';
 
-@ApiTags('person-profiles')
+@ApiTags('Person Profiles')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @Controller('person-profiles')

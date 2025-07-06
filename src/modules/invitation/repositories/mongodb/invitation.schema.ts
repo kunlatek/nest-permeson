@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type InvitationDocument = Invitation & Document;
+export type InvitationDocument = MongoDBInvitation & Document;
 
 @Schema({ timestamps: true })
-export class Invitation extends Document {
+export class MongoDBInvitation extends Document {
     @Prop({ required: true })
     email: string;
 
@@ -30,4 +30,4 @@ export class Invitation extends Document {
     updatedAt: Date;
 }
 
-export const InvitationSchema = SchemaFactory.createForClass(Invitation); 
+export const InvitationSchema = SchemaFactory.createForClass(MongoDBInvitation); 

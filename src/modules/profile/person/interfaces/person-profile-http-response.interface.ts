@@ -1,14 +1,14 @@
 import { IHttpResponse, IHttpResponsePaginated } from "src/interfaces/http-response.interface";
-import { PersonProfile } from "../models";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsObject } from "class-validator";
+import { PersonProfileResponseDto } from "../dto/person-profile-response.dto";
 
 class IPersonProfileHttpResponseCreateData {
     @ApiProperty({
         description: 'Person profile',
-        type: PersonProfile,
+        type: PersonProfileResponseDto,
     })
-    profile: PersonProfile;
+    profile: PersonProfileResponseDto;
 
     @ApiProperty({
         description: 'JWT token',
@@ -33,12 +33,12 @@ export class IPersonProfileHttpResponseCreate extends IHttpResponse {
 export class IPersonProfileHttpResponse extends IHttpResponse {
     @ApiProperty({
         description: 'Person profile',
-        type: PersonProfile,
+        type: PersonProfileResponseDto,
     })
     @IsObject()
-    data: PersonProfile;
+    data: PersonProfileResponseDto;
 
-    constructor(statusCode: number, message: string, data: PersonProfile) {
+    constructor(statusCode: number, message: string, data: PersonProfileResponseDto) {
         super(statusCode, message);
         this.data = data;
     }
@@ -47,12 +47,12 @@ export class IPersonProfileHttpResponse extends IHttpResponse {
 export class IPersonProfileHttpResponsePaginated extends IHttpResponsePaginated {
     @ApiProperty({
         description: 'Person profiles list',
-        type: [PersonProfile],
+        type: [PersonProfileResponseDto],
     })
     @IsArray()
-    data: PersonProfile[];
+    data: PersonProfileResponseDto[];
 
-    constructor(data: PersonProfile[], total: number, page: number, limit: number) {
+    constructor(data: PersonProfileResponseDto[], total: number, page: number, limit: number) {
         super(200, 'Person profiles fetched successfully', total, page, limit);
         this.data = data;
     }

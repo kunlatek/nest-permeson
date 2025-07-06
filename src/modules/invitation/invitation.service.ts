@@ -1,33 +1,31 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Invitation, InvitationDocument } from './invitation.schema';
+import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { InvitationResponseDto } from './dto/invitation-response.dto';
 import { EmailService } from './services/email.service';
-import { InvitationMapper } from './mappers/invitation.mapper';
+import { InvitationRepository } from './invitation.repository.interface';
 
 @Injectable()
 export class InvitationService {
   constructor(
-    @InjectModel(Invitation.name) private invitationModel: Model<InvitationDocument>,
+    @Inject('InvitationRepository')
+    private readonly invitationRepository: InvitationRepository,
+    
     private readonly emailService: EmailService,
   ) { }
 
   async create(createInvitationDto: CreateInvitationDto): Promise<InvitationResponseDto> {
     const { createdBy, ownerId, ...invitationData } = createInvitationDto;
 
-    const existingInvitation = await this.invitationModel.findOne({ email: invitationData.email });
+    const existingInvitation = await this.invitationRepository.findByEmail(invitationData.email);
     if (existingInvitation) {
       throw new BadRequestException('An invitation already exists for this email');
     }
 
-    const invitation = new this.invitationModel({
+    const invitation = await this.invitationRepository.create({
       ...invitationData,
       createdBy,
       ownerId: ownerId || createdBy,
     });
-    await invitation.save();
 
     try {
       await this.emailService.sendInvitationEmail(invitation.email, invitation._id.toString());
@@ -35,40 +33,34 @@ export class InvitationService {
       throw new BadRequestException('Failed to send invitation email');
     }
 
-    return InvitationMapper.toDto(invitation);
+    return invitation;
   }
 
   async findAll(ownerId: string, page: number = 1, limit: number = 10, sortBy: string = 'createdAt', sortDir: 'asc' | 'desc' = 'asc'): Promise<InvitationResponseDto[]> {
     const sortOptions = { [sortBy]: sortDir === 'asc' ? 1 : -1 } as const;
-    const skip = (page - 1) * limit;
-    const invitations = await this.invitationModel
-      .find({ $or: [{ ownerId }, { createdBy: ownerId }] })
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limit).exec();
-    return InvitationMapper.toDtoList(invitations);
+    return await this.invitationRepository.findAll({
+      page,
+      limit,
+      sort: sortOptions,
+      filters: { $or: [{ ownerId }, { createdBy: ownerId }] }
+    });
   }
 
   async count(ownerId: string): Promise<number> {
-    return this.invitationModel.countDocuments({ $or: [{ ownerId }, { createdBy: ownerId }] }).exec();
+    return this.invitationRepository.count({ filters: { $or: [{ ownerId }, { createdBy: ownerId }] } });
   }
 
   async findOne(id: string, ownerId: string): Promise<InvitationResponseDto> {
-    const invitation = await this.invitationModel.findOne({
-      _id: id,
-      $or: [{ ownerId }, { createdBy: ownerId }]
-    }).exec();
+    const invitation = await this.invitationRepository.findByIdAndOwnerId(id, ownerId);
 
     if (!invitation) {
       throw new NotFoundException('Invitation not found');
     }
-    return InvitationMapper.toDto(invitation);
+    return invitation;
   }
 
   async findByEmail(email: string): Promise<InvitationResponseDto | null> {
-    const invitation = await this.invitationModel.findOne({ email }).exec();
-
-    return invitation ? InvitationMapper.toDto(invitation) : null;
+    return await this.invitationRepository.findByEmail(email);
   }
 
   async update(id: string, updateData: Partial<CreateInvitationDto>, ownerId: string): Promise<InvitationResponseDto> {
@@ -83,13 +75,7 @@ export class InvitationService {
     }
 
     const { createdBy, ownerId: newOwnerId, ...updateFields } = updateData;
-    const updatedInvitation = await this.invitationModel.findOneAndUpdate(
-      { _id: id, ownerId },
-      updateFields,
-      { new: true }
-    ).exec();
-
-    return InvitationMapper.toDto(updatedInvitation);
+    return await this.invitationRepository.update(id, updateFields);
   }
 
   async remove(id: string, ownerId: string): Promise<void> {
@@ -99,10 +85,7 @@ export class InvitationService {
       throw new BadRequestException('Cannot delete an accepted invitation');
     }
 
-    await this.invitationModel.findOneAndDelete({
-      _id: id,
-      ownerId
-    }).exec();
+    await this.invitationRepository.delete(id);
   }
 
   async resendEmail(id: string, ownerId: string): Promise<void> {
@@ -113,14 +96,14 @@ export class InvitationService {
     }
 
     try {
-      await this.emailService.sendInvitationEmail(invitation.email, invitation.id);
+      await this.emailService.sendInvitationEmail(invitation.email, invitation._id);
     } catch (error) {
       throw new BadRequestException('Failed to send invitation email');
     }
   }
 
   async acceptInvitation(id: string): Promise<void> {
-    const invitation = await this.invitationModel.findById(id).exec();
+    const invitation = await this.invitationRepository.findById(id);
     if (!invitation) {
       throw new NotFoundException('Invitation not found');
     }
@@ -129,9 +112,9 @@ export class InvitationService {
       throw new BadRequestException('Invitation already accepted');
     }
 
-    await this.invitationModel.findByIdAndUpdate(id, {
+    await this.invitationRepository.update(id, {
       accepted: true,
       acceptedAt: new Date()
-    }).exec();
+    });
   }
 } 

@@ -5,7 +5,7 @@ import {
   ConflictException,
   Inject,
 } from '@nestjs/common';
-import { CompanyProfile } from './models/company-profile.model';
+import { CompanyProfileResponseDto } from './dto/company-profile-response.dto';
 import {
   CompanyProfileFilterDto,
   CreateCompanyProfileDto,
@@ -27,7 +27,7 @@ export class CompanyProfileService {
     private readonly authService: AuthService,
   ) {}
 
-  async createProfile(createCompanyProfileDto: CreateCompanyProfileDto): Promise<{ profile: CompanyProfile; token: string }> {
+  async createProfile(createCompanyProfileDto: CreateCompanyProfileDto): Promise<{ profile: CompanyProfileResponseDto; token: string }> {
     console.log(
       '🔹 Creating company profile for user:',
       createCompanyProfileDto.userId,
@@ -55,7 +55,7 @@ export class CompanyProfileService {
 
   async findAll(
     filterDto: CompanyProfileFilterDto,
-  ): Promise<{ data: CompanyProfile[]; total: number }> {
+  ): Promise<{ data: CompanyProfileResponseDto[]; total: number }> {
     const { page = 1, limit = 10, ...filters } = filterDto;
     const query: any = {};
 
@@ -71,7 +71,7 @@ export class CompanyProfileService {
     return { data, total };
   }
 
-  async findProfileById(id: string) {
+  async findProfileById(id: string): Promise<CompanyProfileResponseDto> {
     const profile = await this.companyProfileRepository.findById(id);
     if (!profile) {
       throw new NotFoundException(
@@ -81,7 +81,7 @@ export class CompanyProfileService {
     return profile;
   }
 
-  async findProfileByUserId(userId: string) {
+  async findProfileByUserId(userId: string): Promise<CompanyProfileResponseDto> {
     const profile = await this.companyProfileRepository.findByUserId(userId);
     if (!profile) {
       throw new NotFoundException(
@@ -95,7 +95,7 @@ export class CompanyProfileService {
     id: string,
     updateCompanyProfileDto: UpdateCompanyProfileDto,
     userId: string,
-  ) {
+  ): Promise<CompanyProfileResponseDto> {
     const profile = await this.companyProfileRepository.findById(id);
 
     if (!profile) {

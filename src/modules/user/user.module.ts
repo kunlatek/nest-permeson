@@ -14,6 +14,7 @@ import {
 import { CommonModule } from 'src/common/common.module';
 import { SmsCodeModule } from '../smsCode/sms-code.module';
 import { InvitationModule } from '../invitation/invitation.module';
+import { DATABASE } from 'src/common/constants/database.constant';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { InvitationModule } from '../invitation/invitation.module';
     ]),
     CommonModule,
     SmsCodeModule,
-    InvitationModule,
+    ...InvitationModule(DATABASE),
   ],
   controllers: [UserController],
   providers: [UserService],

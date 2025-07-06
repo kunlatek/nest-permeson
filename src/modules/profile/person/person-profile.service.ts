@@ -6,7 +6,7 @@ import {
   BadRequestException,
   Inject,
 } from '@nestjs/common';
-import { PersonProfile } from './models/person-profile.model';
+import { PersonProfileResponseDto } from './dto/person-profile-response.dto';
 import {
   CreatePersonProfileDto,
   UpdatePersonProfileDto,
@@ -29,7 +29,7 @@ export class PersonProfileService {
     private readonly authService: AuthService,
   ) {}
 
-  async createProfile(dto: CreatePersonProfileDto): Promise<{ profile: PersonProfile; token: string }> {
+  async createProfile(dto: CreatePersonProfileDto): Promise<{ profile: PersonProfileResponseDto; token: string }> {
     const existing = await this.personProfileRepository.findByUserId(dto.userId);
     if (existing) {
       throw new ConflictException('User already has a person profile');
@@ -53,7 +53,7 @@ export class PersonProfileService {
 
   async findAll(
     filterDto: PersonProfileFilterDto,
-  ): Promise<{ data: PersonProfile[]; total: number }> {
+  ): Promise<{ data: PersonProfileResponseDto[]; total: number }> {
     const { page = 1, limit = 10, ...filters } = filterDto;
     const query: any = {};
 
@@ -69,19 +69,19 @@ export class PersonProfileService {
     return { data, total };
   }
 
-  async findProfileById(id: string): Promise<PersonProfile> {
+  async findProfileById(id: string): Promise<PersonProfileResponseDto> {
     const profile = await this.personProfileRepository.findById(id);
     if (!profile) throw new NotFoundException('Person profile not found');
     return profile;
   }
 
-  async findProfileByUserId(userId: string): Promise<PersonProfile> {
+  async findProfileByUserId(userId: string): Promise<PersonProfileResponseDto> {
     const profile = await this.personProfileRepository.findByUserId(userId);
     if (!profile) throw new NotFoundException('Person profile not found');
     return profile;
   }
 
-  async updateProfile(id: string, dto: UpdatePersonProfileDto, userId: string): Promise<PersonProfile> {
+  async updateProfile(id: string, dto: UpdatePersonProfileDto, userId: string): Promise<PersonProfileResponseDto> {
     const profile = await this.personProfileRepository.findById(id);
     if (!profile) throw new NotFoundException('Person profile not found');
 

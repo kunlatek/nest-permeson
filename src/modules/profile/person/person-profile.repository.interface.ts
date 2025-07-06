@@ -1,18 +1,17 @@
-import { CreatePersonProfileDto, PersonProfileFilterDto, UpdatePersonProfileDto } from "./dto";
-import { PersonProfile } from "./models";
+import { CreatePersonProfileDto, PersonProfileFilterDto, UpdatePersonProfileDto, PersonProfileResponseDto } from "./dto";
 
 export interface PersonProfileRepository {
-  create(personProfileDto: CreatePersonProfileDto): Promise<PersonProfile>;
+  create(personProfileDto: CreatePersonProfileDto): Promise<PersonProfileResponseDto>;
   
-  findById(id: string): Promise<PersonProfile>;
+  findById(id: string): Promise<PersonProfileResponseDto>;
   
-  findByUserId(userId: string): Promise<PersonProfile>;
+  findByUserId(userId: string): Promise<PersonProfileResponseDto>;
   
-  findAll(params: PersonProfileFilterDto): Promise<PersonProfile[]>;
+  findAll(params: PersonProfileFilterDto): Promise<PersonProfileResponseDto[]>;
 
   count(params: Partial<PersonProfileFilterDto>): Promise<number>;
   
-  update(id: string, personProfileDto: UpdatePersonProfileDto): Promise<PersonProfile>;
+  update(id: string, personProfileDto: Partial<UpdatePersonProfileDto>): Promise<PersonProfileResponseDto>;
   
   delete(id: string): Promise<void>;
 }

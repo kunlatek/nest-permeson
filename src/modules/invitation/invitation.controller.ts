@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, Req, Query } from '@nestjs/common';
-import { InvitationService } from './invitation.service';
-import { CreateInvitationDto } from './dto/create-invitation.dto';
-import { InvitationResponseDto } from './dto/invitation-response.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, PartialType, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, Req, Query, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { InvitationService } from './invitation.service';
+import { CreateInvitationDto, InvitationResponseDto } from './dto';
 
 @ApiTags('Invitations')
 @ApiBearerAuth()
@@ -16,8 +15,18 @@ export class InvitationController {
     @ApiSecurity('jwt')
     @ApiOperation({ summary: 'Create a new invitation' })
     @ApiResponse({ status: 400, description: 'Bad request' })
-    create(@Body() createInvitationDto: CreateInvitationDto): Promise<InvitationResponseDto> {
-        return this.invitationService.create(createInvitationDto);
+    create(@Body() createInvitationDto: CreateInvitationDto, @Req() req: any): Promise<InvitationResponseDto> {
+        if (!req.user?.userId) {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        try {
+            createInvitationDto.createdBy = req.user.userId;
+            createInvitationDto.ownerId = req.user.userId;
+            return this.invitationService.create(createInvitationDto);
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 
     @Get()
@@ -36,9 +45,17 @@ export class InvitationController {
         @Query('sortBy') sortBy?: string,
         @Query('sortDir') sortDir?: 'asc' | 'desc'
     ): Promise<{ data: InvitationResponseDto[], total: number }> {
-        const data = await this.invitationService.findAll(req.user.userId, page, limit, sortBy, sortDir);
-        const total = await this.invitationService.count(req.user.userId);
-        return { data, total };
+        if (!req.user?.userId) {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        try {
+            const data = await this.invitationService.findAll(req.user.userId, page, limit, sortBy, sortDir);
+            const total = await this.invitationService.count(req.user.userId);
+            return { data, total };
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 
     @Get(':id')
@@ -52,7 +69,15 @@ export class InvitationController {
     })
     @ApiResponse({ status: 404, description: 'Invitation not found' })
     findOne(@Param('id') id: string, @Req() req: any): Promise<InvitationResponseDto> {
-        return this.invitationService.findOne(id, req.user.userId);
+        if (!req.user?.userId) {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        try {
+            return this.invitationService.findOne(id, req.user.userId);
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 
     @Patch(':id')
@@ -70,7 +95,15 @@ export class InvitationController {
         @Body() updateInvitationDto: Partial<CreateInvitationDto>,
         @Req() req: any
     ): Promise<InvitationResponseDto> {
-        return this.invitationService.update(id, updateInvitationDto, req.user.userId);
+        if (!req.user?.userId) {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        try {
+            return this.invitationService.update(id, updateInvitationDto, req.user.userId);
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 
     @Delete(':id')
@@ -81,7 +114,15 @@ export class InvitationController {
     @ApiResponse({ status: 204, description: 'Invitation deleted successfully' })
     @ApiResponse({ status: 404, description: 'Invitation not found' })
     remove(@Param('id') id: string, @Req() req: any): Promise<void> {
-        return this.invitationService.remove(id, req.user.userId);
+        if (!req.user?.userId) {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        try {
+            return this.invitationService.remove(id, req.user.userId);
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 
     @Post(':id/resend')
@@ -95,6 +136,14 @@ export class InvitationController {
     })
     @ApiResponse({ status: 404, description: 'Invitation not found' })
     resendEmail(@Param('id') id: string, @Req() req: any): Promise<void> {
-        return this.invitationService.resendEmail(id, req.user.userId);
+        if (!req.user?.userId) {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        try {
+            return this.invitationService.resendEmail(id, req.user.userId);
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 }

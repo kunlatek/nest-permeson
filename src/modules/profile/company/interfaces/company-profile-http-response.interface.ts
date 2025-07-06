@@ -1,14 +1,14 @@
 import { IHttpResponse, IHttpResponsePaginated } from "src/interfaces/http-response.interface";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsObject } from "class-validator";
-import { CompanyProfile } from "../models/company-profile.model";
+import { CompanyProfileResponseDto } from "../dto/company-profile-response.dto";
 
 class ICompanyProfileHttpResponseCreateData {
     @ApiProperty({
         description: 'Company profile',
-        type: CompanyProfile,
+        type: CompanyProfileResponseDto,
     })
-    profile: any;
+    profile: CompanyProfileResponseDto;
 
     @ApiProperty({
         description: 'JWT token',
@@ -33,7 +33,7 @@ export class ICompanyProfileHttpResponseCreate extends IHttpResponse {
 export class ICompanyProfileHttpResponse extends IHttpResponse {
     @ApiProperty({
         description: 'Company profile',
-        type: CompanyProfile,
+        type: CompanyProfileResponseDto,
     })
     @IsObject()
     data: any;
@@ -47,7 +47,7 @@ export class ICompanyProfileHttpResponse extends IHttpResponse {
 export class ICompanyProfileHttpResponsePaginated extends IHttpResponsePaginated {
     @ApiProperty({
         description: 'Company profiles list',
-        type: [CompanyProfile],
+        type: [CompanyProfileResponseDto],
     })
     @IsArray()
     data: any[];

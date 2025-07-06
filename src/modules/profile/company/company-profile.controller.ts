@@ -1,4 +1,5 @@
 import {
+  Req,
   Controller,
   Get,
   Post,
@@ -7,25 +8,24 @@ import {
   Param,
   Delete,
   UseGuards,
-  Request,
   Query,
   HttpCode,
   HttpStatus,
+  UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CompanyProfileService } from './company-profile.service';
 import { CreateCompanyProfileDto, UpdateCompanyProfileDto, CompanyProfileFilterDto } from './dto';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { Roles } from '../../../common/decorators/roles.decorator';
-import { UserRole } from '../../../enums/user-role.enum';
 import { 
   ICompanyProfileHttpResponse, 
   ICompanyProfileHttpResponseCreate, 
   ICompanyProfileHttpResponsePaginated 
 } from './interfaces/company-profile-http-response.interface';
 
-@ApiTags('Company Profile')
-@Controller('profile/company')
+@ApiTags('Company Profiles')
+@Controller('company-profiles')
 @UseGuards(RolesGuard)
 export class CompanyProfileController {
   constructor(private readonly companyProfileService: CompanyProfileService) {}
@@ -41,13 +41,18 @@ export class CompanyProfileController {
   @ApiResponse({ status: 409, description: 'Profile already exists' })
   async create(
     @Body() createCompanyProfileDto: CreateCompanyProfileDto,
+    @Req() req,
   ): Promise<ICompanyProfileHttpResponseCreate> {
-    const result = await this.companyProfileService.createProfile(createCompanyProfileDto);
-    return new ICompanyProfileHttpResponseCreate(
-      201,
-      'Company profile created successfully',
-      result,
-    );
+    if (!req.user?.userId) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    try {
+      const result = await this.companyProfileService.createProfile(createCompanyProfileDto);
+      return new ICompanyProfileHttpResponseCreate(201, 'Company profile created successfully', result);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get()
@@ -60,14 +65,18 @@ export class CompanyProfileController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   async findAll(
     @Query() filterDto: CompanyProfileFilterDto,
+    @Req() req,
   ): Promise<ICompanyProfileHttpResponsePaginated> {
-    const { data, total } = await this.companyProfileService.findAll(filterDto);
-    return new ICompanyProfileHttpResponsePaginated(
-      data,
-      total,
-      filterDto.page || 1,
-      filterDto.limit || 10,
-    );
+    if (!req.user?.userId) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    try {
+      const { data, total } = await this.companyProfileService.findAll(filterDto);
+      return new ICompanyProfileHttpResponsePaginated(data, total, filterDto.page || 1, filterDto.limit || 10);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('me')
@@ -79,7 +88,7 @@ export class CompanyProfileController {
     type: ICompanyProfileHttpResponse,
   })
   @ApiResponse({ status: 404, description: 'Profile not found' })
-  async findMyProfile(@Request() req): Promise<ICompanyProfileHttpResponse> {
+  async findMyProfile(@Req() req): Promise<ICompanyProfileHttpResponse> {
     const profile = await this.companyProfileService.findProfileByUserId(req.user.id);
     return new ICompanyProfileHttpResponse(200, 'Company profile retrieved successfully', profile);
   }
@@ -92,9 +101,17 @@ export class CompanyProfileController {
     type: ICompanyProfileHttpResponse,
   })
   @ApiResponse({ status: 404, description: 'Profile not found' })
-  async findOne(@Param('id') id: string): Promise<ICompanyProfileHttpResponse> {
-    const profile = await this.companyProfileService.findProfileById(id);
-    return new ICompanyProfileHttpResponse(200, 'Company profile retrieved successfully', profile);
+  async findOne(@Param('id') id: string, @Req() req): Promise<ICompanyProfileHttpResponse> {
+    if (!req.user?.userId) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    try {
+      const profile = await this.companyProfileService.findProfileById(id);
+      return new ICompanyProfileHttpResponse(200, 'Company profile retrieved successfully', profile);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Patch(':id')
@@ -110,14 +127,22 @@ export class CompanyProfileController {
   async update(
     @Param('id') id: string,
     @Body() updateCompanyProfileDto: UpdateCompanyProfileDto,
-    @Request() req,
+    @Req() req,
   ): Promise<ICompanyProfileHttpResponse> {
-    const profile = await this.companyProfileService.updateProfile(
+    if (!req.user?.userId) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    try {
+      const profile = await this.companyProfileService.updateProfile(
       id,
       updateCompanyProfileDto,
       req.user.id,
-    );
-    return new ICompanyProfileHttpResponse(200, 'Company profile updated successfully', profile);
+      );
+      return new ICompanyProfileHttpResponse(200, 'Company profile updated successfully', profile);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Delete(':id')
@@ -127,7 +152,15 @@ export class CompanyProfileController {
   @ApiResponse({ status: 404, description: 'Profile not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string, @Request() req): Promise<void> {
-    await this.companyProfileService.deleteProfile(id, req.user.id);
+  async remove(@Param('id') id: string, @Req() req): Promise<void> {
+    if (!req.user?.userId) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    try {
+      await this.companyProfileService.deleteProfile(id, req.user.id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

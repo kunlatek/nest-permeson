@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '../../common/common.module';
 import { InvitationModule } from '../invitation/invitation.module';
 import { EmailService } from './services/email.service';
+import { DATABASE } from 'src/common/constants/database.constant';
 /**
  * Module responsible for handling authentication strategies,
  * user login, and issuing JWT tokens.
@@ -38,7 +39,7 @@ import { EmailService } from './services/email.service';
       },
     }),
     CommonModule,
-    InvitationModule,
+    ...InvitationModule(DATABASE),
   ],
   providers: [AuthService, EmailStrategy, JwtStrategy, EmailService],
   controllers: [AuthController],
