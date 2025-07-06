@@ -1,0 +1,136 @@
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  ConflictException,
+  Inject,
+} from '@nestjs/common';
+import { CompanyProfile } from './models/company-profile.model';
+import {
+  CompanyProfileFilterDto,
+  CreateCompanyProfileDto,
+  UpdateCompanyProfileDto,
+} from './dto';
+import { ErrorService } from '../../../common/services/error.service';
+import { ErrorCode } from '../../../common/constants/error-code.enum';
+import { AuthService } from '../../auth/auth.service';
+import { UserRole } from '../../../enums/user-role.enum';
+import { CompanyProfileRepository } from './company-profile.repository.interface';
+
+@Injectable()
+export class CompanyProfileService {
+  constructor(
+    @Inject('CompanyProfileRepository')
+    private readonly companyProfileRepository: CompanyProfileRepository,
+
+    private readonly errorService: ErrorService,
+    private readonly authService: AuthService,
+  ) {}
+
+  async createProfile(createCompanyProfileDto: CreateCompanyProfileDto): Promise<{ profile: CompanyProfile; token: string }> {
+    console.log(
+      '🔹 Creating company profile for user:',
+      createCompanyProfileDto.userId,
+    );
+
+    const existingProfile = await this.companyProfileRepository.findByUserId(
+      createCompanyProfileDto.userId,
+    );
+
+    if (existingProfile) {
+      throw new ConflictException(
+        this.errorService.getErrorMessage(ErrorCode.PROFILE_ALREADY_EXISTS),
+      );
+    }
+
+    const profile = await this.companyProfileRepository.create(createCompanyProfileDto);
+
+    const {access_token: token} = await this.authService.issueTokenWithRole(
+      createCompanyProfileDto.userId,
+      UserRole.COMPANY,
+    );
+
+    return { profile, token };
+  }
+
+  async findAll(
+    filterDto: CompanyProfileFilterDto,
+  ): Promise<{ data: CompanyProfile[]; total: number }> {
+    const { page = 1, limit = 10, ...filters } = filterDto;
+    const query: any = {};
+
+    Object.keys(filters).forEach((key) => {
+      if (filters[key]) {
+        query[key] = { $regex: filters[key], $options: 'i' };
+      }
+    });
+
+    const total = await this.companyProfileRepository.count(query);
+    const data = await this.companyProfileRepository.findAll({ page, limit, ...query });
+
+    return { data, total };
+  }
+
+  async findProfileById(id: string) {
+    const profile = await this.companyProfileRepository.findById(id);
+    if (!profile) {
+      throw new NotFoundException(
+        this.errorService.getErrorMessage(ErrorCode.PROFILE_NOT_FOUND),
+      );
+    }
+    return profile;
+  }
+
+  async findProfileByUserId(userId: string) {
+    const profile = await this.companyProfileRepository.findByUserId(userId);
+    if (!profile) {
+      throw new NotFoundException(
+        this.errorService.getErrorMessage(ErrorCode.PROFILE_NOT_FOUND),
+      );
+    }
+    return profile;
+  }
+
+  async updateProfile(
+    id: string,
+    updateCompanyProfileDto: UpdateCompanyProfileDto,
+    userId: string,
+  ) {
+    const profile = await this.companyProfileRepository.findById(id);
+
+    if (!profile) {
+      throw new NotFoundException(
+        this.errorService.getErrorMessage(ErrorCode.PROFILE_NOT_FOUND),
+      );
+    }
+
+    if (profile.userId !== userId) {
+      throw new UnauthorizedException(
+        this.errorService.getErrorMessage(ErrorCode.UNAUTHORIZED),
+      );
+    }
+
+    return await this.companyProfileRepository.update(
+      id,
+      updateCompanyProfileDto,
+    );
+  }
+
+  async deleteProfile(id: string, userId: string): Promise<void> {
+    const profile = await this.companyProfileRepository.findById(id);
+
+    if (!profile) {
+      throw new NotFoundException(
+        this.errorService.getErrorMessage(ErrorCode.PROFILE_NOT_FOUND),
+      );
+    }
+
+    if (profile.userId !== userId) {
+      throw new UnauthorizedException(
+        this.errorService.getErrorMessage(ErrorCode.UNAUTHORIZED),
+      );
+    }
+
+    await this.companyProfileRepository.delete(id);
+  }
+}
