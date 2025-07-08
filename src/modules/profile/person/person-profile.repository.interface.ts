@@ -14,4 +14,6 @@ export interface PersonProfileRepository {
   update(id: string, personProfileDto: Partial<UpdatePersonProfileDto>): Promise<PersonProfileResponseDto>;
   
   delete(id: string): Promise<void>;
+
+  deleteByUserId(userId: string): Promise<void>;
 }

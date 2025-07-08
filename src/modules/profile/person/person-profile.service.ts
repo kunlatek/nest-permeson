@@ -26,7 +26,7 @@ export class PersonProfileService {
     private readonly personProfileRepository: PersonProfileRepository,
     
     private readonly errorService: ErrorService,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
   ) {}
 
   async createProfile(dto: CreatePersonProfileDto): Promise<{ profile: PersonProfileResponseDto; token: string }> {
@@ -43,12 +43,12 @@ export class PersonProfileService {
     }
 
     const profile = await this.personProfileRepository.create(dto);
-    const {access_token: token} = await this.authService.issueTokenWithRole(
-      dto.userId,
-      UserRole.PERSON,
-    );
+    // const {access_token: token} = await this.authService.issueTokenWithRole(
+    //   dto.userId,
+    //   UserRole.PERSON,
+    // );
 
-    return { profile, token };
+    return { profile, token: '' };
   }
 
   async findAll(
@@ -123,5 +123,13 @@ export class PersonProfileService {
     const m = today.getMonth() - birth.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     return age;
+  }
+
+  async deleteByUserId(userId: string): Promise<void> {
+    await this.personProfileRepository.deleteByUserId(userId);
+  }
+
+  async findByUserId(userId: string): Promise<PersonProfileResponseDto | null> {
+    return await this.personProfileRepository.findByUserId(userId);
   }
 }

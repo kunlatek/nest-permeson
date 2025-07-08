@@ -1,5 +1,33 @@
 {
-  "translation": {
-    "hello": "Hello World!"
+  "hello": "Hello World!",
+  "auth": {
+    "user-not-found": "User not found",
+    "invalid-token": "Invalid token",
+    "invalid-credentials": "Invalid credentials",
+    "reset-password-request": {
+      "error": "Error sending reset password email",
+      "success": "Reset password email sent successfully"
+    },
+    "reset-password": {
+      "success": "Password reset successfully"
+    },
+    "signup": {
+      "error": "Signup error",
+      "email-and-token-dont-match": "Invalid email",
+      "email-already-in-use": "Email already in use",
+      "invalid-email": "Please provide a valid email address",
+      "email-must-be-string": "Email must be a string",
+      "password-must-be-string": "Password must be a string",
+      "password-min-length": "Password must be at least 6 characters long",
+      "token-must-be-string": "Registration token must be a string"
+    },
+    "login": {
+      "error": "Login error",
+      "invalid-email": "Invalid email",
+      "email-required": "Email is required",
+      "password-required": "Password is required",
+      "password-min-length": "Password must be at least 8 characters long",
+      "password-must-be-a-string": "Password must be a string"
+    }
   }
 }

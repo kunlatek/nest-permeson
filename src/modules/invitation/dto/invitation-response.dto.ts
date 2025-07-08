@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { InvitationModel } from '../models';
+import { Invitation } from '../models';
 
-export class InvitationResponseDto extends InvitationModel {
+export class InvitationResponseDto extends Invitation {
   @ApiProperty({
     example: '507f1f77bcf86cd799439011',
     description: 'ID do convite',

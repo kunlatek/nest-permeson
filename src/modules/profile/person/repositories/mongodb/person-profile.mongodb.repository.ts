@@ -46,4 +46,8 @@ export class PersonProfileMongoDBRepository implements PersonProfileRepository {
     async delete(id: string): Promise<void> {
         await this.personProfileModel.findByIdAndDelete(id);
     }
+
+    async deleteByUserId(userId: string): Promise<void> {
+        await this.personProfileModel.deleteMany({ userId });
+    }
 }

@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 import { AuthDebugMiddleware } from './common/middleware/auth-debug.middleware';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 // import { LoggingInterceptor } from './interceptors/logging.interceptor';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { OwnerInterceptor } from './common/interceptors/owner.interceptor';
 
 dotenv.config();
@@ -18,6 +18,9 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (errors) => {
+        return new BadRequestException(Object.values(errors?.[errors.length - 1]?.constraints)?.[Object.values(errors?.[errors.length - 1]?.constraints)?.length - 1] ?? 'Invalid request');
+      },
     }),
   );
 

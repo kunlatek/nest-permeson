@@ -3,22 +3,23 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class SignupDto {
   @ApiProperty({
-    description: "Email do usuário",
-    example: "usuario@exemplo.com",
+    description: "User email",
+    example: "user@example.com",
   })
   @IsEmail()
+  @IsString()
   email: string;
 
   @ApiProperty({
-    description: "Senha do usuário (mínimo 6 caracteres)",
-    example: "senha123",
+    description: "User password (minimum 6 characters)",
+    example: "password123",
   })
   @IsString()
   @MinLength(6)
   password: string;
 
   @ApiProperty({
-    description: "Token de registro",
+    description: "Registration token",
     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   })
   @IsString()

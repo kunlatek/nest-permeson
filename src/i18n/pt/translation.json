@@ -1,5 +1,33 @@
 {
-  "translation": {
-    "hello": "Olá Mundo!"
+  "hello": "Olá Mundo!",
+  "auth": {
+    "user-not-found": "Usuário não encontrado",
+    "invalid-token": "Token inválido",
+    "invalid-credentials": "Credenciais inválidas",
+    "reset-password-request": {
+      "error": "Erro ao enviar email de recuperação de senha",
+      "success": "Email de recuperação de senha enviado com sucesso"
+    },
+    "reset-password": {
+      "success": "Senha resetada com sucesso"
+    },
+    "signup": {
+      "error": "Erro no registro",
+      "email-and-token-dont-match": "Email inválido",
+      "email-already-in-use": "Email já em uso",
+      "invalid-email": "Por favor, forneça um email válido",
+      "email-must-be-string": "O email deve ser uma string",
+      "password-must-be-string": "A senha deve ser uma string",
+      "password-min-length": "A senha deve ter pelo menos 6 caracteres",
+      "token-must-be-string": "O token de registro deve ser uma string"
+    },
+    "login": {
+      "error": "Erro no login",
+      "invalid-email": "Email inválido",
+      "email-required": "Email é obrigatório",
+      "password-required": "Senha é obrigatória",
+      "password-min-length": "A senha deve ter pelo menos 8 caracteres",
+      "password-must-be-a-string": "A senha deve ser uma string"
+    }
   }
 }

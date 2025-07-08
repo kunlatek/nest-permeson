@@ -14,4 +14,6 @@ export interface CompanyProfileRepository {
   update(id: string, companyProfileDto: Partial<UpdateCompanyProfileDto>): Promise<CompanyProfileResponseDto>;
   
   delete(id: string): Promise<void>;
+
+  deleteByUserId(userId: string): Promise<void>;
 }

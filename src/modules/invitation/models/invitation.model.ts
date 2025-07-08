@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-export class InvitationModel {
+export class Invitation {
     @ApiProperty({
         example: 'user@example.com',
         description: 'Email do usuário convidado',
@@ -52,7 +52,7 @@ export class InvitationModel {
     @IsOptional()
     ownerId?: string;
     
-    constructor(data: Partial<InvitationModel>) {
+    constructor(data: Partial<Invitation>) {
         Object.assign(this, data);
     }
 } 

@@ -24,10 +24,9 @@ export class CompanyProfileService {
     private readonly companyProfileRepository: CompanyProfileRepository,
 
     private readonly errorService: ErrorService,
-    private readonly authService: AuthService,
   ) {}
 
-  async createProfile(createCompanyProfileDto: CreateCompanyProfileDto): Promise<{ profile: CompanyProfileResponseDto; token: string }> {
+  async createProfile(createCompanyProfileDto: CreateCompanyProfileDto): Promise<CompanyProfileResponseDto> {
     console.log(
       '🔹 Creating company profile for user:',
       createCompanyProfileDto.userId,
@@ -43,14 +42,7 @@ export class CompanyProfileService {
       );
     }
 
-    const profile = await this.companyProfileRepository.create(createCompanyProfileDto);
-
-    const {access_token: token} = await this.authService.issueTokenWithRole(
-      createCompanyProfileDto.userId,
-      UserRole.COMPANY,
-    );
-
-    return { profile, token };
+    return await this.companyProfileRepository.create(createCompanyProfileDto);
   }
 
   async findAll(
@@ -132,5 +124,13 @@ export class CompanyProfileService {
     }
 
     await this.companyProfileRepository.delete(id);
+  }
+
+  async deleteByUserId(userId: string): Promise<void> {
+    await this.companyProfileRepository.deleteByUserId(userId);
+  }
+
+  async findByUserId(userId: string): Promise<CompanyProfileResponseDto | null> {
+    return await this.companyProfileRepository.findByUserId(userId);
   }
 }

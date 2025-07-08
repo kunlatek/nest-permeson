@@ -47,4 +47,8 @@ export class CompanyProfileMongoDBRepository implements CompanyProfileRepository
     async delete(id: string): Promise<void> {
         await this.companyProfileModel.findByIdAndDelete(id);
     }
+
+    async deleteByUserId(userId: string): Promise<void> {
+        await this.companyProfileModel.deleteMany({ userId });
+    }
 }

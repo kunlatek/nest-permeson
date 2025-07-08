@@ -44,7 +44,7 @@ export class EmailService {
     };
   }
 
-  async sendForgotPasswordEmail(email: string) {
+  async sendResetPasswordEmail(email: string) {
     const baseUrl = this.configService.get("BASE_URL");
 
     const token = this.jwtService.sign({ email }, { expiresIn: "1h" });

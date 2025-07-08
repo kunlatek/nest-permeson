@@ -1,29 +1,29 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserByInvitationDto, CreateUserDto } from './dto/create-user.dto';
-import { MongoDBCompanyProfile, CompanyProfileDocument } from '../profile/company/repositories/mongodb/company-profile.schema';
 import { UserRole } from 'src/enums/user-role.enum';
-import { MongoDBPersonProfile, PersonProfileDocument } from '../profile/person/repositories/mongodb/person-profile.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CascadeService } from 'src/common/services/cascade.service';
 import { InvitationService } from '../invitation/invitation.service';
 import { ErrorService } from 'src/common/services/error.service';
 import { ErrorCode } from 'src/common/constants/error-code.enum';
+import { UserRepository } from './user.repository.interface';
+import { UserResponseDto } from './dto';
+import { CompanyProfileService } from '../profile/company/company-profile.service';
+import { PersonProfileService } from '../profile/person/person-profile.service';
 
 @Injectable()
 export class UserService {
   private readonly DAYS_UNTIL_HARD_DELETE = 90;
 
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @InjectModel(MongoDBCompanyProfile.name)
-    private companyProfileModel: Model<CompanyProfileDocument>,
-    @InjectModel(MongoDBPersonProfile.name)
-    private personProfileModel: Model<PersonProfileDocument>,
+    @Inject('UserRepository')
+    private readonly userRepository: UserRepository,
+
+    private readonly companyProfileService: CompanyProfileService,
+    private readonly personProfileService: PersonProfileService,
+
     private readonly cascadeService: CascadeService,
     private readonly invitationService: InvitationService,
     private readonly errorService: ErrorService,
@@ -33,8 +33,8 @@ export class UserService {
    * Creates a new user, storing the password hashed.
    * Validates if the email already exists.
    */
-  async createUser(payload: CreateUserDto): Promise<UserDocument> {
-    const existingUser = await this.userModel.findOne({ email: payload.email });
+  async createUser(payload: CreateUserDto): Promise<UserResponseDto> {
+    const existingUser = await this.userRepository.findByEmail(payload.email);
     if (existingUser) {
       throw new UnauthorizedException(
         this.errorService.getErrorMessage(ErrorCode.EMAIL_IN_USE),
@@ -42,18 +42,18 @@ export class UserService {
     }
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);
-    const newUser = new this.userModel({
+    const newUser = await this.userRepository.create({
       ...payload,
       password: hashedPassword,
     });
 
-    return newUser.save();
+    return newUser;
   }
 
   /**
    * Creates a new user from an invitation.
    */
-  async createUserByInvitation(payload: CreateUserByInvitationDto): Promise<UserDocument> {
+  async createUserByInvitation(payload: CreateUserByInvitationDto): Promise<UserResponseDto> {
     try {
       const invitationPayload: any = jwt.verify(payload.token, process.env.JWT_SECRET);
 
@@ -70,7 +70,7 @@ export class UserService {
         throw new BadRequestException('Invitation already accepted');
       }
 
-      const existingUser = await this.userModel.findOne({ email: payload.email });
+      const existingUser = await this.userRepository.findByEmail(payload.email);
       if (existingUser) {
         throw new UnauthorizedException(
           this.errorService.getErrorMessage(ErrorCode.EMAIL_IN_USE),
@@ -79,14 +79,14 @@ export class UserService {
 
       const hashedPassword = await bcrypt.hash(payload.password, 10);
       console.log(hashedPassword);
-      const newUser = new this.userModel({
+      const newUser = await this.userRepository.create({
         email: invitationPayload.email,
         password: hashedPassword,
       });
 
       await this.invitationService.acceptInvitation(invitation._id);
 
-      return newUser.save();
+      return newUser;
     } catch (error) {
       throw new BadRequestException(`Failed to create user: ${error.message}`);
     }
@@ -99,8 +99,8 @@ export class UserService {
   async validateUser(
     email: string,
     password: string,
-  ): Promise<UserDocument | null> {
-    const user = await this.userModel.findOne({ email }).exec();
+  ): Promise<UserResponseDto | null> {
+    const user = await this.userRepository.findByEmail(email);
     if (!user) {
       return null;
     }
@@ -116,15 +116,15 @@ export class UserService {
   /**
    * Utility method to find user by ID.
    */
-  async findById(userId: string): Promise<UserDocument | null> {
-    return this.userModel.findById(userId).exec();
+  async findById(userId: string): Promise<UserResponseDto | null> {
+    return this.userRepository.findById(userId);
   }
 
   /**
    * Finds a user by email.
    */
-  async findByEmail(email: string): Promise<UserDocument | null> {
-    return this.userModel.findOne({ email }).exec();
+  async findByEmail(email: string): Promise<UserResponseDto | null> {
+    return this.userRepository.findByEmail(email);
   }
 
   /**
@@ -136,15 +136,16 @@ export class UserService {
     provider: string;
     providerId: string;
     profilePicture?: string;
-  }): Promise<UserDocument> {
-    const newUser = new this.userModel({
-      email: data.email,
-      provider: data.provider,
-      providerId: data.providerId,
-      profilePicture: data.profilePicture,
-    });
+  }): Promise<UserResponseDto> {
+    throw new Error('Not implemented');
+    // const newUser = await this.userRepository.create({
+    //   email: data.email,
+    //   provider: data.provider,
+    //   providerId: data.providerId,
+    //   profilePicture: data.profilePicture,
+    // });
 
-    return newUser.save();
+    // return newUser.save();
   }
 
   /**
@@ -153,14 +154,11 @@ export class UserService {
   async getAvailableRoles(userId: string): Promise<UserRole[]> {
     const roles: UserRole[] = [];
 
-    const normalizedUserId =
-      typeof userId === 'string'
-        ? userId
-        : new Types.ObjectId(userId).toString();
+    const normalizedUserId = userId;
 
     const [company, person] = await Promise.all([
-      this.companyProfileModel.exists({ userId: normalizedUserId }),
-      this.personProfileModel.exists({ userId: normalizedUserId }),
+      this.companyProfileService.findByUserId(normalizedUserId),
+      this.personProfileService.findByUserId(normalizedUserId),
     ]);
 
     if (company) roles.push(UserRole.COMPANY);
@@ -169,8 +167,8 @@ export class UserService {
     return roles;
   }
 
-  async updateUser(id: string, payload: UpdateUserDto): Promise<UserDocument> {
-    const user = await this.userModel.findById(id);
+  async updateUser(id: string, payload: UpdateUserDto): Promise<UserResponseDto> {
+    const user = await this.userRepository.findById(id);
     if (!user || user.deletedAt) {
       throw new NotFoundException('User not found or has been deleted');
     }
@@ -180,24 +178,23 @@ export class UserService {
     }
 
     Object.assign(user, payload);
-    return user.save();
+    return this.userRepository.update(id, payload);
   }
 
   async softDeleteUser(id: string): Promise<void> {
-    const user = await this.userModel.findById(id);
+    const user = await this.userRepository.findById(id);
     if (!user || user.deletedAt) {
       throw new NotFoundException('User not found or has been deleted');
     }
 
-    user.deletedAt = new Date();
-    await user.save();
+    await this.userRepository.update(id, { deletedAt: new Date() });
 
     // Cascade soft delete to all related documents
     await this.cascadeService.cascadeSoftDelete(id);
 
     // Schedule hard delete after 90 days if user remains soft deleted
     setTimeout(async () => {
-      const user = await this.userModel.findById(id);
+      const user = await this.userRepository.findById(id);
       if (user?.deletedAt) {
         const daysSinceDelete = Math.floor(
           (Date.now() - user.deletedAt.getTime()) / (1000 * 60 * 60 * 24)
@@ -214,17 +211,16 @@ export class UserService {
     await this.cascadeService.cascadeHardDelete(id);
 
     // Then delete the user
-    await this.userModel.findByIdAndDelete(id);
+    await this.userRepository.delete(id);
   }
 
-  async restoreUser(id: string): Promise<UserDocument> {
-    const user = await this.userModel.findById(id);
+  async restoreUser(id: string): Promise<UserResponseDto> {
+    const user = await this.userRepository.findById(id);
     if (!user || !user.deletedAt) {
       throw new NotFoundException('User not found or is not deleted');
     }
 
-    user.deletedAt = null;
-    await user.save();
+    await this.userRepository.update(id, { deletedAt: null });
 
     // Cascade restore to all related documents
     await this.cascadeService.cascadeRestore(id);
@@ -232,20 +228,20 @@ export class UserService {
     return user;
   }
 
-  async findAll(): Promise<UserDocument[]> {
-    return this.userModel.find().exec();
+  async findAll(): Promise<UserResponseDto[]> {
+    return this.userRepository.findAll({});
   }
 
-  async findOne(id: string): Promise<UserDocument> {
-    const user = await this.userModel.findById(id);
+  async findOne(id: string): Promise<UserResponseDto> {
+    const user = await this.userRepository.findById(id);
     if (!user || user.deletedAt) {
       throw new NotFoundException('User not found or has been deleted');
     }
     return user;
   }
 
-  async findMe(id: string): Promise<UserDocument> {
-    const user = await this.userModel.findById(id);
+  async findMe(id: string): Promise<UserResponseDto> {
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -253,7 +249,7 @@ export class UserService {
   }
 
   async updatePassword(userId: string, oldPassword: string, newPassword: string): Promise<void> {
-    const user = await this.userModel.findById(userId);
+    const user = await this.userRepository.findById(userId);
     if (!user || user.deletedAt) {
       throw new NotFoundException('User not found or has been deleted');
     }
@@ -264,13 +260,12 @@ export class UserService {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
+    await this.userRepository.update(userId, { password: hashedPassword });
   }
 
   async userHasProfile(userId: string): Promise<{ company: boolean; person: boolean }> {
-    const company = await this.companyProfileModel.exists({ userId });
-    const person = await this.personProfileModel.exists({ userId });
+    const company = await this.companyProfileService.findByUserId(userId);
+    const person = await this.personProfileService.findByUserId(userId);
     return { company: !!company, person: !!person };
   }
 }

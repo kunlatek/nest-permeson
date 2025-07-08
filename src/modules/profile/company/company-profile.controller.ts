@@ -1,55 +1,39 @@
-import {
-  Req,
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-  HttpCode,
-  HttpStatus,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Req, Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, HttpCode, HttpStatus, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CompanyProfileService } from './company-profile.service';
 import { CreateCompanyProfileDto, UpdateCompanyProfileDto, CompanyProfileFilterDto } from './dto';
 import { RolesGuard } from '../../../common/guards/roles.guard';
-import { 
-  ICompanyProfileHttpResponse, 
-  ICompanyProfileHttpResponseCreate, 
-  ICompanyProfileHttpResponsePaginated 
-} from './interfaces/company-profile-http-response.interface';
+import { ICompanyProfileHttpResponse, ICompanyProfileHttpResponseCreate, ICompanyProfileHttpResponsePaginated } from './interfaces/company-profile-http-response.interface';
+import { AuthService } from 'src/modules/auth/auth.service';
+import { UserRole } from 'src/enums/user-role.enum';
 
 @ApiTags('Company Profiles')
 @Controller('company-profiles')
 @UseGuards(RolesGuard)
 export class CompanyProfileController {
-  constructor(private readonly companyProfileService: CompanyProfileService) {}
+  constructor(
+    private readonly companyProfileService: CompanyProfileService,
+    // private readonly authService: AuthService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new company profile' })
-  @ApiResponse({
-    status: 201,
-    description: 'Company profile created successfully',
-    type: ICompanyProfileHttpResponseCreate,
-  })
+  @ApiResponse({ status: 201, description: 'Company profile created successfully', type: ICompanyProfileHttpResponseCreate })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 409, description: 'Profile already exists' })
   async create(
     @Body() createCompanyProfileDto: CreateCompanyProfileDto,
     @Req() req,
   ): Promise<ICompanyProfileHttpResponseCreate> {
-    if (!req.user?.userId) {
-      throw new UnauthorizedException('Invalid token');
-    }
+    if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
 
     try {
-      const result = await this.companyProfileService.createProfile(createCompanyProfileDto);
-      return new ICompanyProfileHttpResponseCreate(201, 'Company profile created successfully', result);
+      const profile = await this.companyProfileService.createProfile(createCompanyProfileDto);
+      // const {access_token: token} = await this.authService.issueTokenWithRole(
+      //   profile.userId,
+      //   UserRole.COMPANY,
+      // );
+      return new ICompanyProfileHttpResponseCreate(201, 'Company profile created successfully', {profile, token: ''});
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -57,19 +41,13 @@ export class CompanyProfileController {
 
   @Get()
   @ApiOperation({ summary: 'Get all company profiles with pagination' })
-  @ApiResponse({
-    status: 200,
-    description: 'Company profiles retrieved successfully',
-    type: ICompanyProfileHttpResponsePaginated,
-  })
+  @ApiResponse({ status: 200, description: 'Company profiles retrieved successfully', type: ICompanyProfileHttpResponsePaginated })
   @ApiResponse({ status: 400, description: 'Bad request' })
   async findAll(
     @Query() filterDto: CompanyProfileFilterDto,
     @Req() req,
   ): Promise<ICompanyProfileHttpResponsePaginated> {
-    if (!req.user?.userId) {
-      throw new UnauthorizedException('Invalid token');
-    }
+    if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
 
     try {
       const { data, total } = await this.companyProfileService.findAll(filterDto);
@@ -82,11 +60,7 @@ export class CompanyProfileController {
   @Get('me')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user company profile' })
-  @ApiResponse({
-    status: 200,
-    description: 'Company profile retrieved successfully',
-    type: ICompanyProfileHttpResponse,
-  })
+  @ApiResponse({ status: 200, description: 'Company profile retrieved successfully', type: ICompanyProfileHttpResponse })
   @ApiResponse({ status: 404, description: 'Profile not found' })
   async findMyProfile(@Req() req): Promise<ICompanyProfileHttpResponse> {
     const profile = await this.companyProfileService.findProfileByUserId(req.user.id);
@@ -95,16 +69,10 @@ export class CompanyProfileController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get company profile by ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Company profile retrieved successfully',
-    type: ICompanyProfileHttpResponse,
-  })
+  @ApiResponse({ status: 200, description: 'Company profile retrieved successfully', type: ICompanyProfileHttpResponse })
   @ApiResponse({ status: 404, description: 'Profile not found' })
   async findOne(@Param('id') id: string, @Req() req): Promise<ICompanyProfileHttpResponse> {
-    if (!req.user?.userId) {
-      throw new UnauthorizedException('Invalid token');
-    }
+    if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
 
     try {
       const profile = await this.companyProfileService.findProfileById(id);
@@ -117,11 +85,7 @@ export class CompanyProfileController {
   @Patch(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update company profile' })
-  @ApiResponse({
-    status: 200,
-    description: 'Company profile updated successfully',
-    type: ICompanyProfileHttpResponse,
-  })
+  @ApiResponse({ status: 200, description: 'Company profile updated successfully', type: ICompanyProfileHttpResponse })
   @ApiResponse({ status: 404, description: 'Profile not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async update(
@@ -129,9 +93,7 @@ export class CompanyProfileController {
     @Body() updateCompanyProfileDto: UpdateCompanyProfileDto,
     @Req() req,
   ): Promise<ICompanyProfileHttpResponse> {
-    if (!req.user?.userId) {
-      throw new UnauthorizedException('Invalid token');
-    }
+    if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
 
     try {
       const profile = await this.companyProfileService.updateProfile(
@@ -153,9 +115,7 @@ export class CompanyProfileController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string, @Req() req): Promise<void> {
-    if (!req.user?.userId) {
-      throw new UnauthorizedException('Invalid token');
-    }
+    if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
 
     try {
       await this.companyProfileService.deleteProfile(id, req.user.id);

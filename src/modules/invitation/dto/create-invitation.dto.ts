@@ -1,3 +1,3 @@
-import { InvitationModel } from '../models';
+import { Invitation } from '../models';
 
-export class CreateInvitationDto extends InvitationModel {}
+export class CreateInvitationDto extends Invitation {}

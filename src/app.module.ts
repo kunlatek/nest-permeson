@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DatabaseEnum } from "./enums/database.enum";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./modules/auth/auth.module";
@@ -13,10 +12,11 @@ import { RequestLoggerModule } from "./common/middleware/request-logger.module";
 import { InvitationModule } from "./modules/invitation/invitation.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
 import { SmsCodeModule } from "./modules/smsCode/sms-code.module";
-import { CleanupModule } from "./modules/cleanup/cleanup.module";
+// import { CleanupModule } from "./modules/cleanup/cleanup.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 import { DATABASE } from "./common/constants/database.constant";
 import * as path from "path";
+
 
 @Module({
   imports: [
@@ -37,16 +37,16 @@ import * as path from "path";
         AcceptLanguageResolver,
       ],
     }),
+    AuthModule,
     CommonModule,
     LoggingModule,
     ...InvitationModule(DATABASE),
-    AuthModule,
-    UserModule,
+    ...UserModule(DATABASE),
     RequestLoggerModule,
     ...ProfileModule(DATABASE),
     OwnerModule,
     SmsCodeModule,
-    CleanupModule,
+    // CleanupModule,
   ],
   controllers: [AppController],
   providers: [AppService],
