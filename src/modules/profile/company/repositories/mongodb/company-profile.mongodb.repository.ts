@@ -29,16 +29,6 @@ export class CompanyProfileMongoDBRepository implements CompanyProfileRepository
         return new CompanyProfileResponseDto(companyProfile);
     }
 
-    async findAll(params: CompanyProfileFilterDto): Promise<CompanyProfileResponseDto[]> {
-        const { page, limit, ...filters } = params;
-        const companyProfiles = await this.companyProfileModel.find(filters).skip((page - 1) * limit).limit(limit);
-        return companyProfiles.map(companyProfile => new CompanyProfileResponseDto(companyProfile));
-    }
-
-    async count(params: Partial<CompanyProfileFilterDto>): Promise<number> {
-        return await this.companyProfileModel.countDocuments(params);
-    }
-
     async update(id: string, companyProfileDto: Partial<UpdateCompanyProfileDto>): Promise<CompanyProfileResponseDto> {
         const updatedCompanyProfile = await this.companyProfileModel.findByIdAndUpdate(id, companyProfileDto, { new: true });
         return new CompanyProfileResponseDto(updatedCompanyProfile);

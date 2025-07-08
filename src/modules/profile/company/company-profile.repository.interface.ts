@@ -7,10 +7,6 @@ export interface CompanyProfileRepository {
   
   findByUserId(userId: string): Promise<CompanyProfileResponseDto>;
   
-  findAll(params: CompanyProfileFilterDto): Promise<CompanyProfileResponseDto[]>;
-
-  count(params: Partial<CompanyProfileFilterDto>): Promise<number>;
-  
   update(id: string, companyProfileDto: Partial<UpdateCompanyProfileDto>): Promise<CompanyProfileResponseDto>;
   
   delete(id: string): Promise<void>;

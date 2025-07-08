@@ -1,1 +1,0 @@
-export * from './company-profile-http-response.interface'; 

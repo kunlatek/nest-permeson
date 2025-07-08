@@ -1,12 +1,20 @@
-import { DatabaseEnum } from "src/enums/database.enum";
+import { Module } from '@nestjs/common';
 
-// MongoDB
-import { CompanyProfileModule } from "./company/repositories/mongodb/company-profile.module";
-import { PersonProfileModule } from "./person/repositories/mongodb/person-profile.module";
+import { ProfileService } from './profile.service';
+import { DATABASE } from 'src/common/constants/database.constant';
+import { CompanyProfileModule } from './company/company-profile.module';
+import { PersonProfileModule } from './person/person-profile.module';
+import { ProfileController } from './profile.controller';
 
-export const ProfileModule = (database: DatabaseEnum) => {
-  if (database === DatabaseEnum.MONGODB) {
-    return [PersonProfileModule, CompanyProfileModule];
-  }
-  return [];
-};
+@Module({
+  imports: [
+    ...CompanyProfileModule(DATABASE),
+    ...PersonProfileModule(DATABASE)
+  ],
+  providers: [
+    ProfileService,
+  ],
+  controllers: [ProfileController],
+  exports: [ProfileService],
+})
+export class ProfileModule {}

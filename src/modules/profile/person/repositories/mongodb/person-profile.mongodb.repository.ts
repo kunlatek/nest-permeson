@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { MongoDBPersonProfile, PersonProfileDocument } from "./person-profile.schema";
 import { CreatePersonProfileDto, PersonProfileFilterDto, UpdatePersonProfileDto } from "../../dto";
-import { PersonProfileRepository } from "../../interfaces";
+import { PersonProfileRepository } from "../../person-profile.repository.interface";
 import { PersonProfileResponseDto } from "../../dto/person-profile-response.dto";
 
 @Injectable()
@@ -26,16 +26,6 @@ export class PersonProfileMongoDBRepository implements PersonProfileRepository {
     async findByUserId(userId: string): Promise<PersonProfileResponseDto> {
         const personProfile = await this.personProfileModel.findOne({ userId });
         return new PersonProfileResponseDto(personProfile);
-    }
-
-    async findAll(params: PersonProfileFilterDto): Promise<PersonProfileResponseDto[]> {
-        const { page, limit, ...filters } = params;
-        const personProfiles = await this.personProfileModel.find(filters).skip((page - 1) * limit).limit(limit);
-        return personProfiles.map(personProfile => new PersonProfileResponseDto(personProfile));
-    }
-
-    async count(params: Partial<PersonProfileFilterDto>): Promise<number> {
-        return await this.personProfileModel.countDocuments(params);
     }
 
     async update(id: string, personProfileDto: Partial<UpdatePersonProfileDto>): Promise<PersonProfileResponseDto> {

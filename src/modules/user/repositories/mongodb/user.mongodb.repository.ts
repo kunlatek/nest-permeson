@@ -35,16 +35,6 @@ export class UserMongoDBRepository implements UserRepository {
     return new UserResponseDto(user);
   }
 
-  async findAll(params: UserFilterDto): Promise<UserResponseDto[]> {
-    const { page, limit, ...filters } = params;
-    const users = await this.userModel.find(filters).skip((page - 1) * limit).limit(limit);
-    return users.map(user => new UserResponseDto(user));
-  }
-
-  async count(params: Partial<UserFilterDto>): Promise<number> {
-    return await this.userModel.countDocuments(params);
-  }
-
   async update(id: string, userDto: Partial<UpdateUserDto>): Promise<UserResponseDto> {
     const updatedUser = await this.userModel.findByIdAndUpdate(id, userDto, { new: true });
     return new UserResponseDto(updatedUser);

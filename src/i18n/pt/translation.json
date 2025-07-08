@@ -40,5 +40,16 @@
     "error-getting-user": "Erro ao obter o usuário",
     "verified": "Conta verificada",
     "account-status": "Estado da conta"
+  },
+  "profile": {
+    "invalid-profile-type": "Tipo de perfil inválido",
+    "person-profile-found": "Perfil de pessoa encontrado",
+    "person-profile-not-found": "Perfil de pessoa não encontrado",
+    "company-profile-found": "Perfil de empresa encontrado",
+    "company-profile-not-found": "Perfil de empresa não encontrado",
+    "person-profile-updated": "Perfil de pessoa atualizado",
+    "company-profile-updated": "Perfil de empresa atualizado",
+    "person-profile-update-error": "Erro ao atualizar o perfil de pessoa",
+    "company-profile-update-error": "Erro ao atualizar o perfil de empresa"
   }
 }

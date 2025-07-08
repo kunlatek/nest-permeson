@@ -66,9 +66,9 @@ export class DiscordLoggerService {
         });
       }
 
-      await axios.post(this.webhookUrl, {
-        embeds: [embed],
-      });
+      // await axios.post(this.webhookUrl, {
+      //   embeds: [embed],
+      // });
     } catch (err) {
       this.logger.error(`Failed to send error log to Discord: ${err.message}`);
     }
@@ -107,9 +107,9 @@ export class DiscordLoggerService {
         });
       }
 
-      await axios.post(this.webhookUrl, {
-        embeds: [embed],
-      });
+      // await axios.post(this.webhookUrl, {
+      //   embeds: [embed],
+      // });
     } catch (err) {
       this.logger.error(`Failed to send warning log to Discord: ${err.message}`);
     }

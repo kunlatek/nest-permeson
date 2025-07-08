@@ -41,5 +41,16 @@
     "error-getting-user": "Error getting user",
     "verified": "Account verified",
     "account-status": "Account status"
+  },
+  "profile": {
+    "invalid-profile-type": "Invalid profile type",
+    "person-profile-found": "Person profile found",
+    "person-profile-not-found": "Person profile not found",
+    "company-profile-found": "Company profile found",
+    "company-profile-not-found": "Company profile not found",
+    "person-profile-updated": "Person profile updated",
+    "company-profile-updated": "Company profile updated",
+    "person-profile-update-error": "Error updating person profile",
+    "company-profile-update-error": "Error updating company profile"
   }
 }

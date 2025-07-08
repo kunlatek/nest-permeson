@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from 'src/common/common.module';
-// import { UserModule } from 'src/modules/user/user.module';
-// import { AuthModule } from 'src/modules/auth/auth.module';
 
-import { PersonProfileController } from '../../person-profile.controller';
-import { PersonProfileService } from '../../person-profile.service';
 import { PersonProfileSchema, MongoDBPersonProfile, PersonProfileMongoDBRepository } from '.';
 
 @Module({
@@ -15,14 +11,12 @@ import { PersonProfileSchema, MongoDBPersonProfile, PersonProfileMongoDBReposito
     ]),
     CommonModule,
   ],
-  controllers: [PersonProfileController],
   providers: [
-    PersonProfileService,
     {
       provide: 'PersonProfileRepository',
       useClass: PersonProfileMongoDBRepository,
     },
   ],
-  exports: [PersonProfileService],
+  exports: ['PersonProfileRepository'],
 })
 export class PersonProfileModule {}

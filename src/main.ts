@@ -29,11 +29,6 @@ async function bootstrap() {
 
   app.use(new AuthDebugMiddleware().use);
 
-  app.use((req, res, next) => {
-    console.log('🔹 Received Token:', req.headers.authorization);
-    next();
-  });
-
   // app.useGlobalInterceptors(app.get(LoggingInterceptor));
 
   const config = new DocumentBuilder()

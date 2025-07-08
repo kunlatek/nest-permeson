@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from 'src/common/common.module';
 
-import { CompanyProfileController } from '../../company-profile.controller';
-import { CompanyProfileService } from '../../company-profile.service';
-import { MongoDBCompanyProfile, CompanyProfileSchema, CompanyProfileMongoDBRepository } from '.';
+  import { MongoDBCompanyProfile, CompanyProfileSchema, CompanyProfileMongoDBRepository } from '.';
 
 @Module({
   imports: [
@@ -13,14 +11,12 @@ import { MongoDBCompanyProfile, CompanyProfileSchema, CompanyProfileMongoDBRepos
     ]),
     CommonModule,
   ],
-  controllers: [CompanyProfileController],
   providers: [
-    CompanyProfileService,
     {
       provide: 'CompanyProfileRepository',
       useClass: CompanyProfileMongoDBRepository,
     },
   ],
-  exports: [CompanyProfileService],
+  exports: ['CompanyProfileRepository'],
 })
 export class CompanyProfileModule {}

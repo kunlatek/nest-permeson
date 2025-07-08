@@ -7,10 +7,6 @@ export interface UserRepository {
   
   findByEmail(email: string): Promise<UserResponseDto | null>;
   
-  findAll(params: UserFilterDto): Promise<UserResponseDto[]>;
-
-  count(params: Partial<UserFilterDto>): Promise<number>;
-  
   update(id: string, userDto: Partial<UpdateUserDto>): Promise<UserResponseDto>;
   
   delete(id: string): Promise<void>;

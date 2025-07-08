@@ -7,10 +7,6 @@ export interface PersonProfileRepository {
   
   findByUserId(userId: string): Promise<PersonProfileResponseDto>;
   
-  findAll(params: PersonProfileFilterDto): Promise<PersonProfileResponseDto[]>;
-
-  count(params: Partial<PersonProfileFilterDto>): Promise<number>;
-  
   update(id: string, personProfileDto: Partial<UpdatePersonProfileDto>): Promise<PersonProfileResponseDto>;
   
   delete(id: string): Promise<void>;

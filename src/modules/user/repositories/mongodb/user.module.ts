@@ -6,9 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from 'src/common/common.module';
 
 import { UserService } from '../../user.service';
-import { MongoDBUser, UserSchema, UserMongoDBRepository } from '.';
-import { InvitationModule } from 'src/modules/invitation/invitation.module';
-import { ProfileModule } from 'src/modules/profile/profile.module';
+import { MongoDBUser, UserSchema, UserMongoDBRepository } from '.'; 
 
 import { DATABASE } from 'src/common/constants/database.constant';
 
@@ -36,8 +34,6 @@ import { DATABASE } from 'src/common/constants/database.constant';
         };
       },
     }),
-    ...InvitationModule(DATABASE),
-    ...ProfileModule(DATABASE),
   ],
   controllers: [],
   providers: [

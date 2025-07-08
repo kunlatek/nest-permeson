@@ -10,8 +10,6 @@ import { ErrorService } from 'src/common/services/error.service';
 import { ErrorCode } from 'src/common/constants/error-code.enum';
 import { UserRepository } from './user.repository.interface';
 import { UserResponseDto } from './dto';
-import { CompanyProfileService } from '../profile/company/company-profile.service';
-import { PersonProfileService } from '../profile/person/person-profile.service';
 
 @Injectable()
 export class UserService {
@@ -21,18 +19,10 @@ export class UserService {
     @Inject('UserRepository')
     private readonly userRepository: UserRepository,
 
-    private readonly companyProfileService: CompanyProfileService,
-    private readonly personProfileService: PersonProfileService,
-
     private readonly cascadeService: CascadeService,
-    private readonly invitationService: InvitationService,
     private readonly errorService: ErrorService,
   ) { }
 
-  /**
-   * Creates a new user, storing the password hashed.
-   * Validates if the email already exists.
-   */
   async createUser(payload: CreateUserDto): Promise<UserResponseDto> {
     const existingUser = await this.userRepository.findByEmail(payload.email);
     if (existingUser) {
@@ -49,25 +39,13 @@ export class UserService {
 
     return newUser;
   }
-
-  /**
-   * Creates a new user from an invitation.
-   */
+  
   async createUserByInvitation(payload: CreateUserByInvitationDto): Promise<UserResponseDto> {
     try {
       const invitationPayload: any = jwt.verify(payload.token, process.env.JWT_SECRET);
 
       if (invitationPayload.email !== payload.email) {
         throw new BadRequestException('Email does not match invitation email');
-      }
-
-      const invitation = await this.invitationService.findByEmail(invitationPayload.email);
-      if (!invitation) {
-        throw new NotFoundException('Invitation not found');
-      }
-
-      if (invitation.accepted) {
-        throw new BadRequestException('Invitation already accepted');
       }
 
       const existingUser = await this.userRepository.findByEmail(payload.email);
@@ -84,18 +62,12 @@ export class UserService {
         password: hashedPassword,
       });
 
-      await this.invitationService.acceptInvitation(invitation._id);
-
       return newUser;
     } catch (error) {
       throw new BadRequestException(`Failed to create user: ${error.message}`);
     }
   }
 
-  /**
-   * Finds a user by email and verifies if the password matches.
-   * Returns null if it does not match or if user not found.
-   */
   async validateUser(
     email: string,
     password: string,
@@ -113,24 +85,14 @@ export class UserService {
     return user;
   }
 
-  /**
-   * Utility method to find user by ID.
-   */
   async findById(userId: string): Promise<UserResponseDto | null> {
     return this.userRepository.findById(userId);
   }
 
-  /**
-   * Finds a user by email.
-   */
   async findByEmail(email: string): Promise<UserResponseDto | null> {
     return this.userRepository.findByEmail(email);
   }
 
-  /**
-   * Creates a user from an external provider (e.g., Google).
-   * This skips password validation and stores only provider metadata.
-   */
   async createWithProvider(data: {
     email: string;
     provider: string;
@@ -148,21 +110,18 @@ export class UserService {
     // return newUser.save();
   }
 
-  /**
-   * Returns all roles available to a given user based on their associated profiles.
-   */
   async getAvailableRoles(userId: string): Promise<UserRole[]> {
     const roles: UserRole[] = [];
 
     const normalizedUserId = userId;
 
-    const [company, person] = await Promise.all([
-      this.companyProfileService.findByUserId(normalizedUserId),
-      this.personProfileService.findByUserId(normalizedUserId),
-    ]);
+    // const [company, person] = await Promise.all([
+    //   this.companyProfileService.findByUserId(normalizedUserId),
+    //   this.personProfileService.findByUserId(normalizedUserId),
+    // ]);
 
-    if (company) roles.push(UserRole.COMPANY);
-    if (person) roles.push(UserRole.PERSON);
+    // if (company) roles.push(UserRole.COMPANY);
+    // if (person) roles.push(UserRole.PERSON);
 
     return roles;
   }
@@ -228,10 +187,6 @@ export class UserService {
     return user;
   }
 
-  async findAll(): Promise<UserResponseDto[]> {
-    return this.userRepository.findAll({});
-  }
-
   async findOne(id: string): Promise<UserResponseDto> {
     const user = await this.userRepository.findById(id);
     if (!user || user.deletedAt) {
@@ -264,8 +219,9 @@ export class UserService {
   }
 
   async userHasProfile(userId: string): Promise<{ company: boolean; person: boolean }> {
-    const company = await this.companyProfileService.findByUserId(userId);
-    const person = await this.personProfileService.findByUserId(userId);
-    return { company: !!company, person: !!person };
+    // const company = await this.companyProfileService.findByUserId(userId);
+    // const person = await this.personProfileService.findByUserId(userId);
+    // return { company: !!company, person: !!person };
+    return { company: false, person: false };
   }
 }
