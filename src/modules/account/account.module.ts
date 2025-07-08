@@ -1,23 +1,17 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
-import { JwtStrategy } from './strategies';
-import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '../../common/common.module';
 import { EmailService } from './services/email.service';
+import { AccountService } from './account.service';
+import { AccountController } from './account.controller';
+
 import { DATABASE } from 'src/common/constants/database.constant';
 
-/**
- * Module responsible for handling authentication strategies,
- * user login, and issuing JWT tokens.
- */
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -39,8 +33,8 @@ import { DATABASE } from 'src/common/constants/database.constant';
     CommonModule,
     ...UserModule(DATABASE),
   ],
-  providers: [AuthService, JwtStrategy, EmailService],
-  controllers: [AuthController],
-  exports: [PassportModule, JwtStrategy, AuthService, JwtModule],
+  providers: [AccountService, EmailService],
+  controllers: [AccountController],
+  exports: [],
 })
-export class AuthModule {}
+export class AccountModule {}

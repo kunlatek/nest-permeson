@@ -4,6 +4,7 @@
     "user-not-found": "Usuario no encontrado",
     "invalid-token": "Token inválido",
     "invalid-credentials": "Credenciales inválidas",
+    "account-not-verified": "Cuenta no verificada",
     "reset-password-request": {
       "error": "Error al enviar el email de recuperación de contraseña",
       "success": "Email de recuperación de contraseña enviado correctamente"
@@ -29,5 +30,13 @@
       "password-min-length": "La contraseña debe tener al menos 8 caracteres",
       "password-must-be-a-string": "La contraseña debe ser una cadena"
     }
+  },
+  "account": {
+    "verify-email-sent": "Email de verificación enviado",
+    "email-and-token-dont-match": "Email inválido",
+    "error-updating-user": "Error al actualizar el usuario",
+    "error-getting-user": "Error al obtener el usuario",
+    "verified": "Cuenta verificada",
+    "account-status": "Estado de la cuenta"
   }
 }

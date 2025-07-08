@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsEmail, IsNotEmpty, IsOptional, MinLength } from "class-validator";
+import { IsBoolean, IsDate, IsEmail, IsNotEmpty, IsOptional, MinLength } from "class-validator";
 
 export class User {
     @ApiProperty({
@@ -24,4 +24,12 @@ export class User {
     @IsDate()
     @IsOptional()
     deletedAt?: Date;
+
+    @ApiProperty({
+        example: true,
+        description: 'If the user is verified',
+    })
+    @IsBoolean()
+    @IsOptional()
+    verified?: boolean = false;
 } 

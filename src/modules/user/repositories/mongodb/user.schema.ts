@@ -13,6 +13,9 @@ export class MongoDBUser extends Document {
 
     @Prop({ type: Date, default: null }) // Campo para soft delete
     deletedAt?: Date;
+
+    @Prop({ type: Boolean, default: false })
+    verified: boolean = false;
 }
 
 export const UserSchema = SchemaFactory.createForClass(MongoDBUser); 

@@ -4,6 +4,7 @@
     "user-not-found": "Usuário não encontrado",
     "invalid-token": "Token inválido",
     "invalid-credentials": "Credenciais inválidas",
+    "account-not-verified": "Conta não verificada",
     "reset-password-request": {
       "error": "Erro ao enviar email de recuperação de senha",
       "success": "Email de recuperação de senha enviado com sucesso"
@@ -13,6 +14,7 @@
     },
     "signup": {
       "error": "Erro no registro",
+      "success": "Usuário registrado com sucesso",
       "email-and-token-dont-match": "Email inválido",
       "email-already-in-use": "Email já em uso",
       "invalid-email": "Por favor, forneça um email válido",
@@ -23,11 +25,20 @@
     },
     "login": {
       "error": "Erro no login",
+      "success": "Login realizado com sucesso",
       "invalid-email": "Email inválido",
       "email-required": "Email é obrigatório",
       "password-required": "Senha é obrigatória",
       "password-min-length": "A senha deve ter pelo menos 8 caracteres",
       "password-must-be-a-string": "A senha deve ser uma string"
     }
+  },
+  "account": {
+    "verify-email-sent": "Email de verificação enviado",
+    "email-and-token-dont-match": "Email inválido",
+    "error-updating-user": "Erro ao atualizar o usuário",
+    "error-getting-user": "Erro ao obter o usuário",
+    "verified": "Conta verificada",
+    "account-status": "Estado da conta"
   }
 }

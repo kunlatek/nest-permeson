@@ -12,6 +12,7 @@ import { RequestLoggerModule } from "./common/middleware/request-logger.module";
 import { InvitationModule } from "./modules/invitation/invitation.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
 import { SmsCodeModule } from "./modules/smsCode/sms-code.module";
+import { AccountModule } from "./modules/account/account.module";
 // import { CleanupModule } from "./modules/cleanup/cleanup.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 import { DATABASE } from "./common/constants/database.constant";
@@ -38,6 +39,7 @@ import * as path from "path";
       ],
     }),
     AuthModule,
+    AccountModule,
     CommonModule,
     LoggingModule,
     ...InvitationModule(DATABASE),

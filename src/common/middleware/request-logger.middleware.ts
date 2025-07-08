@@ -13,6 +13,21 @@ export class RequestLoggerMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction) {
+    // Skip logging for certain paths that don't need to be logged
+    const skipPaths = [
+      '/mockServiceWorker.js',
+      '/favicon.ico',
+      '/robots.txt',
+      '/.well-known/',
+      '/health',
+      '/metrics'
+    ];
+
+    const shouldSkip = skipPaths.some(path => req.originalUrl.includes(path));
+    if (shouldSkip) {
+      return next();
+    }
+
     // Generate a unique request ID
     const requestId = uuidv4();
     req['requestId'] = requestId;

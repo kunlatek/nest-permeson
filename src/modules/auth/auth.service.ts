@@ -7,13 +7,14 @@ import {
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
-import { SignupDto } from "./dto/signup.dto";
+import { SignupDto, ResetPasswordDto, LoginDto } from "./dto";
 import { EmailService } from "./services/email.service";
-import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { UserResponseDto } from "../user/dto/user-response.dto";
 import { I18nService } from "nestjs-i18n";
 import { AuthLoginResponseDto, AuthSignupResponseDto } from "./dto/auth-response.dto";
-import { LoginDto } from "./dto/login.dto";
+import { ISignupHttpResponse } from "./interfaces/signup-http-response.interface";
+import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
+import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
 
 @Injectable()
 export class AuthService {
@@ -31,14 +32,16 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
 
+    // if (!user.verified) throw new UnauthorizedException(this.i18n.t("translation.auth.account-not-verified", { lang }));
+
     return user;
   }
 
-  async signup(signupDto: SignupDto, lang: string = "en"): Promise<AuthSignupResponseDto> {
+  async signup(signupDto: SignupDto, lang: string = "en"): Promise<ISignupHttpResponse> {
     let payload: any;
 
     try {
-      payload = await this.jwtService.verify(signupDto.registerToken);
+      payload = await this.jwtService.verify(signupDto.invitationToken);
     } catch (error) {
       throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-token", { lang }));
     }
@@ -57,20 +60,20 @@ export class AuthService {
 
       const token = this.jwtService.sign({ sub: user._id, email: user.email });
 
-      return new AuthSignupResponseDto(token);
+      return new ISignupHttpResponse(201, this.i18n.t("translation.auth.signup.success", { lang }), new AuthSignupResponseDto(token));
     } catch (error) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
     }
   }
 
-  async login(loginDto: LoginDto, lang: string = "en"): Promise<AuthLoginResponseDto> {
+  async login(loginDto: LoginDto, lang: string = "en"): Promise<ILoginHttpResponse> {
     const { email, password } = loginDto;
     const user = await this.validateUser(email, password, lang);
     const { _id: sub } = user;
-    return new AuthLoginResponseDto(this.jwtService.sign({ sub, email }));
+    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email })));
   }
 
-  async resetPasswordRequest(email: string, lang: string = "en") {
+  async resetPasswordRequest(email: string, lang: string = "en"): Promise<IResetPasswordHttpResponse> {
     const user = await this.userService.findByEmail(email);
     if (!user) throw new NotFoundException(this.i18n.t("translation.auth.user-not-found", { lang }));
 
@@ -80,10 +83,10 @@ export class AuthService {
       throw new BadRequestException(this.i18n.t("translation.auth.reset-password-request.error", { lang }));
     }
 
-    return this.i18n.t("translation.auth.reset-password-request.success", { lang });
+    return new IResetPasswordHttpResponse(200, this.i18n.t("translation.auth.reset-password-request.success", { lang }), this.i18n.t("translation.auth.reset-password-request.success", { lang }));
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto, lang: string = "en") {
+  async resetPassword(resetPasswordDto: ResetPasswordDto, lang: string = "en"): Promise<IResetPasswordHttpResponse> {
     const { token, password } = resetPasswordDto;
 
     let payload: any;
@@ -100,7 +103,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
     await this.userService.updateUser(user._id, { password: hashedPassword });
 
-    return this.i18n.t("translation.auth.reset-password.success", { lang });
+    return new IResetPasswordHttpResponse(200, this.i18n.t("translation.auth.reset-password.success", { lang }), this.i18n.t("translation.auth.reset-password.success", { lang }));
   }
 
   /*async googleLogin(idToken: string) {
