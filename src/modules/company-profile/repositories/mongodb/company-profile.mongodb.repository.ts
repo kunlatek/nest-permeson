@@ -20,17 +20,17 @@ export class CompanyProfileMongoDBRepository implements CompanyProfileRepository
     }
 
     async findById(id: string): Promise<CompanyProfileResponseDto> {
-        const companyProfile = await this.companyProfileModel.findById(id);
+        const companyProfile = await this.companyProfileModel.findById(id).lean();
         return new CompanyProfileResponseDto(companyProfile);
     }
 
     async findByUserId(userId: string): Promise<CompanyProfileResponseDto> {
-        const companyProfile = await this.companyProfileModel.findOne({ userId });
+        const companyProfile = await this.companyProfileModel.findOne({ userId }).lean();
         return new CompanyProfileResponseDto(companyProfile);
     }
 
     async update(id: string, companyProfileDto: Partial<UpdateCompanyProfileDto>): Promise<CompanyProfileResponseDto> {
-        const updatedCompanyProfile = await this.companyProfileModel.findByIdAndUpdate(id, companyProfileDto, { new: true });
+        const updatedCompanyProfile = await this.companyProfileModel.findByIdAndUpdate(id, companyProfileDto, { new: true }).lean();
         return new CompanyProfileResponseDto(updatedCompanyProfile);
     }
 
@@ -43,7 +43,7 @@ export class CompanyProfileMongoDBRepository implements CompanyProfileRepository
     }
 
     async findByUserIds(userIds: string[]): Promise<CompanyProfileResponseDto[]> {
-        const companyProfiles = await this.companyProfileModel.find({ userId: { $in: userIds } });
+        const companyProfiles = await this.companyProfileModel.find({ userId: { $in: userIds } }).lean();
         return companyProfiles.map((companyProfile) => new CompanyProfileResponseDto(companyProfile));
     }
 }

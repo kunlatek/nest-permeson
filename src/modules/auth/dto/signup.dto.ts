@@ -17,11 +17,4 @@ export class SignupDto {
   @IsString()
   @MinLength(6)
   password: string;
-
-  @ApiProperty({
-    description: "Registration token",
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
-  @IsString()
-  invitationToken: string;
 }

@@ -5,7 +5,7 @@ import { PersonJob, PersonEducation, PersonCourse, PersonBankData, PersonRelated
 
 export type PersonProfileDocument = MongoDBPersonProfile & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'PersonProfile' })
 export class MongoDBPersonProfile extends Document {
   @Prop({ required: true })
   userId: string;

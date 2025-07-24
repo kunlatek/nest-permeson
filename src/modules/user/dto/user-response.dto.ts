@@ -10,6 +10,7 @@ export class UserResponseDto extends User {
 
   constructor(data: Partial<UserResponseDto>) {
     super();
-    this._id = data?._id?.toString();
+    Object.assign(this, data);
+    this._id = data._id?.toString();
   }
 } 

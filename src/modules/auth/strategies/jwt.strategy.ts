@@ -33,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   async validate(payload: any) {
     console.log('🔹 JWT Payload received:', payload);
 
-    if (!payload || !payload.sub || !payload.availableRoles) {
+    if (!payload || !payload.sub) {
       console.log('❌ Invalid JWT token: Missing required fields.');
       throw new UnauthorizedException('Invalid JWT token');
     }
@@ -42,14 +42,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       userId: payload.sub,
       email: payload.email,
       activeRole: payload.activeRole,
-      availableRoles: payload.availableRoles,
+      availableRoles: payload.availableRoles || [],
     });
 
     return {
       userId: payload.sub,
       email: payload.email,
       activeRole: payload.activeRole as UserRole,
-      availableRoles: payload.availableRoles as UserRole[],
+      availableRoles: payload.availableRoles as UserRole[] || [],
     };
   }
 }

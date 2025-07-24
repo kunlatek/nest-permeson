@@ -11,10 +11,10 @@ import { SignupDto, ResetPasswordDto, LoginDto } from "./dto";
 import { EmailService } from "./services/email.service";
 import { UserResponseDto } from "../user/dto/user-response.dto";
 import { I18nService } from "nestjs-i18n";
-import { AuthLoginResponseDto, AuthSignupResponseDto } from "./dto/auth-response.dto";
-import { ISignupHttpResponse } from "./interfaces/signup-http-response.interface";
+import { AuthLoginResponseDto } from "./dto/auth-response.dto";
 import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
 import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
+import { IHttpResponse } from "src/interfaces";
 
 @Injectable()
 export class AuthService {
@@ -29,6 +29,10 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
     if (!user) throw new NotFoundException(this.i18n.t("translation.auth.user-not-found", { lang }));
 
+    if (!user.password) {
+      throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
 
@@ -37,16 +41,16 @@ export class AuthService {
     return user;
   }
 
-  async signup(signupDto: SignupDto, lang: string = "en"): Promise<ISignupHttpResponse> {
+  async signup(signupDto: SignupDto, lang: string = "en"): Promise<IHttpResponse> {
     if (await this.userService.findByEmail(signupDto.email)) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.email-already-in-use", { lang }));
     }
 
     try {
       const { email, password } = signupDto;
-      const user = await this.userService.createUser({ email, password });
-      const { _id: sub } = user;
-      return new ISignupHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }), new AuthSignupResponseDto(this.jwtService.sign({ sub, email })));
+      await this.userService.createUser({ email, password });
+      await this.emailService.sendRegisterEmail(email);
+      return new IHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }));
     } catch (error) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
     }

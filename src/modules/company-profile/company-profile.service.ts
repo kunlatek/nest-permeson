@@ -35,7 +35,7 @@ export class CompanyProfileService {
         if (!companyProfile) throw new NotFoundException(this.i18n.t('translation.company-profile.company-profile-not-found', { lang }))
 
         try {
-            const updatedCompanyProfile = await this.companyProfileRepository.update(userId, companyProfileDto)
+            const updatedCompanyProfile = await this.companyProfileRepository.update(companyProfile._id.toString(), companyProfileDto)
             return new ICompanyProfileHttpResponse(200, this.i18n.t('translation.company-profile.company-profile-updated', { lang }), updatedCompanyProfile)
         } catch (error) {
             throw new BadRequestException(this.i18n.t('translation.company-profile.company-profile-update-error', { lang }))

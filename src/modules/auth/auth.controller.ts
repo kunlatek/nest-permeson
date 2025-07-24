@@ -3,9 +3,9 @@ import { AuthService } from "./auth.service";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { LoginDto, SignupDto, ResetPasswordDto, ResetPasswordRequestDto } from "./dto";
 import { I18nLang } from "nestjs-i18n";
-import { ISignupHttpResponse } from "./interfaces/signup-http-response.interface";
 import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
 import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
+import { IHttpResponse } from "src/interfaces";
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -16,11 +16,11 @@ export class AuthController {
 
   @Post("signup")
   @ApiOperation({ summary: "Register a new user" })
-  @ApiResponse({ status: 200, description: "User registered successfully", type: ISignupHttpResponse })
+  @ApiResponse({ status: 200, description: "User registered successfully", type: IHttpResponse })
   async signup(
     @Body() signupDto: SignupDto,
     @I18nLang() lang?: string
-  ): Promise<ISignupHttpResponse> {
+  ): Promise<IHttpResponse> {
     return await this.authService.signup(signupDto, lang);
   }
 

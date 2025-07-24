@@ -4,7 +4,7 @@ import { ACL } from "../../models";
 
 export type WorkspaceDocument = MongoDBWorkspace & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'Workspace' })
 export class MongoDBWorkspace extends Document {
   @Prop({ required: true })
   owner: string;

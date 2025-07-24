@@ -35,7 +35,7 @@ export class PersonProfileService {
             const personProfile = await this.personProfileRepository.findByUserId(userId)
             if (!personProfile) throw new NotFoundException(this.i18n.t('translation.person-profile.person-profile-not-found', { lang }))
 
-            const updatedPersonProfile = await this.personProfileRepository.update(userId, personProfileDto)
+            const updatedPersonProfile = await this.personProfileRepository.update(personProfile._id.toString(), personProfileDto)
             return new IPersonProfileHttpResponse(200, this.i18n.t('translation.person-profile.person-profile-updated', { lang }), updatedPersonProfile)
         } catch (error) {
             throw new BadRequestException(this.i18n.t('translation.person-profile.person-profile-update-error', { lang }))

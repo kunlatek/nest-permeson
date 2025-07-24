@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type UserDocument = MongoDBUser & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'User' })
 export class MongoDBUser extends Document {
     @Prop({ required: true, unique: true })
     email: string;

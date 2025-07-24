@@ -28,17 +28,17 @@ export class WorkspaceMongoDBRepository implements WorkspaceRepository {
     }
 
     async findById(id: string): Promise<WorkspaceResponseDto> {
-        const workspace = await this.workspaceModel.findById(id);
+        const workspace = await this.workspaceModel.findById(id).lean();
         return new WorkspaceResponseDto(workspace);
     }
 
     async findByOwner(owner: string): Promise<WorkspaceResponseDto> {
-        const workspace = await this.workspaceModel.findOne({ owner });
+        const workspace = await this.workspaceModel.findOne({ owner }).lean();
         return new WorkspaceResponseDto(workspace);
     }
 
     async findByTeamUser(teamUser: string): Promise<WorkspaceResponseDto[]> {
-        const workspaces = await this.workspaceModel.find({ team: { $in: [teamUser] } });
+        const workspaces = await this.workspaceModel.find({ team: { $in: [teamUser] } }).lean();
         return workspaces.map((workspace) => new WorkspaceResponseDto(workspace));
     }
 }

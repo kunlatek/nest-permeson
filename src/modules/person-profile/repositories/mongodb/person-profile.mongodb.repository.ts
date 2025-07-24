@@ -18,18 +18,18 @@ export class PersonProfileMongoDBRepository implements PersonProfileRepository {
     }
 
     async findById(id: string): Promise<PersonProfileResponseDto> {
-        const personProfile = await this.personProfileModel.findById(id);
+        const personProfile = await this.personProfileModel.findById(id).lean();
         return new PersonProfileResponseDto(personProfile);
     }
 
     async findByUserId(userId: string): Promise<PersonProfileResponseDto> {
-        const personProfile = await this.personProfileModel.findOne({ userId });
+        const personProfile = await this.personProfileModel.findOne({ userId }).lean();
         return new PersonProfileResponseDto(personProfile);
     }
 
     async update(id: string, personProfileDto: Partial<UpdatePersonProfileDto>): Promise<PersonProfileResponseDto> {
-        const updatedPersonProfile = await this.personProfileModel.findByIdAndUpdate(id, personProfileDto, { new: true });
-        return new PersonProfileResponseDto (updatedPersonProfile);
+        const updatedPersonProfile = await this.personProfileModel.findByIdAndUpdate(id, personProfileDto, { new: true }).lean();
+        return new PersonProfileResponseDto(updatedPersonProfile);
     }
 
     async delete(id: string): Promise<void> {
@@ -41,7 +41,7 @@ export class PersonProfileMongoDBRepository implements PersonProfileRepository {
     }
 
     async findByUserIds(userIds: string[]): Promise<PersonProfileResponseDto[]> {
-        const personProfiles = await this.personProfileModel.find({ userId: { $in: userIds } });
+        const personProfiles = await this.personProfileModel.find({ userId: { $in: userIds } }).lean();
         return personProfiles.map((personProfile) => new PersonProfileResponseDto(personProfile));
     }
 }

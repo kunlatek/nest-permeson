@@ -18,23 +18,23 @@ export class UserMongoDBRepository implements UserRepository {
   }
 
   async findById(id: string): Promise<UserResponseDto | null> {
-    const user = await this.userModel.findById(id);
+    const user = await this.userModel.findById(id).lean();
     if (!user) return null;
     return new UserResponseDto(user);
   }
 
   async findByEmail(email: string): Promise<UserResponseDto | null> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userModel.findOne({ email }).lean();
     if (!user) return null;
     return new UserResponseDto(user);
   }
 
   async update(id: string, userDto: Partial<UpdateUserDto>): Promise<UserResponseDto> {
-    const updatedUser = await this.userModel.findByIdAndUpdate(id, userDto, { new: true });
+    const updatedUser = await this.userModel.findByIdAndUpdate(id, userDto, { new: true }).lean();
     return new UserResponseDto(updatedUser);
   }
 
   async delete(id: string): Promise<void> {
-    await this.userModel.updateOne({ _id: id }, { deletedAt: new Date() });
+    await this.userModel.updateOne({ _id: id }, { deletedAt: new Date() }).lean();
   }
 }

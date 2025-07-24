@@ -76,12 +76,14 @@
     "person-profile-create-error": "Error creating person profile",
     "person-profile-found": "Person profile found",
     "person-profile-not-found": "Person profile not found",
-    "person-profile-updated": "Person profile updated"
+    "person-profile-updated": "Person profile updated",
+    "person-profile-update-error": "Error updating person profile"
   },
   "company-profile": {
     "company-profile-create-error": "Error creating company profile",
     "company-profile-found": "Company profile found",
     "company-profile-not-found": "Company profile not found",
-    "company-profile-updated": "Company profile updated"
+    "company-profile-updated": "Company profile updated",
+    "company-profile-update-error": "Error updating company profile"
   }
 }

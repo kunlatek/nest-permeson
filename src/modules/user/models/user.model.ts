@@ -14,7 +14,7 @@ export class User {
         description: 'Password with a minimum length of 8 characters',
     })
     @IsNotEmpty()
-    @MinLength(8)
+    @MinLength(6)
     password: string;
 
     @ApiProperty({

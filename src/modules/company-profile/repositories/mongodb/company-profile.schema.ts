@@ -7,7 +7,7 @@ import { AddressType } from '../../enums/address-type.enum';
 
 export type CompanyProfileDocument = MongoDBCompanyProfile & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'CompanyProfile' })
 export class MongoDBCompanyProfile extends Document {
   @Prop({ required: true })
   userId: string;

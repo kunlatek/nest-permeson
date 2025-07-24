@@ -75,12 +75,14 @@
     "person-profile-create-error": "Erro ao criar o perfil de pessoa",
     "person-profile-found": "Perfil de pessoa encontrado",
     "person-profile-not-found": "Perfil de pessoa não encontrado",
-    "person-profile-updated": "Perfil de pessoa atualizado"
+    "person-profile-updated": "Perfil de pessoa atualizado",
+    "person-profile-update-error": "Erro ao atualizar o perfil de pessoa"
   },
   "company-profile": {
     "company-profile-create-error": "Erro ao criar o perfil de empresa",
     "company-profile-found": "Perfil de empresa encontrado",
     "company-profile-not-found": "Perfil de empresa não encontrado",
-    "company-profile-updated": "Perfil de empresa atualizado"
+    "company-profile-updated": "Perfil de empresa atualizado",
+    "company-profile-update-error": "Erro ao atualizar o perfil de empresa"
   }
 }
