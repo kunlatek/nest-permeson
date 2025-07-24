@@ -8,9 +8,6 @@ import { EmailService } from './services/email.service';
 import { AccountService } from './account.service';
 import { AccountController } from './account.controller';
 import { WorkspaceModule } from '../workspace/workspace.module';
-import { WorkspaceService } from '../workspace/workspace.service';
-
-import { DATABASE } from 'src/common/constants/database.constant';
 
 @Module({
   imports: [
@@ -36,10 +33,10 @@ import { DATABASE } from 'src/common/constants/database.constant';
     CommonModule,
     UserModule,
     ProfileModule,
-    ...WorkspaceModule(DATABASE),
+    WorkspaceModule,
   ],
-  providers: [AccountService, EmailService, WorkspaceService],
+  providers: [AccountService, EmailService],
   controllers: [AccountController],
-  exports: [],
+  exports: [AccountService],
 })
 export class AccountModule {}

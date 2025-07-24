@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { WorkspaceRepository } from "./workspace.repository.interface";
-import { CreateWorkspaceDto, UpdateWorkspaceDto, WorkspaceResponseDto } from "./dto";
+import { CreateWorkspaceDto, WorkspaceResponseDto } from "./dto";
 import { I18nService } from "nestjs-i18n";
 import { IMyWorkspacesHttpResponse, IWorkspaceHttpResponse, IWorkspaceTokenHttpResponse } from "./interfaces/workspace-http-response.interface";
 import { IHttpResponse } from "src/interfaces/http-response.interface";

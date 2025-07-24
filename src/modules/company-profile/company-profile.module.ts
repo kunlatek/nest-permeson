@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { DatabaseEnum } from "src/enums/database.enum";
 
 import { DATABASE } from "src/common/constants/database.constant";
-import { CompanyProfileMongodbModule } from "./repositories/mongodb/company-profile-mongodb.module";
+import { CompanyProfileMongodbModule } from "./repositories/mongodb/company-profile.mongodb.module";
 
 import { CompanyProfileService } from "./company-profile.service";
 

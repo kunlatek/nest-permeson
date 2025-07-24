@@ -5,7 +5,7 @@ import { DatabaseEnum } from 'src/enums/database.enum';
 
 import { CommonModule } from 'src/common/common.module';
 
-import { UserMongoDBModule } from './repositories/mongodb/user-mongodb.module';
+import { UserMongoDBModule } from './repositories/mongodb/user.mongodb.module';
 
 import { UserService } from './user.service';
 

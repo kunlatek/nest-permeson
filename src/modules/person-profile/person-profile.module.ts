@@ -4,7 +4,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
 import { DATABASE } from "src/common/constants/database.constant";
-import { PersonProfileMongodbModule } from "./repositories/mongodb/person-profile-mongodb.module";
+import { PersonProfileMongodbModule } from "./repositories/mongodb/person-profile.mongodb.module";
 
 import { PersonProfileService } from "./person-profile.service";
 

@@ -15,8 +15,6 @@ import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 
 import * as path from "path";
 
-import { DATABASE } from "./common/constants/database.constant";
-
 @Module({
   imports: [
     // RAPIDA-V-MODULE-IMPORT-PLACEHOLDER
@@ -39,7 +37,7 @@ import { DATABASE } from "./common/constants/database.constant";
     AuthModule,
     AccountModule,
     ProfileModule,
-    ...WorkspaceModule(DATABASE),
+    WorkspaceModule,
     
     CommonModule,
     LoggingModule,
