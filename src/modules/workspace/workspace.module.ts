@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { WorkspaceMongodbModule } from "./repositories/mongodb/workspace.mongodb.module";
 import { WorkspaceService } from "./workspace.service";
 import { ProfileModule } from "../profile/profile.module";
+import { WorkspaceController } from "./workspace.controller";
 
 import { DatabaseEnum } from "src/enums/database.enum";
 import { DATABASE } from "src/common/constants/database.constant";
@@ -33,6 +34,7 @@ import { JwtModule } from "@nestjs/jwt";
     }),
     ProfileModule
   ],
+  controllers: [WorkspaceController],
   providers: [WorkspaceService],
   exports: [WorkspaceService],
 })
