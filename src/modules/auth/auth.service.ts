@@ -32,24 +32,12 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
 
-    // if (!user.verified) throw new UnauthorizedException(this.i18n.t("translation.auth.account-not-verified", { lang }));
+    if (!user.verified) throw new UnauthorizedException(this.i18n.t("translation.auth.account-not-verified", { lang }));
 
     return user;
   }
 
   async signup(signupDto: SignupDto, lang: string = "en"): Promise<ISignupHttpResponse> {
-    let payload: any;
-
-    try {
-      payload = await this.jwtService.verify(signupDto.invitationToken);
-    } catch (error) {
-      throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-token", { lang }));
-    }
-
-    if (payload.email !== signupDto.email) {
-      throw new BadRequestException(this.i18n.t("translation.auth.signup.email-and-token-dont-match", { lang }));
-    }
-
     if (await this.userService.findByEmail(signupDto.email)) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.email-already-in-use", { lang }));
     }
@@ -57,10 +45,8 @@ export class AuthService {
     try {
       const { email, password } = signupDto;
       const user = await this.userService.createUser({ email, password });
-
-      const token = this.jwtService.sign({ sub: user._id, email: user.email });
-
-      return new ISignupHttpResponse(201, this.i18n.t("translation.auth.signup.success", { lang }), new AuthSignupResponseDto(token));
+      const { _id: sub } = user;
+      return new ISignupHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }), new AuthSignupResponseDto(this.jwtService.sign({ sub, email })));
     } catch (error) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
     }

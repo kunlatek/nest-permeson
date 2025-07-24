@@ -52,5 +52,36 @@
     "company-profile-updated": "Company profile updated",
     "person-profile-update-error": "Error updating person profile",
     "company-profile-update-error": "Error updating company profile"
+  },
+  "workspace": {
+    "error-creating-workspace": "Error creating workspace",
+    "error-updating-workspace": "Error updating workspace",
+    "error-deleting-workspace": "Error deleting workspace",
+    "error-finding-workspace": "Error finding workspace",
+    "error-finding-workspaces-by-owner": "Error finding workspaces by owner",
+    "error-finding-workspaces-by-team-user": "Error finding workspaces by team user",
+    "error-adding-team-user": "Error adding team user",
+    "workspace-not-found": "Workspace not found",
+    "workspace-found": "Workspace found",
+    "team-user-added": "Team user added",
+    "team-user-removed": "Team user removed",
+    "error-removing-team-user": "Error removing team user",
+    "my-workspaces-found": "My workspaces found",
+    "error-finding-my-workspaces": "Error finding my workspaces",
+    "user-not-in-workspace": "User not in workspace",
+    "error-finding-workspace-token": "Error finding workspace token",
+    "workspace-token-found": "Workspace token found"
+  },
+  "person-profile": {
+    "person-profile-create-error": "Error creating person profile",
+    "person-profile-found": "Person profile found",
+    "person-profile-not-found": "Person profile not found",
+    "person-profile-updated": "Person profile updated"
+  },
+  "company-profile": {
+    "company-profile-create-error": "Error creating company profile",
+    "company-profile-found": "Company profile found",
+    "company-profile-not-found": "Company profile not found",
+    "company-profile-updated": "Company profile updated"
   }
 }

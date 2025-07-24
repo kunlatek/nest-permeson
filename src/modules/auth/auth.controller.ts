@@ -16,7 +16,7 @@ export class AuthController {
 
   @Post("signup")
   @ApiOperation({ summary: "Register a new user" })
-  @ApiResponse({ status: 201, description: "User registered successfully", type: ISignupHttpResponse })
+  @ApiResponse({ status: 200, description: "User registered successfully", type: ISignupHttpResponse })
   async signup(
     @Body() signupDto: SignupDto,
     @I18nLang() lang?: string

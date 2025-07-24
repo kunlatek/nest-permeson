@@ -5,6 +5,8 @@ import { I18nService } from "nestjs-i18n";
 import { JwtService } from "@nestjs/jwt";
 import { EmailService } from "./services/email.service";
 import { UserService } from "../user/user.service";
+import { ProfileService } from "../profile/profile.service";
+import { WorkspaceService } from "../workspace/workspace.service";
 import { IAccountStatusHttpResponse } from "./interfaces/account-http-response.interface";
 import { IHttpResponse } from "src/interfaces/http-response.interface";
 
@@ -15,6 +17,8 @@ export class AccountService {
     private readonly i18n: I18nService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly profileService: ProfileService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   async sendVerifyEmail(email: string, lang: string): Promise<IHttpResponse> {
@@ -41,6 +45,8 @@ export class AccountService {
 
     try {
       await this.userService.updateUser(user._id, { verified: true });
+      await this.profileService.createProfiles(user._id, email.split('@')[0], lang);
+      await this.workspaceService.createWorkspace({ owner: user._id, team: [user._id] }, lang);
     } catch (error) {
       throw new BadRequestException(this.i18n.t("translation.account.error-updating-user", { lang }));
     }

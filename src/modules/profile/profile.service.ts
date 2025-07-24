@@ -1,81 +1,57 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { PersonProfileRepository } from "./person/person-profile.repository.interface";
-import { CompanyProfileRepository } from "./company/company-profile.repository.interface";
 import { ProfileTypesEnum } from "./enums/profile-types.enum";
 import { I18nService } from "nestjs-i18n";
-import { ICompanyProfileHttpResponse, IPersonProfileHttpResponse } from "./interfaces";
+
+import { IPersonProfileHttpResponse } from "../person-profile/interfaces/person-profile-http-response.interface";
+import { PersonProfileService } from "../person-profile/person-profile.service";
+import { UpdatePersonProfileDto } from "../person-profile/dto";
+
+import { ICompanyProfileHttpResponse } from "../company-profile/interfaces/company-profile-http-response.interface";
+import { CompanyProfileService } from "../company-profile/company-profile.service";
+import { UpdateCompanyProfileDto } from "../company-profile/dto";
 
 @Injectable()
 export class ProfileService {
     constructor(
         private readonly i18n: I18nService,
 
-        @Inject('PersonProfileRepository')
-        private readonly personProfileRepository: PersonProfileRepository,
-        
-        @Inject('CompanyProfileRepository')
-        private readonly companyProfileRepository: CompanyProfileRepository,
+        private readonly personProfileService: PersonProfileService,
+        private readonly companyProfileService: CompanyProfileService,
     ) { }
+
+    async createProfiles(userId: string, userName: string, lang: string): Promise<void> {
+        await this.personProfileService.createPersonProfile(userId, userName, lang)
+        await this.companyProfileService.createCompanyProfile(userId, userName, lang)
+    }
 
     async findProfileByUserId(userId: string, type: ProfileTypesEnum, lang: string): Promise<ICompanyProfileHttpResponse | IPersonProfileHttpResponse> {
         if (type === ProfileTypesEnum.PERSON) {
-            return this.findPersonProfileByUserId(userId, lang)
+            return this.personProfileService.findPersonProfileByUserId(userId, lang)
         } else if (type === ProfileTypesEnum.COMPANY) {
-            return this.findCompanyProfileByUserId(userId, lang)
+            return this.companyProfileService.findCompanyProfileByUserId(userId, lang)
         }
 
         throw new BadRequestException(this.i18n.t('translation.profile.invalid-profile-type', { lang }))
     }
 
-    async findPersonProfileByUserId(userId: string, lang: string): Promise<IPersonProfileHttpResponse> {
-        try {
-            const personProfile = await this.personProfileRepository.findByUserId(userId)
-            return new IPersonProfileHttpResponse(200, this.i18n.t('translation.profile.person-profile-found', { lang }), personProfile)
-        } catch (error) {
-            throw new NotFoundException(this.i18n.t('translation.profile.person-profile-not-found', { lang }))
-        }
-    }
-
-    async findCompanyProfileByUserId(userId: string, lang: string): Promise<ICompanyProfileHttpResponse> {
-        try {
-            const companyProfile = await this.companyProfileRepository.findByUserId(userId)
-            return new ICompanyProfileHttpResponse(200, this.i18n.t('translation.profile.company-profile-found', { lang }), companyProfile)
-        } catch (error) {
-            throw new NotFoundException(this.i18n.t('translation.profile.company-profile-not-found', { lang }))
-        }
-    }
-
-    async updateProfileByUserId(userId: string, type: ProfileTypesEnum, lang: string): Promise<ICompanyProfileHttpResponse | IPersonProfileHttpResponse> {
+    async updateProfileByUserId(
+        userId: string, 
+        type: ProfileTypesEnum, 
+        profileDto: UpdatePersonProfileDto | UpdateCompanyProfileDto, 
+        lang: string
+    ): Promise<ICompanyProfileHttpResponse | IPersonProfileHttpResponse> {
         if (type === ProfileTypesEnum.PERSON) {
-            return this.updatePersonProfileByUserId(userId, lang)
+            return this.personProfileService.updatePersonProfileByUserId(userId, profileDto as UpdatePersonProfileDto, lang)
         } else if (type === ProfileTypesEnum.COMPANY) {
-            return this.updateCompanyProfileByUserId(userId, lang)
+            return this.companyProfileService.updateCompanyProfileByUserId(userId, profileDto as UpdateCompanyProfileDto, lang)
         }
 
         throw new BadRequestException(this.i18n.t('translation.profile.invalid-profile-type', { lang }))
     }
 
-    async updatePersonProfileByUserId(userId: string, lang: string): Promise<IPersonProfileHttpResponse> {
-        const personProfile = await this.personProfileRepository.findByUserId(userId)
-        if (!personProfile) throw new NotFoundException(this.i18n.t('translation.profile.person-profile-not-found', { lang }))
-
-        try {
-            const updatedPersonProfile = await this.personProfileRepository.update(userId, personProfile)
-            return new IPersonProfileHttpResponse(200, this.i18n.t('translation.profile.person-profile-updated', { lang }), updatedPersonProfile)
-        } catch (error) {
-            throw new BadRequestException(this.i18n.t('translation.profile.person-profile-update-error', { lang }))
-        }
-    }
-
-    async updateCompanyProfileByUserId(userId: string, lang: string): Promise<ICompanyProfileHttpResponse> {
-        const companyProfile = await this.companyProfileRepository.findByUserId(userId)
-        if (!companyProfile) throw new NotFoundException(this.i18n.t('translation.profile.company-profile-not-found', { lang }))
-
-        try {
-            const updatedCompanyProfile = await this.companyProfileRepository.update(userId, companyProfile)
-            return new ICompanyProfileHttpResponse(200, this.i18n.t('translation.profile.company-profile-updated', { lang }), updatedCompanyProfile)
-        } catch (error) {
-            throw new BadRequestException(this.i18n.t('translation.profile.company-profile-update-error', { lang }))
-        }
+    async getProfileUserNamesByUserIds(userIds: string[], lang: string): Promise<{userId: string, userName: string}[]> {
+        const personUserNames = await this.personProfileService.getPersonProfileUserNamesByUserIds(userIds, lang)
+        const companyUserNames = await this.companyProfileService.getCompanyProfileUserNamesByUserIds(userIds, lang)
+        return [...personUserNames, ...companyUserNames].map((profile) => ({userId: profile.userId, userName: profile.userName}))
     }
 }

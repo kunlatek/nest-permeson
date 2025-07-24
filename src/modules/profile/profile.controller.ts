@@ -4,7 +4,9 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "
 import { ProfileTypesEnum } from "./enums/profile-types.enum";
 import { IHttpResponse } from "src/interfaces";
 import { ProfileService } from "./profile.service";
-import { ICompanyProfileHttpResponse, IPersonProfileHttpResponse } from "./interfaces";
+
+import { IPersonProfileHttpResponse } from "../person-profile/interfaces";
+import { ICompanyProfileHttpResponse } from "../company-profile/interfaces";
 
 @ApiTags('Profile')
 @ApiBearerAuth()
@@ -46,7 +48,7 @@ export class ProfileController {
         @Req() req: any,
     ): Promise<IHttpResponse> {
         if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
-        return this.profileService.updateProfileByUserId(req.user.userId, ProfileTypesEnum.PERSON, req.i18n.lang)
+        return this.profileService.updateProfileByUserId(req.user.userId, ProfileTypesEnum.PERSON, req.body, req.i18n.lang)
     }
 
     @Put('company')
@@ -58,6 +60,6 @@ export class ProfileController {
         @Req() req: any,
     ): Promise<ICompanyProfileHttpResponse | IPersonProfileHttpResponse> {
         if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
-        return this.profileService.updateProfileByUserId(req.user.userId, ProfileTypesEnum.COMPANY, req.i18n.lang)
+        return this.profileService.updateProfileByUserId(req.user.userId, ProfileTypesEnum.COMPANY, req.body, req.i18n.lang)
     }
 }

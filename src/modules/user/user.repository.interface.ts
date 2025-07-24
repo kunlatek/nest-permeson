@@ -1,4 +1,4 @@
-import { CreateUserDto, UserResponseDto, UpdateUserDto, UserFilterDto } from "./dto";
+import { CreateUserDto, UserResponseDto, UpdateUserDto } from "./dto";
 
 export interface UserRepository {
   create(userDto: CreateUserDto): Promise<UserResponseDto>;

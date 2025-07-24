@@ -16,7 +16,6 @@ export class RequestLoggerMiddleware implements NestMiddleware {
     // Skip logging for certain paths that don't need to be logged
     const skipPaths = [
       '/mockServiceWorker.js',
-      '/favicon.ico',
       '/robots.txt',
       '/.well-known/',
       '/health',

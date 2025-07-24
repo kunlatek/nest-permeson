@@ -51,5 +51,36 @@
     "company-profile-updated": "Perfil de empresa atualizado",
     "person-profile-update-error": "Erro ao atualizar o perfil de pessoa",
     "company-profile-update-error": "Erro ao atualizar o perfil de empresa"
+  },
+  "workspace": {
+    "error-creating-workspace": "Erro ao criar o workspace",
+    "error-updating-workspace": "Erro ao atualizar o workspace",
+    "error-deleting-workspace": "Erro ao deletar o workspace",
+    "error-finding-workspace": "Erro ao encontrar o workspace",
+    "error-finding-workspaces-by-owner": "Erro ao encontrar os workspaces por dono",
+    "error-finding-workspaces-by-team-user": "Erro ao encontrar os workspaces por usuário do time",
+    "error-adding-team-user": "Erro ao adicionar usuário ao workspace",
+    "workspace-not-found": "Workspace não encontrado",
+    "workspace-found": "Workspace encontrado",
+    "team-user-added": "Usuário do time adicionado",
+    "team-user-removed": "Usuário do time removido",
+    "error-removing-team-user": "Erro ao remover usuário do time",
+    "my-workspaces-found": "Workspaces encontrados",
+    "error-finding-my-workspaces": "Erro ao encontrar os workspaces",
+    "user-not-in-workspace": "Usuário não está no workspace",
+    "error-finding-workspace-token": "Erro ao encontrar o token do workspace",
+    "workspace-token-found": "Token do workspace encontrado"
+  },
+  "person-profile": {
+    "person-profile-create-error": "Erro ao criar o perfil de pessoa",
+    "person-profile-found": "Perfil de pessoa encontrado",
+    "person-profile-not-found": "Perfil de pessoa não encontrado",
+    "person-profile-updated": "Perfil de pessoa atualizado"
+  },
+  "company-profile": {
+    "company-profile-create-error": "Erro ao criar o perfil de empresa",
+    "company-profile-found": "Perfil de empresa encontrado",
+    "company-profile-not-found": "Perfil de empresa não encontrado",
+    "company-profile-updated": "Perfil de empresa atualizado"
   }
 }

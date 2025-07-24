@@ -37,7 +37,7 @@ import { DATABASE } from 'src/common/constants/database.constant';
       },
     }),
     CommonModule,
-    ...UserModule(DATABASE),
+    UserModule,
   ],
   providers: [AuthService, JwtStrategy, EmailService],
   controllers: [AuthController],
