@@ -3,7 +3,6 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./modules/auth/auth.module";
 import { ConfigModule } from "@nestjs/config";
-import { MongooseModule } from "@nestjs/mongoose";
 import { ProfileModule } from "./modules/profile/profile.module";
 import { CommonModule } from "./common/common.module";
 import { LoggingModule } from "./common/logging/logging.module";
@@ -12,6 +11,9 @@ import { OwnerModule } from "./common/interceptors/owner.module";
 import { AccountModule } from "./modules/account/account.module";
 import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
+
+import { DATABASE } from "./common/constants/database.constant";
+import { getDatabaseConfig } from "./utils/database.utils";
 
 import * as path from "path";
 
@@ -22,7 +24,7 @@ import * as path from "path";
       isGlobal: true,
       envFilePath: ".env",
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    getDatabaseConfig(DATABASE),
     I18nModule.forRoot({
       fallbackLanguage: "en",
       loaderOptions: {
