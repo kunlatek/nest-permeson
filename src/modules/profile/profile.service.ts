@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ProfileTypesEnum } from "./enums/profile-types.enum";
 import { I18nService } from "nestjs-i18n";
 
@@ -20,8 +20,12 @@ export class ProfileService {
     ) { }
 
     async createProfiles(userId: string, userName: string, lang: string): Promise<void> {
-        await this.personProfileService.createPersonProfile(userId, userName, lang)
-        await this.companyProfileService.createCompanyProfile(userId, userName, lang)
+        try {
+            await this.personProfileService.createPersonProfile(userId, userName, lang)
+            await this.companyProfileService.createCompanyProfile(userId, userName, lang)
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     async findProfileByUserId(userId: string, type: ProfileTypesEnum, lang: string): Promise<ICompanyProfileHttpResponse | IPersonProfileHttpResponse> {
@@ -31,7 +35,7 @@ export class ProfileService {
             return this.companyProfileService.findCompanyProfileByUserId(userId, lang)
         }
 
-        throw new BadRequestException(this.i18n.t('translation.profile.invalid-profile-type', { lang }))
+        throw new Error(this.i18n.t('translation.profile.invalid-profile-type', { lang }))
     }
 
     async updateProfileByUserId(
@@ -46,7 +50,7 @@ export class ProfileService {
             return this.companyProfileService.updateCompanyProfileByUserId(userId, profileDto as UpdateCompanyProfileDto, lang)
         }
 
-        throw new BadRequestException(this.i18n.t('translation.profile.invalid-profile-type', { lang }))
+        throw new Error(this.i18n.t('translation.profile.invalid-profile-type', { lang }))
     }
 
     async getProfileUserNamesByUserIds(userIds: string[], lang: string): Promise<{userId: string, userName: string}[]> {

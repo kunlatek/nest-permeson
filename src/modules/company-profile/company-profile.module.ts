@@ -1,8 +1,10 @@
 import { Module } from "@nestjs/common";
 import { DatabaseEnum } from "src/enums/database.enum";
 
+import { getDatabaseModule } from "src/utils/database.utils";
 import { DATABASE } from "src/common/constants/database.constant";
 import { CompanyProfileMongodbModule } from "./repositories/mongodb/company-profile.mongodb.module";
+import { CompanyProfileSQLModule } from "./repositories/sql/company-profile.sql.module";
 
 import { CompanyProfileService } from "./company-profile.service";
 
@@ -11,7 +13,11 @@ import { JwtModule } from "@nestjs/jwt";
 
 @Module({
     imports: [
-        DATABASE === DatabaseEnum.MONGODB ? CompanyProfileMongodbModule : null,
+        getDatabaseModule(DATABASE, [
+            { database: DatabaseEnum.MONGODB, module: CompanyProfileMongodbModule },
+            { database: DatabaseEnum.POSTGRES, module: CompanyProfileSQLModule },
+            { database: DatabaseEnum.SQLITE, module: CompanyProfileSQLModule },
+        ]),
 
         JwtModule.registerAsync({
             imports: [ConfigModule],

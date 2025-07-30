@@ -1,18 +1,24 @@
 import { Module } from "@nestjs/common";
-import { WorkspaceMongodbModule } from "./repositories/mongodb/workspace.mongodb.module";
 import { WorkspaceService } from "./workspace.service";
 import { ProfileModule } from "../profile/profile.module";
 import { WorkspaceController } from "./workspace.controller";
 
 import { DatabaseEnum } from "src/enums/database.enum";
 import { DATABASE } from "src/common/constants/database.constant";
+import { getDatabaseModule } from "src/utils/database.utils";
+import { WorkspaceMongodbModule } from "./repositories/mongodb/workspace.mongodb.module";
+import { WorkspaceSQLModule } from "./repositories/sql";
 
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [
-    DATABASE === DatabaseEnum.MONGODB ? WorkspaceMongodbModule : null,
+    getDatabaseModule(DATABASE, [
+      { database: DatabaseEnum.MONGODB, module: WorkspaceMongodbModule },
+      { database: DatabaseEnum.POSTGRES, module: WorkspaceSQLModule },
+      { database: DatabaseEnum.SQLITE, module: WorkspaceSQLModule },
+    ]),
 
     JwtModule.registerAsync({
       imports: [ConfigModule],

@@ -1,138 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from "typeorm";
-import { GenderEnum, MaritalStatusEnum, EducationLevelEnum } from "../../enums";
-
-// Related entities
-@Entity('person_jobs')
-export class PersonJobEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ nullable: true })
-  jobId?: string;
-
-  @Column({ nullable: true })
-  jobStartDateMonth?: number;
-
-  @Column({ nullable: true })
-  jobStartDateYear?: number;
-
-  @Column({ nullable: true })
-  jobFinishDateMonth?: number;
-
-  @Column({ nullable: true })
-  jobFinishDateYear?: number;
-
-  @Column({ nullable: true })
-  jobDescription?: string;
-
-  @Column()
-  personProfileId: number;
-}
-
-@Entity('person_educations')
-export class PersonEducationEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ nullable: true })
-  educationInstitution?: string;
-
-  @Column({ nullable: true })
-  educationCourse?: string;
-
-  @Column({ nullable: true })
-  educationStartDateMonth?: number;
-
-  @Column({ nullable: true })
-  educationStartDateYear?: number;
-
-  @Column({ nullable: true })
-  educationFinishDateMonth?: number;
-
-  @Column({ nullable: true })
-  educationFinishDateYear?: number;
-
-  @Column({ nullable: true })
-  educationDescription?: string;
-
-  @Column()
-  personProfileId: number;
-}
-
-@Entity('person_courses')
-export class PersonCourseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ nullable: true })
-  courseInstitution?: string;
-
-  @Column({ nullable: true })
-  courseName?: string;
-
-  @Column({ nullable: true })
-  courseStartDateMonth?: number;
-
-  @Column({ nullable: true })
-  courseStartDateYear?: number;
-
-  @Column({ nullable: true })
-  courseFinishDateMonth?: number;
-
-  @Column({ nullable: true })
-  courseFinishDateYear?: number;
-
-  @Column({ nullable: true })
-  courseDescription?: string;
-
-  @Column()
-  personProfileId: number;
-}
-
-@Entity('person_bank_data')
-export class PersonBankDataEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ nullable: true })
-  bankName?: string;
-
-  @Column({ nullable: true })
-  bankAgency?: string;
-
-  @Column({ nullable: true })
-  bankAccount?: string;
-
-  @Column({ nullable: true })
-  bankAccountType?: string;
-
-  @Column({ nullable: true })
-  bankPix?: string;
-
-  @Column()
-  personProfileId: number;
-}
-
-@Entity('person_related_files')
-export class PersonRelatedFileEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ nullable: true })
-  fileName?: string;
-
-  @Column({ nullable: true })
-  fileUrl?: string;
-
-  @Column({ nullable: true })
-  fileType?: string;
-
-  @Column({ nullable: true })
-  fileDescription?: string;
-
-  @Column()
-  personProfileId: number;
-}
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('person_profiles')
 export class PersonProfileEntity {
@@ -152,21 +18,19 @@ export class PersonProfileEntity {
   personNickname?: string;
 
   @Column({ 
-    type: 'enum', 
-    enum: GenderEnum, 
+    type: 'varchar', 
     nullable: true 
   })
-  gender?: GenderEnum;
+  gender?: string;
 
   @Column({ type: 'date', nullable: true })
   birthday?: Date;
 
   @Column({ 
-    type: 'enum', 
-    enum: MaritalStatusEnum, 
+    type: 'varchar', 
     nullable: true 
   })
-  maritalStatus?: MaritalStatusEnum;
+  maritalStatus?: string;
 
   @Column({ nullable: true })
   motherName?: string;
@@ -179,6 +43,26 @@ export class PersonProfileEntity {
 
   @Column({ nullable: true })
   personDescription?: string;
+
+  // Professions as JSON
+  @Column({ type: 'simple-json', nullable: true })
+  professions?: any[];
+
+  // Person Educations as JSON
+  @Column({ type: 'simple-json', nullable: true })
+  personEducations?: any[];
+
+  // Person Courses as JSON
+  @Column({ type: 'simple-json', nullable: true })
+  personCourses?: any[];
+
+  // Bank Data as JSON
+  @Column({ type: 'simple-json', nullable: true })
+  bankData?: any[];
+
+  // Related Files as JSON
+  @Column({ type: 'simple-json', nullable: true })
+  relatedFiles?: any[];
 
   // Documents
   @Column({ nullable: true })
@@ -284,11 +168,10 @@ export class PersonProfileEntity {
 
   // Education
   @Column({ 
-    type: 'enum', 
-    enum: EducationLevelEnum, 
+    type: 'varchar', 
     nullable: true 
   })
-  personEducation?: EducationLevelEnum;
+  personEducation?: string;
 
   @Column({ type: 'simple-array', nullable: true })
   personLanguages?: string[];
@@ -306,25 +189,4 @@ export class PersonProfileEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  // Relations
-  @OneToMany(() => PersonJobEntity, job => job.personProfileId)
-  @JoinColumn({ name: 'id', referencedColumnName: 'personProfileId' })
-  professions?: PersonJobEntity[];
-
-  @OneToMany(() => PersonEducationEntity, education => education.personProfileId)
-  @JoinColumn({ name: 'id', referencedColumnName: 'personProfileId' })
-  personEducations?: PersonEducationEntity[];
-
-  @OneToMany(() => PersonCourseEntity, course => course.personProfileId)
-  @JoinColumn({ name: 'id', referencedColumnName: 'personProfileId' })
-  personCourses?: PersonCourseEntity[];
-
-  @OneToMany(() => PersonBankDataEntity, bankData => bankData.personProfileId)
-  @JoinColumn({ name: 'id', referencedColumnName: 'personProfileId' })
-  bankData?: PersonBankDataEntity[];
-
-  @OneToMany(() => PersonRelatedFileEntity, file => file.personProfileId)
-  @JoinColumn({ name: 'id', referencedColumnName: 'personProfileId' })
-  relatedFiles?: PersonRelatedFileEntity[];
 }

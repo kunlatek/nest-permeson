@@ -1,23 +1,19 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { PersonProfileEntity } from "./person-profile.entity";
-import { PersonJobEntity } from "./person-profile.entity";
-import { PersonEducationEntity } from "./person-profile.entity";
-import { PersonCourseEntity } from "./person-profile.entity";
-import { PersonBankDataEntity } from "./person-profile.entity";
-import { PersonRelatedFileEntity } from "./person-profile.entity";
-import { PersonProfileSQLRepository } from "./person-profile.sql.repository";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+// Person Profile Entities
+import { 
+  PersonProfileEntity, 
+} from './person-profile.entity';
+
+// Person Profile SQL Repository
+import { PersonProfileSQLRepository } from './person-profile.sql.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      PersonProfileEntity, 
-      PersonJobEntity, 
-      PersonEducationEntity, 
-      PersonCourseEntity, 
-      PersonBankDataEntity, 
-      PersonRelatedFileEntity
-    ])
+      PersonProfileEntity,
+    ]),
   ],
   providers: [
     {
@@ -27,4 +23,4 @@ import { PersonProfileSQLRepository } from "./person-profile.sql.repository";
   ],
   exports: ['PersonProfileRepository'],
 })
-export class PersonProfileSQLModule {}
+export class PersonProfileSQLModule {} 

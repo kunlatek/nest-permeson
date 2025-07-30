@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 import { ICompanyProfileHttpResponse } from "./interfaces";
 import { CompanyProfileRepository } from "./company-profile.repository.interface";
@@ -17,7 +17,7 @@ export class CompanyProfileService {
         try {   
             await this.companyProfileRepository.create({ userId, userName, createdBy: userId, ownerId: userId })
         } catch (error) {
-            throw new BadRequestException(this.i18n.t('translation.company-profile.company-profile-create-error', { lang }))
+            throw new Error(this.i18n.t('translation.company-profile.company-profile-create-error', { lang }))
         }
     }
 
@@ -38,7 +38,7 @@ export class CompanyProfileService {
             const updatedCompanyProfile = await this.companyProfileRepository.update(companyProfile._id.toString(), companyProfileDto)
             return new ICompanyProfileHttpResponse(200, this.i18n.t('translation.company-profile.company-profile-updated', { lang }), updatedCompanyProfile)
         } catch (error) {
-            throw new BadRequestException(this.i18n.t('translation.company-profile.company-profile-update-error', { lang }))
+            throw new Error(this.i18n.t('translation.company-profile.company-profile-update-error', { lang }))
         }
     }
 

@@ -4,12 +4,26 @@ import { DatabaseEnum } from "src/enums/database.enum";
 
 export const getDatabaseConfig = (database: DatabaseEnum) => {
   switch (database) {
+    
     case DatabaseEnum.MONGODB:
       return MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/rapida-quickstart');
+    
     case DatabaseEnum.SQLITE:
-      return TypeOrmModule.forRoot({ type: 'sqlite', database: 'db.sqlite', synchronize: true, autoLoadEntities: true });
+      return TypeOrmModule.forRoot({
+        type: 'sqlite',
+        database: 'db.sqlite',
+        synchronize: true,
+        autoLoadEntities: true,
+        logging: false,
+      });
+    
     case DatabaseEnum.POSTGRES:
-      return TypeOrmModule.forRoot({ type: 'postgres', url: process.env.POSTGRES_URI || 'postgres://postgres:postgres@localhost:5432/rapida-quickstart', synchronize: true, autoLoadEntities: true });
+      return TypeOrmModule.forRoot({
+        type: 'postgres',
+        url: process.env.POSTGRES_URI || 'postgres://postgres:postgres@localhost:5432/rapida-quickstart',
+        synchronize: true,
+        autoLoadEntities: true,
+      });
   }
 };
 

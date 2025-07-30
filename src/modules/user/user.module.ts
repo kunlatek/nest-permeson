@@ -5,15 +5,20 @@ import { DatabaseEnum } from 'src/enums/database.enum';
 
 import { CommonModule } from 'src/common/common.module';
 
+import { getDatabaseModule } from 'src/utils/database.utils';
+import { DATABASE } from 'src/common/constants/database.constant';
 import { UserMongoDBModule } from './repositories/mongodb/user.mongodb.module';
+import { UserSQLModule } from './repositories/sql';
 
 import { UserService } from './user.service';
 
-import { DATABASE } from 'src/common/constants/database.constant';
-
 @Module({
   imports: [
-    DATABASE === DatabaseEnum.MONGODB ? UserMongoDBModule : null,
+    getDatabaseModule(DATABASE, [
+      { database: DatabaseEnum.MONGODB, module: UserMongoDBModule },
+      { database: DatabaseEnum.POSTGRES, module: UserSQLModule },
+      { database: DatabaseEnum.SQLITE, module: UserSQLModule },
+    ]),
 
     CommonModule,
     JwtModule.registerAsync({

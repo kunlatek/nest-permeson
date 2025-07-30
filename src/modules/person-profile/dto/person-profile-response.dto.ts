@@ -13,6 +13,6 @@ export class PersonProfileResponseDto extends PersonProfile {
 
     constructor(data: Partial<PersonProfileResponseDto>) {
         super(data);
-        this._id = data._id.toString();  
+        this._id = data._id?.toString() || '';
     }
 }

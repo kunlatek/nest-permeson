@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { PersonProfileRepository } from "./person-profile.repository.interface";
 import { I18nService } from "nestjs-i18n";
 import { IPersonProfileHttpResponse } from "./interfaces";
@@ -17,7 +17,7 @@ export class PersonProfileService {
         try {
             await this.personProfileRepository.create({ userId, userName, createdBy: userId, ownerId: userId });
         } catch (error) {
-            throw new BadRequestException(this.i18n.t('translation.person-profile.person-profile-create-error', { lang }))
+            throw new Error(this.i18n.t('translation.person-profile.person-profile-create-error', { lang }))
         }
     }
 
@@ -38,7 +38,7 @@ export class PersonProfileService {
             const updatedPersonProfile = await this.personProfileRepository.update(personProfile._id.toString(), personProfileDto)
             return new IPersonProfileHttpResponse(200, this.i18n.t('translation.person-profile.person-profile-updated', { lang }), updatedPersonProfile)
         } catch (error) {
-            throw new BadRequestException(this.i18n.t('translation.person-profile.person-profile-update-error', { lang }))
+            throw new Error(this.i18n.t('translation.person-profile.person-profile-update-error', { lang }))
         }
     }
 

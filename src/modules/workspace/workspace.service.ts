@@ -21,7 +21,7 @@ export class WorkspaceService {
     try {
       return this.workspaceRepository.create(workspaceDto);
     } catch (error) {
-      throw new BadRequestException(this.i18n.t('translation.workspace.error-creating-workspace', { lang }));
+      throw new Error(this.i18n.t('translation.workspace.error-creating-workspace', { lang }));
     }
   }
 
@@ -30,7 +30,7 @@ export class WorkspaceService {
       const workspace = await this.workspaceRepository.findByOwner(owner);
       return new IWorkspaceHttpResponse(200, this.i18n.t('translation.workspace.workspace-found', { lang }), new WorkspaceResponseDto(workspace));
     } catch (error) {
-      throw new BadRequestException(this.i18n.t('translation.workspace.error-finding-workspaces-by-owner', { lang }));
+      throw new Error(this.i18n.t('translation.workspace.error-finding-workspaces-by-owner', { lang }));
     }
   }
 
@@ -43,7 +43,7 @@ export class WorkspaceService {
       await this.workspaceRepository.update(workspace._id, workspace);
       return new IHttpResponse(204, this.i18n.t('translation.workspace.team-user-added', { lang }));
     } catch (error) {
-      throw new BadRequestException(this.i18n.t('translation.workspace.error-adding-team-user', { lang }));
+      throw new Error(this.i18n.t('translation.workspace.error-adding-team-user', { lang }));
     }
   }
 
@@ -56,7 +56,7 @@ export class WorkspaceService {
       await this.workspaceRepository.update(workspace._id, workspace);
       return new IHttpResponse(204, this.i18n.t('translation.workspace.team-user-removed', { lang }));
     } catch (error) {
-      throw new BadRequestException(this.i18n.t('translation.workspace.error-removing-team-user', { lang }));
+      throw new Error(this.i18n.t('translation.workspace.error-removing-team-user', { lang }));
     }
   }
 
@@ -70,7 +70,7 @@ export class WorkspaceService {
         workspaces.map((workspace) => new WorkspaceResponseDto({...workspace, name: userNames.find((user) => user.userId === workspace.owner)?.userName}))
       );
     } catch (error) {
-      throw new BadRequestException(this.i18n.t('translation.workspace.error-finding-my-workspaces', { lang }));
+      throw new Error(this.i18n.t('translation.workspace.error-finding-my-workspaces', { lang }));
     }
   }
 
@@ -83,7 +83,7 @@ export class WorkspaceService {
       const token = this.jwtService.sign({ sub: userId, workspaceId });
       return new IWorkspaceTokenHttpResponse(200, this.i18n.t('translation.workspace.workspace-token-found', { lang }), token);
     } catch (error) {
-      throw new BadRequestException(this.i18n.t('translation.workspace.error-finding-workspace-token', { lang }));
+      throw new Error(this.i18n.t('translation.workspace.error-finding-workspace-token', { lang }));
     }
   }
 
@@ -91,7 +91,7 @@ export class WorkspaceService {
     try {
       return this.workspaceRepository.delete(id);
     } catch (error) {
-      throw new BadRequestException(this.i18n.t('translation.workspace.error-deleting-workspace', { lang }));
+      throw new Error(this.i18n.t('translation.workspace.error-deleting-workspace', { lang }));
     }
   }
 }

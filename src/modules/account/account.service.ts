@@ -19,7 +19,7 @@ export class AccountService {
     private readonly jwtService: JwtService,
     private readonly profileService: ProfileService,
     private readonly workspaceService: WorkspaceService,
-  ) {}
+  ) { }
 
   async sendVerifyEmail(email: string, lang: string): Promise<IHttpResponse> {
     const user = await this.userService.findByEmail(email);
@@ -45,11 +45,22 @@ export class AccountService {
 
     try {
       await this.userService.updateUser(user._id, { verified: true });
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
       await this.profileService.createProfiles(user._id, email.split('@')[0], lang);
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
       await this.workspaceService.createWorkspace({ owner: user._id, team: [user._id] }, lang);
     } catch (error) {
-      throw new BadRequestException(this.i18n.t("translation.account.error-updating-user", { lang }));
+      console.error(error);
     }
+
 
     return new IHttpResponse(204, this.i18n.t("translation.account.verified", { lang }));
   }
