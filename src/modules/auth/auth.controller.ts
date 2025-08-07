@@ -1,4 +1,4 @@
-import { Controller, Post, Req, Body, UseGuards } from "@nestjs/common";
+import { Controller, Post, Req, Body, UseGuards, HttpCode } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { LoginDto, SignupDto, ResetPasswordDto, ResetPasswordRequestDto } from "./dto";
@@ -15,6 +15,7 @@ export class AuthController {
   ) { }
 
   @Post("signup")
+  @HttpCode(200)
   @ApiOperation({ summary: "Register a new user" })
   @ApiResponse({ status: 200, description: "User registered successfully", type: IHttpResponse })
   async signup(
@@ -25,6 +26,7 @@ export class AuthController {
   }
 
   @Post("login")
+  @HttpCode(200)
   @ApiOperation({ summary: "Local login with email/password" })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 200, description: "Returns JWT access token on successful login with available roles", type: ILoginHttpResponse })
@@ -36,6 +38,7 @@ export class AuthController {
   }
 
   @Post("reset-password-request")
+  @HttpCode(200)
   @ApiOperation({ summary: "Send a password reset email" })
   @ApiBody({ type: ResetPasswordRequestDto })
   @ApiResponse({ status: 200, description: "Password reset email sent successfully", type: IResetPasswordHttpResponse })
@@ -47,6 +50,7 @@ export class AuthController {
   }
 
   @Post("reset-password")
+  @HttpCode(200)
   @ApiOperation({ summary: "Reset user password" })
   @ApiBody({ type: ResetPasswordDto })
   @ApiResponse({ status: 200, description: "Password reset successfully", type: IResetPasswordHttpResponse })

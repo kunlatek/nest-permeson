@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Post, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { Param } from "@nestjs/common";
 import { UpdateWorkspaceTeamDto } from "./dto";
@@ -29,6 +29,7 @@ export class WorkspaceController {
   }
 
   @Post('team-user')
+  @HttpCode(200)
   @ApiSecurity('jwt')
   @ApiOperation({ summary: 'Add team user' })
   @ApiResponse({ status: 204, description: 'Team user added successfully' })

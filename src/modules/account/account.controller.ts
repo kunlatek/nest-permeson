@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post, Query } from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { I18nLang } from "nestjs-i18n";
@@ -14,6 +14,7 @@ export class AccountController {
   ) {}
 
   @Post('verify/send')
+  @HttpCode(200)
   @ApiOperation({ summary: 'Send verify email' })
   @ApiResponse({ status: 200, description: 'Verify email sent', type: IHttpResponse })
   @ApiBody({ type: VerifyAccountSendMailDto })
