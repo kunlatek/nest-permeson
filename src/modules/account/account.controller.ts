@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post, Query, Redirect } from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { I18nLang } from "nestjs-i18n";
@@ -14,9 +14,9 @@ export class AccountController {
   ) {}
 
   @Post('verify/send')
-  @HttpCode(200)
+  @HttpCode(204)
   @ApiOperation({ summary: 'Send verify email' })
-  @ApiResponse({ status: 200, description: 'Verify email sent', type: IHttpResponse })
+  @ApiResponse({ status: 204, description: 'Verify email sent', type: IHttpResponse })
   @ApiBody({ type: VerifyAccountSendMailDto })
   async sendVerifyEmail(
     @Body() body: VerifyAccountSendMailDto,
@@ -26,19 +26,23 @@ export class AccountController {
   }
 
   @Get('verify')
+  @Redirect()
   @ApiOperation({ summary: 'Verify account' })
-  @ApiResponse({ status: 200, description: 'Account verified', type: IHttpResponse })
+  @ApiResponse({ status: 302, description: 'Account verified and redirected' })
   @ApiQuery({ name: 'token', type: String })
   @ApiQuery({ name: 'email', type: String })
   async verify(
     @Query('token') token: string,
     @Query('email') email: string,
     @I18nLang() lang?: string
-  ): Promise<IHttpResponse> {
-    return this.accountService.verify(token, email, lang);
+  ): Promise<{ url: string }> {
+    await this.accountService.verify(token, email, lang);
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    return { url: baseUrl };
   }
 
   @Get('status')
+  @HttpCode(200)
   @ApiOperation({ summary: 'Get account status' })
   @ApiResponse({ status: 200, description: 'Account status', type: IAccountStatusHttpResponse })
   async status(

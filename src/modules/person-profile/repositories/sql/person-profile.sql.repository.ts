@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In } from "typeorm";
+import { Repository, In, Like } from "typeorm";
 import { PersonProfileEntity } from "./person-profile.entity";
 import { CreatePersonProfileDto, UpdatePersonProfileDto, PersonProfileResponseDto } from "../../dto";
 import { PersonProfileRepository } from "../../person-profile.repository.interface";
@@ -42,6 +42,16 @@ export class PersonProfileSQLRepository implements PersonProfileRepository {
 
   async deleteByUserId(userId: string): Promise<void> {
     await this.personProfileRepository.delete({ userId });
+  }
+
+  async findByUsernameLike(username: string, page: number, limit: number): Promise<{ profiles: PersonProfileResponseDto[], total: number }> {
+    const [profiles, total] = await this.personProfileRepository.findAndCount({
+      where: { userName: Like(`%${username}%`) },
+      skip: (page - 1) * limit,
+      take: limit
+    });
+
+    return { profiles: profiles.map(profile => this.transformEntityToResponse(profile)), total };
   }
 
   async findByUserIds(userIds: string[]): Promise<PersonProfileResponseDto[]> {

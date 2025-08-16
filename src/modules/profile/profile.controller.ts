@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, Put, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { ProfileTypesEnum } from "./enums/profile-types.enum";
@@ -12,6 +12,8 @@ import { PersonProfileResponseDto } from "../person-profile/dto/person-profile-r
 import { ICompanyProfileHttpResponse } from "../company-profile/interfaces";
 import { CompanyProfileResponseDto } from "../company-profile/dto/company-profile-response.dto";
 
+import { ProfileSearchParamsDto, ProfileSearchPaginatedResponseDto } from "./dto";
+
 @ApiTags('Profile')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -19,8 +21,22 @@ import { CompanyProfileResponseDto } from "../company-profile/dto/company-profil
 export class ProfileController {
     constructor(private readonly profileService: ProfileService) {}
 
+    @Get()
+    @ApiSecurity('jwt')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Search profiles by username' })
+    @ApiResponse({ status: 200, description: 'Profiles found successfully', type: ProfileSearchPaginatedResponseDto })
+    async searchProfiles(
+        @Query() searchParams: ProfileSearchParamsDto,
+        @I18nLang() lang?: string
+    ): Promise<ProfileSearchPaginatedResponseDto> {
+        const { username = '', page = 1, limit = 10 } = searchParams;
+        return this.profileService.searchProfilesByUsername(username, page, limit, lang);
+    }
+
     @Get('person')
     @ApiSecurity('jwt')
+    @HttpCode(200)
     @ApiOperation({ summary: 'Get profile by type' })
     @ApiResponse({ status: 200, description: 'Profile retrieved successfully', type: IPersonProfileHttpResponse })
     @ApiResponse({ status: 400, description: 'Invalid profile type' })
@@ -34,6 +50,7 @@ export class ProfileController {
 
     @Get('company')
     @ApiSecurity('jwt')
+    @HttpCode(200)
     @ApiOperation({ summary: 'Get profile by type' })
     @ApiResponse({ status: 200, description: 'Profile retrieved successfully', type: ICompanyProfileHttpResponse })
     @ApiResponse({ status: 400, description: 'Invalid profile type' })
@@ -47,6 +64,7 @@ export class ProfileController {
 
     @Put('person')
     @ApiSecurity('jwt')
+    @HttpCode(200)
     @ApiOperation({ summary: 'Update profile by type' })
     @ApiBody({ type: PersonProfileResponseDto })
     @ApiResponse({ status: 200, description: 'Profile updated successfully', type: IPersonProfileHttpResponse })
@@ -61,6 +79,7 @@ export class ProfileController {
 
     @Put('company')
     @ApiSecurity('jwt')
+    @HttpCode(200)
     @ApiOperation({ summary: 'Update profile by type' })
     @ApiBody({ type: CompanyProfileResponseDto })
     @ApiResponse({ status: 200, description: 'Profile updated successfully', type: ICompanyProfileHttpResponse })

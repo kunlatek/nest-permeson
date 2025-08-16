@@ -44,4 +44,25 @@ export class PersonProfileMongoDBRepository implements PersonProfileRepository {
         const personProfiles = await this.personProfileModel.find({ userId: { $in: userIds } }).lean();
         return personProfiles.map((personProfile) => new PersonProfileResponseDto(personProfile));
     }
+
+    async findByUsernameLike(username: string, page: number, limit: number): Promise<{ profiles: PersonProfileResponseDto[], total: number }> {
+        const skip = (page - 1) * limit;
+        
+        const total = await this.personProfileModel.countDocuments({
+            userName: { $regex: username, $options: 'i' }
+        });
+        
+        const profiles = await this.personProfileModel.find({
+            userName: { $regex: username, $options: 'i' }
+        })
+        .select('userId userName')
+        .skip(skip)
+        .limit(limit)
+        .lean();
+        
+        return {
+            profiles: profiles.map((profile) => new PersonProfileResponseDto(profile)),
+            total
+        };
+    }
 }

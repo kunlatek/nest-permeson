@@ -51,7 +51,8 @@
     "person-profile-updated": "Person profile updated",
     "company-profile-updated": "Company profile updated",
     "person-profile-update-error": "Error updating person profile",
-    "company-profile-update-error": "Error updating company profile"
+    "company-profile-update-error": "Error updating company profile",
+    "profiles-found": "Profiles found successfully"
   },
   "workspace": {
     "error-creating-workspace": "Error creating workspace",

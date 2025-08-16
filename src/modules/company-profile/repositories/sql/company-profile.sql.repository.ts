@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In } from "typeorm";
+import { Repository, In, Like } from "typeorm";
 import { CompanyProfileEntity } from "./company-profile.entity";
 import { CreateCompanyProfileDto, UpdateCompanyProfileDto, CompanyProfileResponseDto } from "../../dto";
 import { CompanyProfileRepository } from "../../company-profile.repository.interface";
@@ -50,7 +50,16 @@ export class CompanyProfileSQLRepository implements CompanyProfileRepository {
     return companyProfiles.map(profile => this.transformEntityToResponse(profile));
   }
 
-  // Helper methods
+  async findByUsernameLike(username: string, page: number, limit: number): Promise<{ profiles: CompanyProfileResponseDto[], total: number }> {
+    const [profiles, total] = await this.companyProfileRepository.findAndCount({
+      where: { userName: Like(`%${username}%`) },
+      skip: (page - 1) * limit,
+      take: limit
+    });
+
+    return { profiles: profiles.map(profile => this.transformEntityToResponse(profile)), total };
+  }
+
   private transformEntityToResponse(companyProfile: CompanyProfileEntity): CompanyProfileResponseDto {
     const bankData = companyProfile.bankData || [];
     

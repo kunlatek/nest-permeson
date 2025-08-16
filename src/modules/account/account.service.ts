@@ -28,7 +28,7 @@ export class AccountService {
     return new IHttpResponse(204, this.i18n.t("translation.account.verify-email-sent", { lang }));
   }
 
-  async verify(token: string, email: string, lang: string): Promise<IHttpResponse> {
+  async verify(token: string, email: string, lang: string): Promise<void> {
     let payload: any;
     try {
       payload = await this.jwtService.verify(token);
@@ -61,8 +61,7 @@ export class AccountService {
       console.error(error);
     }
 
-
-    return new IHttpResponse(204, this.i18n.t("translation.account.verified", { lang }));
+    // Account verification completed successfully
   }
 
   async status(email: string, lang: string): Promise<IAccountStatusHttpResponse> {

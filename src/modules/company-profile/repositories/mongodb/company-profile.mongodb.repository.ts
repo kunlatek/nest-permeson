@@ -46,4 +46,25 @@ export class CompanyProfileMongoDBRepository implements CompanyProfileRepository
         const companyProfiles = await this.companyProfileModel.find({ userId: { $in: userIds } }).lean();
         return companyProfiles.map((companyProfile) => new CompanyProfileResponseDto(companyProfile));
     }
+
+    async findByUsernameLike(username: string, page: number, limit: number): Promise<{ profiles: CompanyProfileResponseDto[], total: number }> {
+        const skip = (page - 1) * limit;
+        
+        const total = await this.companyProfileModel.countDocuments({
+            userName: { $regex: username, $options: 'i' }
+        });
+        
+        const profiles = await this.companyProfileModel.find({
+            userName: { $regex: username, $options: 'i' }
+        })
+        .select('userId userName')
+        .skip(skip)
+        .limit(limit)
+        .lean();
+        
+        return {
+            profiles: profiles.map((profile) => new CompanyProfileResponseDto(profile)),
+            total
+        };
+    }
 }

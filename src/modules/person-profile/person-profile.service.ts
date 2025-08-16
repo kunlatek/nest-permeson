@@ -46,4 +46,12 @@ export class PersonProfileService {
         const personUserNames = await this.personProfileRepository.findByUserIds(userIds)
         return personUserNames.map((profile) => ({userId: profile.userId, userName: profile.userName}))
     }
+
+    async findByUsernameLike(username: string, page: number, limit: number, lang: string): Promise<{ profiles: {userId: string, userName: string}[], total: number }> {
+        const result = await this.personProfileRepository.findByUsernameLike(username, page, limit);
+        return {
+            profiles: result.profiles.map((profile) => ({userId: profile.userId, userName: profile.userName})),
+            total: result.total
+        };
+    }
 }

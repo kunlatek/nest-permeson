@@ -21,11 +21,11 @@ export class EmailService {
   }
 
   async sendVerifyEmail(email: string) {
-    const baseUrl = this.configService.get("BASE_URL");
+    const baseUrl = this.configService.get("API_BASE_URL");
 
     const token = this.jwtService.sign({ email }, { expiresIn: "24h" });
 
-    const url = `${baseUrl}/account/verify-mail?token=${token}&email=${email}`;
+    const url = `${baseUrl}/account/verify?token=${token}&email=${email}`;
 
     await this.transporter.sendMail({
       from: process.env.SMTP_FROM,

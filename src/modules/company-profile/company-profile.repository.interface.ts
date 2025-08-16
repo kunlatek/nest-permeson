@@ -14,4 +14,6 @@ export interface CompanyProfileRepository {
   deleteByUserId(userId: string): Promise<void>;
 
   findByUserIds(userIds: string[]): Promise<CompanyProfileResponseDto[]>;
+  
+  findByUsernameLike(username: string, page: number, limit: number): Promise<{ profiles: CompanyProfileResponseDto[], total: number }>;
 }

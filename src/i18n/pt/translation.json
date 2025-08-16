@@ -50,7 +50,8 @@
     "person-profile-updated": "Perfil de pessoa atualizado",
     "company-profile-updated": "Perfil de empresa atualizado",
     "person-profile-update-error": "Erro ao atualizar o perfil de pessoa",
-    "company-profile-update-error": "Erro ao atualizar o perfil de empresa"
+    "company-profile-update-error": "Erro ao atualizar o perfil de empresa",
+    "profiles-found": "Perfis encontrados com sucesso"
   },
   "workspace": {
     "error-creating-workspace": "Erro ao criar o workspace",
