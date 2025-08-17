@@ -331,16 +331,10 @@ export class PersonProfile {
   
   // 🔹 Banco
   @ApiProperty({
-    type: PersonBankData,
+    type: [PersonBankData],
     description: 'Banco do usuário',
   })
-  bankDataOne?: PersonBankData;
-  
-  @ApiProperty({
-    type: PersonBankData,
-    description: 'Banco do usuário',
-  })
-  bankDataTwo?: PersonBankData;
+  bankData?: PersonBankData[];
   
   // 🔹 Arquivos relacionados
   @ApiProperty({

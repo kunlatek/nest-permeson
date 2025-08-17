@@ -165,14 +165,7 @@ export class CompanyProfile {
     description: 'Company bank data',
   })
   @IsOptional()
-  bankDataOne?: CompanyBankData;
-
-  @ApiProperty({ 
-    type: () => CompanyBankData,
-    description: 'Company bank data',
-  })
-  @IsOptional()
-  bankDataTwo?: CompanyBankData;
+  bankData?: CompanyBankData[];
 
   // Arquivos
   @ApiProperty({ 

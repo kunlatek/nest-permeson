@@ -160,11 +160,8 @@ export class MongoDBPersonProfile extends Document {
   personLanguages?: string[];
 
   // 🔹 Banco
-  @Prop({ type: Object })
-  bankDataOne?: PersonBankData;
-
-  @Prop({ type: Object })
-  bankDataTwo?: PersonBankData;
+  @Prop({ type: [Object] })
+  bankData?: PersonBankData[];
 
   // 🔹 Arquivos relacionados
   @Prop({ type: [Object] })

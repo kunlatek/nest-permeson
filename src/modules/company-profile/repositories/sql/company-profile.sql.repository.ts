@@ -68,8 +68,7 @@ export class CompanyProfileSQLRepository implements CompanyProfileRepository {
       _id: companyProfile.id.toString(),
       partners: companyProfile.partners || [],
       contacts: companyProfile.contacts || [],
-      bankDataOne: bankData[0] || null,
-      bankDataTwo: bankData[1] || null,
+      bankData: bankData || [],
       relatedFiles: companyProfile.relatedFiles || []
     };
 

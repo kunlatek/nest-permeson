@@ -71,8 +71,7 @@ export class PersonProfileSQLRepository implements PersonProfileRepository {
       professions: personProfile.professions || [],
       personEducations: this.transformEducations(personProfile.personEducations || []),
       personCourses: this.transformCourses(personProfile.personCourses || []),
-      bankDataOne: bankData[0] || null,
-      bankDataTwo: bankData[1] || null,
+      bankData: bankData || [],
       relatedFiles: personProfile.relatedFiles || []
     };
 

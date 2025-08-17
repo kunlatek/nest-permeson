@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ContactType } from '../../enums/contact-type.enum';
-import { BankAccountTypeEnum } from '../../enums/bank-account-type.enum';
 import { AddressType } from '../../enums/address-type.enum';
+import { CompanyBankData } from '../../models/company-bank-data.model';
 
 
 export type CompanyProfileDocument = MongoDBCompanyProfile & Document;
@@ -106,37 +106,9 @@ export class MongoDBCompanyProfile extends Document {
   @Prop()
   addressTwoState?: string;
 
-  // Banco 1
-  @Prop({
-    type: {
-      bankName: String,
-      bankBranch: String,
-      bankAccount: String,
-      bankAccountType: { type: String, enum: Object.values(BankAccountTypeEnum) },
-    },
-  })
-  bankDataOne?: {
-    bankName?: string;
-    bankBranch?: string;
-    bankAccount?: string;
-    bankAccountType?: BankAccountTypeEnum;
-  };
-
-  // Banco 2
-  @Prop({
-    type: {
-      bankName: String,
-      bankBranch: String,
-      bankAccount: String,
-      bankAccountType: { type: String, enum: Object.values(BankAccountTypeEnum) },
-    },
-  })
-  bankDataTwo?: {
-    bankName?: string;
-    bankBranch?: string;
-    bankAccount?: string;
-    bankAccountType?: BankAccountTypeEnum;
-  };
+  // Bancos 
+  @Prop({ type: [Object] })
+  bankData?: CompanyBankData[];
 
   @Prop([
     {

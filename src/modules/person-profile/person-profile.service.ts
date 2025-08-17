@@ -38,6 +38,7 @@ export class PersonProfileService {
             const updatedPersonProfile = await this.personProfileRepository.update(personProfile._id.toString(), personProfileDto)
             return new IPersonProfileHttpResponse(200, this.i18n.t('translation.person-profile.person-profile-updated', { lang }), updatedPersonProfile)
         } catch (error) {
+            console.log(error)
             throw new Error(this.i18n.t('translation.person-profile.person-profile-update-error', { lang }))
         }
     }
