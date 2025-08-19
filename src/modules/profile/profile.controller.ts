@@ -12,7 +12,7 @@ import { PersonProfileResponseDto } from "../person-profile/dto/person-profile-r
 import { ICompanyProfileHttpResponse } from "../company-profile/interfaces";
 import { CompanyProfileResponseDto } from "../company-profile/dto/company-profile-response.dto";
 
-import { ProfileSearchParamsDto, ProfileSearchPaginatedResponseDto } from "./dto";
+import { ProfileSearchPaginatedResponseDto } from "./dto";
 
 @ApiTags('Profile')
 @ApiBearerAuth()
@@ -24,14 +24,28 @@ export class ProfileController {
     @Get()
     @ApiSecurity('jwt')
     @HttpCode(200)
-    @ApiOperation({ summary: 'Search profiles by username' })
+    @ApiOperation({ summary: 'Search profiles' })
     @ApiResponse({ status: 200, description: 'Profiles found successfully', type: ProfileSearchPaginatedResponseDto })
     async searchProfiles(
-        @Query() searchParams: ProfileSearchParamsDto,
+        @Query('username') username: string = '',
+        @Query('ids') ids: string[] = [],
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10,
         @I18nLang() lang?: string
     ): Promise<ProfileSearchPaginatedResponseDto> {
-        const { username = '', page = 1, limit = 10 } = searchParams;
         return this.profileService.searchProfilesByUsername(username, page, limit, lang);
+    }
+
+    @Get('ids')
+    @ApiSecurity('jwt')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Get profile user names by ids' })
+    @ApiResponse({ status: 200, description: 'Profile user names found successfully' })
+    async getProfileUserNamesByUserIds(
+        @Query('ids') ids: string[] = [],
+        @I18nLang() lang?: string
+    ): Promise<{userId: string, userName: string}[]> {
+        return this.profileService.getProfileUserNamesByUserIds(ids, lang);
     }
 
     @Get('person')

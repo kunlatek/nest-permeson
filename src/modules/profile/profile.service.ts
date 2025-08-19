@@ -60,7 +60,7 @@ export class ProfileService {
     async getProfileUserNamesByUserIds(userIds: string[], lang: string): Promise<{userId: string, userName: string}[]> {
         const personUserNames = await this.personProfileService.getPersonProfileUserNamesByUserIds(userIds, lang)
         const companyUserNames = await this.companyProfileService.getCompanyProfileUserNamesByUserIds(userIds, lang)
-        return [...personUserNames, ...companyUserNames].map((profile) => ({userId: profile.userId, userName: profile.userName}))
+        return [...personUserNames, ...companyUserNames].map((profile) => ({userId: profile.userId, userName: `@${profile.userName}`}))
     }
 
     async searchProfilesByUsername(username: string, page: number, limit: number, lang: string): Promise<ProfileSearchPaginatedResponseDto> {

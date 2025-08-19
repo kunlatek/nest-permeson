@@ -5,6 +5,9 @@ export class CompanyProfileEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  _id: string;
+
   @Column({ nullable: false })
   userId: string;
 

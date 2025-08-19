@@ -21,20 +21,20 @@ export class EmailService {
   }
 
   async sendRegisterEmail(email: string) {
-    const baseUrl = this.configService.get("BASE_URL");
+    const baseUrl = this.configService.get("API_BASE_URL");
 
     const token = this.jwtService.sign({ email }, { expiresIn: "24h" });
 
-    const url = `${baseUrl}/auth/register-completion?token=${token}&email=${email}`;
+    const url = `${baseUrl}/account/verify?token=${token}&email=${email}`;
 
     await this.transporter.sendMail({
       from: process.env.SMTP_FROM,
       to: email,
-      subject: "Complete seu cadastro",
+      subject: "Bem vindo",
       html: `
-        <h1>Bem-vindo!</h1>
-        <p>Clique no link abaixo para completar seu cadastro:</p>
-        <a href="${url}">Completar cadastro</a>
+        <h1>Bem vindo!</h1>
+        <p>Clique no link abaixo para verificar seu email:</p>
+        <a href="${url}">Verificar email</a>
         <p>Este link expira em 24 horas.</p>
       `,
     });

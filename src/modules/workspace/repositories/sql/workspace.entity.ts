@@ -5,6 +5,9 @@ export class WorkspaceEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  _id: string;
+
   @Column({ nullable: false })
   owner: string;
 

@@ -16,7 +16,7 @@ export class OwnerInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest<Request>();
     const user = request.user as any;
 
-    if (request.method === 'POST' && user) {
+    if ((request.method === 'POST' || request.method === 'DELETE') && user) {
       const body = request.body;
 
       // Sempre define createdBy como o userId do usuário logado
