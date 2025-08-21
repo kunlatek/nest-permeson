@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In } from "typeorm";
+import { Repository, In, Like } from "typeorm";
 import { WorkspaceEntity } from "./workspace.entity";
 import { CreateWorkspaceDto, UpdateWorkspaceDto, WorkspaceResponseDto } from "../../dto";
 import { WorkspaceRepository } from "../../workspace.repository.interface";
@@ -39,12 +39,16 @@ export class WorkspaceSQLRepository implements WorkspaceRepository {
   }
 
   async findByTeamUser(userId: string): Promise<WorkspaceResponseDto[]> {
-    const workspaces = await this.workspaceRepository.find({
-      where: [
-        { owner: userId },
-        { team: In([userId]) }
-      ]
-    });
+    // Since team is stored as simple-array (comma-separated string), we need to search for the userId within the string
+    // We need to handle different cases: userId at start, middle, or end of the array
+    const workspaces = await this.workspaceRepository
+      .createQueryBuilder('workspace')
+      .where('workspace.owner = :userId', { userId })
+      .orWhere('workspace.team LIKE :userIdExact', { userIdExact: userId })
+      .orWhere('workspace.team LIKE :userIdStart', { userIdStart: `${userId},%` })
+      .orWhere('workspace.team LIKE :userIdMiddle', { userIdMiddle: `%,${userId},%` })
+      .orWhere('workspace.team LIKE :userIdEnd', { userIdEnd: `%,${userId}` })
+      .getMany();
 
     return workspaces.map(workspace => this.transformEntityToResponse(workspace));
   }

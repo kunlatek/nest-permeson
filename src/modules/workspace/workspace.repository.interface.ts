@@ -12,4 +12,8 @@ export interface WorkspaceRepository {
   findByOwner(owner: string): Promise<WorkspaceResponseDto>;
   
   findByTeamUser(teamUser: string): Promise<WorkspaceResponseDto[]>;
+
+  addTeamUser(workspaceId: string, userId: string): Promise<WorkspaceResponseDto>;
+
+  removeTeamUser(workspaceId: string, userId: string): Promise<WorkspaceResponseDto>;
 }

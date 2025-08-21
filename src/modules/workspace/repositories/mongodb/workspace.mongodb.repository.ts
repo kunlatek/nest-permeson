@@ -38,7 +38,41 @@ export class WorkspaceMongoDBRepository implements WorkspaceRepository {
     }
 
     async findByTeamUser(teamUser: string): Promise<WorkspaceResponseDto[]> {
-        const workspaces = await this.workspaceModel.find({ team: { $in: [teamUser] } }).lean();
+        // Find workspaces where the user is either the owner or a member of the team
+        const workspaces = await this.workspaceModel.find({
+            $or: [
+                { owner: teamUser },
+                { team: teamUser } // This will find workspaces where teamUser is in the team array
+            ]
+        }).lean();
         return workspaces.map((workspace) => new WorkspaceResponseDto(workspace));
+    }
+
+    async addTeamUser(workspaceId: string, userId: string): Promise<WorkspaceResponseDto> {
+        const workspace = await this.workspaceModel.findById(workspaceId);
+        if (!workspace) {
+            throw new Error(`Workspace with id ${workspaceId} not found`);
+        }
+
+        const currentTeam = workspace.team || [];
+        if (!currentTeam.includes(userId)) {
+            currentTeam.push(userId);
+            await this.workspaceModel.findByIdAndUpdate(workspaceId, { team: currentTeam });
+        }
+
+        return this.findById(workspaceId);
+    }
+
+    async removeTeamUser(workspaceId: string, userId: string): Promise<WorkspaceResponseDto> {
+        const workspace = await this.workspaceModel.findById(workspaceId);
+        if (!workspace) {
+            throw new Error(`Workspace with id ${workspaceId} not found`);
+        }
+
+        const currentTeam = workspace.team || [];
+        const updatedTeam = currentTeam.filter(id => id !== userId);
+        await this.workspaceModel.findByIdAndUpdate(workspaceId, { team: updatedTeam });
+
+        return this.findById(workspaceId);
     }
 }

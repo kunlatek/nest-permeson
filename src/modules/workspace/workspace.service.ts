@@ -38,8 +38,8 @@ export class WorkspaceService {
     try {
       const workspace = await this.workspaceRepository.findByOwner(owner);
       if (!workspace) throw new NotFoundException(this.i18n.t('translation.workspace.workspace-not-found', { lang }));
-      workspace.team.push(userId);
-      await this.workspaceRepository.update(workspace._id, workspace);
+      
+      await this.workspaceRepository.addTeamUser(workspace._id, userId);
       return new IHttpResponse(204, this.i18n.t('translation.workspace.team-user-added', { lang }));
     } catch (error) {
       throw new BadRequestException(this.i18n.t('translation.workspace.error-adding-team-user', { lang }));
@@ -51,8 +51,7 @@ export class WorkspaceService {
       const workspace = await this.workspaceRepository.findByOwner(owner);
       if (!workspace) throw new NotFoundException(this.i18n.t('translation.workspace.workspace-not-found', { lang }));
 
-      workspace.team = workspace.team.filter((id) => id !== userId);
-      await this.workspaceRepository.update(workspace._id, workspace);
+      await this.workspaceRepository.removeTeamUser(workspace._id, userId);
       return new IHttpResponse(204, this.i18n.t('translation.workspace.team-user-removed', { lang }));
     } catch (error) {
       throw new BadRequestException(this.i18n.t('translation.workspace.error-removing-team-user', { lang }));
