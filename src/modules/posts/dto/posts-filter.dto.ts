@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNumber, IsOptional, Min } from "class-validator";
+import { IsNumber, IsOptional, Min, IsString } from "class-validator";
 import { Type } from "class-transformer";
 
 export class PostsFilterDto {
@@ -24,4 +24,13 @@ export class PostsFilterDto {
   @Min(1)
   @IsOptional()
   limit?: number = 10;
+
+  @ApiPropertyOptional({
+    description: 'Language for internationalization',
+    example: 'pt',
+    default: 'en',
+  })
+  @IsString()
+  @IsOptional()
+  lang?: string = 'en';
 }
