@@ -9,19 +9,19 @@ export class PostEntity {
   _id: string;
 
   @Column({ nullable: false })
-  titulo: string;
+  title: string;
 
   @Column({ type: 'text', nullable: false })
-  conteudo: string;
+  content: string;
 
   @Column({ type: 'date', nullable: false })
-  dataPublicacao: Date;
+  publishedAt: Date;
 
   @Column({ type: 'int', nullable: false })
-  tempoLeitura: number;
+  readingTime: number;
 
   @Column({ nullable: false })
-  autor: string;
+  author: string;
 
   @Column({ nullable: false })
   workspace: string;
