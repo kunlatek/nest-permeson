@@ -8,14 +8,14 @@ import { Request, Response, NextFunction } from 'express';
 @Injectable()
 export class AuthDebugMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    console.log('🔹 [Auth Debug Middleware] Request received.');
-    console.log('🔹 Request headers:', req.headers);
+    // console.log('🔹 [Auth Debug Middleware] Request received.');
+    // console.log('🔹 Request headers:', req.headers);
 
-    if (req.headers.authorization) {
-      console.log('✅ Authorization Header found:', req.headers.authorization);
-    } else {
-      console.log('❌ Authorization Header NOT found!');
-    }
+    // if (req.headers.authorization) {
+    //   console.log('✅ Authorization Header found:', req.headers.authorization);
+    // } else {
+    //   console.log('❌ Authorization Header NOT found!');
+    // }
 
     next();
   }

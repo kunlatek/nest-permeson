@@ -401,3 +401,5 @@ dist
 
 /logs/*
 .audit.json
+
+db.sqlite

@@ -1,110 +1,105 @@
 import {
   Injectable,
   UnauthorizedException,
-  ForbiddenException,
   BadRequestException,
   NotFoundException,
 } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
-import { UserDocument } from "../user/schemas/user.schema";
-import { ErrorService } from "../../common/services/error.service";
-import { ErrorCode } from "../../common/constants/error-code.enum";
-import axios from "axios";
-import * as jwt from "jsonwebtoken";
-import * as jwksClient from "jwks-rsa";
-import { UserRole } from "src/enums/user-role.enum";
-import { SignupDto } from "./dto/signup.dto";
-import { RegisterInitDto } from "./dto/register-init.dto";
-import { InvitationService } from "../invitation/invitation.service";
+import { SignupDto, ResetPasswordDto, LoginDto } from "./dto";
 import { EmailService } from "./services/email.service";
-import { ResetPasswordDto } from "./dto/reset-password.dto";
+import { UserResponseDto } from "../user/dto/user-response.dto";
+import { I18nService } from "nestjs-i18n";
+import { AuthLoginResponseDto } from "./dto/auth-response.dto";
+import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
+import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
+import { IHttpResponse } from "src/interfaces";
+import { WorkspaceService } from "../workspace/workspace.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly errorService: ErrorService,
-    private readonly invitationService: InvitationService,
-    private readonly emailService: EmailService
-  ) {}
+    private readonly emailService: EmailService,
+    private readonly i18n: I18nService,
+    private readonly workspaceService: WorkspaceService,
+  ) { }
 
-  async validateUser(email: string, password: string): Promise<UserDocument> {
-    const user = await this.userService.validateUser(email, password);
+  async validateUser(email: string, password: string, lang: string = "en"): Promise<UserResponseDto> {
+    const user = await this.userService.findByEmail(email);
+    if (!user) throw new NotFoundException(this.i18n.t("translation.auth.user-not-found", { lang }));
 
-    if (!user) {
-      throw new UnauthorizedException(
-        this.errorService.getErrorMessage(ErrorCode.INVALID_CREDENTIALS)
-      );
+    if (!user.password) {
+      throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
     }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
+
+    if (!user.verified) throw new UnauthorizedException(this.i18n.t("translation.auth.account-not-verified", { lang }));
 
     return user;
   }
 
-  async login(user: UserDocument) {
-    const availableRoles = await this.userService.getAvailableRoles(user._id);
-
-    const payload = {
-      sub: user._id,
-      email: user.email,
-      activeRole: availableRoles.length === 1 ? availableRoles[0] : null,
-      availableRoles,
-    };
-
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
-
-  async issueTokenWithRole(
-    userId: string,
-    newRole: UserRole
-  ): Promise<{ access_token: string }> {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new UnauthorizedException(
-        this.errorService.getErrorMessage(ErrorCode.UNAUTHORIZED)
-      );
+  async signup(signupDto: SignupDto, lang: string = "en"): Promise<IHttpResponse> {
+    if (await this.userService.findByEmail(signupDto.email)) {
+      throw new BadRequestException(this.i18n.t("translation.auth.signup.email-already-in-use", { lang }));
     }
 
-    const availableRoles = await this.userService.getAvailableRoles(userId);
-    const updatedRoles = Array.from(new Set([...availableRoles, newRole]));
-
-    const payload = {
-      sub: user._id,
-      email: user.email,
-      activeRole: newRole,
-      availableRoles: updatedRoles,
-    };
-
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    try {
+      const { email, password } = signupDto;
+      await this.userService.createUser({ email, password });
+      await this.emailService.sendRegisterEmail(email);
+      return new IHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }));
+    } catch (error) {
+      throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
+    }
   }
 
-  async switchActiveRole(
-    user: any,
-    newRole: UserRole
-  ): Promise<{ access_token: string }> {
-    if (!user.availableRoles.includes(newRole)) {
-      throw new ForbiddenException(`You cannot switch to role: ${newRole}`);
+  async login(loginDto: LoginDto, lang: string = "en"): Promise<ILoginHttpResponse> {
+    const { email, password } = loginDto;
+    const user = await this.validateUser(email, password, lang);
+    const { _id: sub } = user;
+    const workspaceId = await this.workspaceService.findWorkspacesByOwner(sub, lang);
+    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId.data._id })));
+  }
+
+  async resetPasswordRequest(email: string, lang: string = "en"): Promise<IResetPasswordHttpResponse> {
+    const user = await this.userService.findByEmail(email);
+    if (!user) throw new NotFoundException(this.i18n.t("translation.auth.user-not-found", { lang }));
+
+    try {
+      await this.emailService.sendResetPasswordEmail(email);
+    } catch (error) {
+      throw new BadRequestException(this.i18n.t("translation.auth.reset-password-request.error", { lang }));
     }
 
-    const payload = {
-      sub: user.userId,
-      email: user.email,
-      activeRole: newRole,
-      availableRoles: user.availableRoles,
-    };
-
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return new IResetPasswordHttpResponse(200, this.i18n.t("translation.auth.reset-password-request.success", { lang }), this.i18n.t("translation.auth.reset-password-request.success", { lang }));
   }
 
-  async googleLogin(idToken: string) {
+  async resetPassword(resetPasswordDto: ResetPasswordDto, lang: string = "en"): Promise<IResetPasswordHttpResponse> {
+    const { token, password } = resetPasswordDto;
+
+    let payload: any;
+
+    try {
+      payload = this.jwtService.verify(token);
+    } catch (error) {
+      throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-token", { lang }));
+    }
+
+    const user = await this.userService.findByEmail(payload.email);
+    if (!user) throw new NotFoundException(this.i18n.t("translation.auth.user-not-found", { lang }));
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await this.userService.updateUser(user._id, { password: hashedPassword });
+
+    return new IResetPasswordHttpResponse(200, this.i18n.t("translation.auth.reset-password.success", { lang }), this.i18n.t("translation.auth.reset-password.success", { lang }));
+  }
+
+  /*async googleLogin(idToken: string) {
     try {
       const response = await axios.get(
         `https://www.googleapis.com/oauth2/v1/tokeninfo?id_token=${idToken}`
@@ -187,103 +182,5 @@ export class AuthService {
         this.errorService.getErrorMessage(ErrorCode.INVALID_CREDENTIALS)
       );
     }
-  }
-
-  async registerInit(registerInitDto: RegisterInitDto) {
-    const { email } = registerInitDto;
-
-    // Check if user already exists
-    const existingUser = await this.userService.findByEmail(email);
-    if (existingUser) {
-      throw new BadRequestException("Email address is already in use.");
-    }
-
-    try {
-      await this.emailService.sendRegisterEmail(email);
-      return {
-        message: "Email de registro enviado com sucesso",
-      };
-    } catch (error) {
-      throw new BadRequestException("Erro ao enviar email de registro");
-    }
-  }
-
-  async signup(signupDto: SignupDto) {
-    try {
-      const payload = this.jwtService.verify(signupDto.registerToken);
-
-      if (payload.email !== signupDto.email) {
-        throw new BadRequestException("Email não corresponde ao token");
-      }
-
-      // Check if user already exists
-      const existingUser = await this.userService.findByEmail(signupDto.email);
-      if (existingUser) {
-        throw new BadRequestException("Email address is already in use.");
-      }
-
-      const user = await this.userService.createUser({
-        email: signupDto.email,
-        password: signupDto.password,
-      });
-
-      const token = this.jwtService.sign({
-        sub: user.id,
-        email: user.email,
-      });
-
-      return {
-        user,
-        token,
-      };
-    } catch (error) {
-      if (error.name === "JsonWebTokenError") {
-        throw new UnauthorizedException("Token de registro inválido");
-      }
-      if (error.name === "TokenExpiredError") {
-        throw new UnauthorizedException("Token de registro expirado");
-      }
-      throw error;
-    }
-  }
-
-  async forgotPassword(email: string) {
-    const user = await this.userService.findByEmail(email);
-    if (!user) {
-      throw new NotFoundException("Usuário não encontrado");
-    }
-
-    try {
-      await this.emailService.sendForgotPasswordEmail(email);
-    } catch (error) {
-      throw new BadRequestException(
-        "Erro ao enviar email de recuperação de senha"
-      );
-    }
-
-    return {
-      message: "Email de recuperação de senha enviado com sucesso",
-    };
-  }
-
-  async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    const { token, password } = resetPasswordDto;
-
-    const decoded = this.jwtService.verify(token);
-
-    const user = await this.userService.findByEmail(decoded.email);
-
-    if (!user) {
-      throw new NotFoundException("Usuário não encontrado");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    user.password = hashedPassword;
-    await user.save();
-
-    return {
-      message: "Senha resetada com sucesso",
-    };
-  }
+  }*/
 }

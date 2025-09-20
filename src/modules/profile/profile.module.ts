@@ -1,40 +1,19 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { CommonModule } from 'src/common/common.module';
-import { UserModule } from '../user/user.module';
-import { AuthModule } from '../auth/auth.module';
 
-import { CompanyProfileController } from './company/company-profile.controller';
-import { CompanyProfileService } from './company/company-profile.service';
-import { MongoDBCompanyProfile, CompanyProfileSchema, CompanyProfileMongoDBRepository } from './company/repositories/mongodb';
-
-import { PersonProfileController } from './person/person-profile.controller';
-import { PersonProfileService } from './person/person-profile.service';
-import { PersonProfileSchema, MongoDBPersonProfile, PersonProfileMongoDBRepository } from './person/repositories/mongodb';
+import { ProfileService } from './profile.service';
+import { CompanyProfileModule } from '../company-profile/company-profile.module';
+import { PersonProfileModule } from '../person-profile/person-profile.module';
+import { ProfileController } from './profile.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: MongoDBPersonProfile.name, schema: PersonProfileSchema },
-      { name: MongoDBCompanyProfile.name, schema: CompanyProfileSchema },
-    ]),
-    CommonModule,
-    UserModule,
-    AuthModule,
+    CompanyProfileModule,
+    PersonProfileModule,
   ],
-  controllers: [CompanyProfileController, PersonProfileController],
   providers: [
-    PersonProfileService,
-    {
-      provide: 'PersonProfileRepository',
-      useClass: PersonProfileMongoDBRepository,
-    },
-    CompanyProfileService,
-    {
-      provide: 'CompanyProfileRepository',
-      useClass: CompanyProfileMongoDBRepository,
-    },
+    ProfileService,
   ],
-  exports: [PersonProfileService, CompanyProfileService],
+  controllers: [ProfileController],
+  exports: [ProfileService],
 })
 export class ProfileModule {}

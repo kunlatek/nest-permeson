@@ -1,5 +1,100 @@
 {
-  "translation": {
-    "hello": "Hola Mundo!"
+  "hello": "Hola Mundo!",
+  "auth": {
+    "user-not-found": "Usuario no encontrado",
+    "invalid-token": "Token inválido",
+    "invalid-credentials": "Credenciales inválidas",
+    "account-not-verified": "Cuenta no verificada",
+    "reset-password-request": {
+      "error": "Error al enviar el email de recuperación de contraseña",
+      "success": "Email de recuperación de contraseña enviado correctamente"
+    },
+    "reset-password": {
+      "success": "Contraseña restablecida correctamente"
+    },
+    "signup": {
+      "error": "Error no registro",
+      "email-and-token-dont-match": "Email inválido",
+      "email-already-in-use": "Email ya en uso",
+      "invalid-email": "Por favor, proporcione un email válido",
+      "email-must-be-string": "El email debe ser una cadena de texto",
+      "password-must-be-string": "La contraseña debe ser una cadena de texto",
+      "password-min-length": "La contraseña debe tener al menos 6 caracteres",
+      "token-must-be-string": "El token de registro debe ser una cadena de texto"
+    },
+    "login": {
+      "error": "Error en el login",
+      "invalid-email": "Email inválido",
+      "email-required": "Email es requerido",
+      "password-required": "Contraseña es requerida",
+      "password-min-length": "La contraseña debe tener al menos 8 caracteres",
+      "password-must-be-a-string": "La contraseña debe ser una cadena"
+    }
+  },
+  "account": {
+    "verify-email-sent": "Email de verificación enviado",
+    "email-and-token-dont-match": "Email inválido",
+    "error-updating-user": "Error al actualizar el usuario",
+    "error-getting-user": "Error al obtener el usuario",
+    "verified": "Cuenta verificada",
+    "account-status": "Estado de la cuenta"
+  },
+  "profile": {
+    "invalid-profile-type": "Tipo de perfil inválido",
+    "person-profile-found": "Perfil de persona encontrado",
+    "person-profile-not-found": "Perfil de persona no encontrado",
+    "company-profile-found": "Perfil de empresa encontrado",
+    "company-profile-not-found": "Perfil de empresa no encontrado",
+    "person-profile-updated": "Perfil de persona actualizado",
+    "company-profile-updated": "Perfil de empresa actualizado",
+    "person-profile-update-error": "Error al actualizar el perfil de persona",
+    "company-profile-update-error": "Error al actualizar el perfil de empresa",
+    "profiles-found": "Perfiles encontrados exitosamente"
+  },
+  "workspace": {
+    "error-creating-workspace": "Error al crear el workspace",
+    "error-updating-workspace": "Error al actualizar el workspace",
+    "error-deleting-workspace": "Error al eliminar el workspace",
+    "error-finding-workspace": "Error al encontrar el workspace",
+    "error-finding-workspaces-by-owner": "Error al encontrar los workspaces por dueño",
+    "error-finding-workspaces-by-team-user": "Error al encontrar los workspaces por usuario del equipo",
+    "error-adding-team-user": "Error al agregar el usuario al workspace",
+    "workspace-not-found": "Workspace no encontrado",
+    "workspace-found": "Workspace encontrado",
+    "team-user-added": "Usuario del equipo agregado",
+    "team-user-removed": "Usuario del equipo eliminado",
+    "error-removing-team-user": "Error al eliminar el usuario del equipo",
+    "my-workspaces-found": "Workspaces encontrados",
+    "error-finding-my-workspaces": "Error al encontrar los workspaces",
+    "user-not-in-workspace": "Usuario no en el workspace",
+    "error-finding-workspace-token": "Error al encontrar el token del workspace",
+    "workspace-token-found": "Token del workspace encontrado"
+  },
+  "person-profile": {
+    "person-profile-create-error": "Error al crear el perfil de persona",
+    "person-profile-found": "Perfil de persona encontrado",
+    "person-profile-not-found": "Perfil de persona no encontrado",
+    "person-profile-updated": "Perfil de persona actualizado",
+    "person-profile-update-error": "Error al actualizar el perfil de persona"
+  },
+  "company-profile": {
+    "company-profile-create-error": "Error al crear el perfil de empresa",
+    "company-profile-found": "Perfil de empresa encontrado",
+    "company-profile-not-found": "Perfil de empresa no encontrado",
+    "company-profile-updated": "Perfil de empresa actualizado",
+    "company-profile-update-error": "Error al actualizar el perfil de empresa"
+  },
+  "posts": {
+    "post-created": "Post creado exitosamente",
+    "posts-found": "Posts encontrados exitosamente",
+    "post-found": "Post encontrado exitosamente",
+    "post-not-found": "Post no encontrado",
+    "post-updated": "Post actualizado exitosamente",
+    "post-deleted": "Post eliminado exitosamente",
+    "error-creating-post": "Error al crear el post",
+    "error-finding-posts": "Error al encontrar los posts",
+    "error-finding-post": "Error al encontrar el post",
+    "error-updating-post": "Error al actualizar el post",
+    "error-deleting-post": "Error al eliminar el post"
   }
 }

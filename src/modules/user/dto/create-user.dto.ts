@@ -1,32 +1,10 @@
 import { IsEmail, IsNotEmpty, MinLength, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../models';
 
-export class CreateUserDto {
-  @ApiProperty({
-    example: 'john.doe@example.com',
-    description: 'User e-mail, must be unique',
-  })
-  @IsEmail()
-  email: string;
+export class CreateUserDto extends User {}
 
-  @ApiProperty({
-    example: 'p4s$W0rd!',
-    description: 'Password with a minimum length of 8 characters',
-  })
-  @IsNotEmpty()
-  @MinLength(8)
-  password: string;
-}
-
-export class CreateUserByInvitationDto {
-  @ApiProperty({
-    example: 'john.doe@example.com',
-    description: 'User e-mail, must be unique',
-  })
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
+export class CreateUserByInvitationDto extends User {
   @ApiProperty({
     example: '1234567890',
     description: 'Invitation token',
@@ -34,12 +12,4 @@ export class CreateUserByInvitationDto {
   @IsString()
   @IsNotEmpty()
   token: string;
-
-  @ApiProperty({
-    example: 'p4s$W0rd!',
-    description: 'Password with a minimum length of 8 characters',
-  })
-  @IsNotEmpty()
-  @MinLength(8)
-  password: string;
 }

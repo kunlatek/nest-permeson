@@ -5,9 +5,8 @@ import * as dotenv from 'dotenv';
 import { AuthDebugMiddleware } from './common/middleware/auth-debug.middleware';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 // import { LoggingInterceptor } from './interceptors/logging.interceptor';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { OwnerInterceptor } from './common/interceptors/owner.interceptor';
-import { InvitationService } from './modules/invitation/invitation.service';
 
 dotenv.config();
 
@@ -19,6 +18,9 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (errors) => {
+        return new BadRequestException(Object.values(errors?.[errors.length - 1]?.constraints)?.[Object.values(errors?.[errors.length - 1]?.constraints)?.length - 1] ?? 'Invalid request');
+      },
     }),
   );
 
@@ -26,11 +28,6 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.use(new AuthDebugMiddleware().use);
-
-  app.use((req, res, next) => {
-    console.log('🔹 Received Token:', req.headers.authorization);
-    next();
-  });
 
   // app.useGlobalInterceptors(app.get(LoggingInterceptor));
 
@@ -56,8 +53,7 @@ async function bootstrap() {
     },
   });
 
-  const invitationService = app.get(InvitationService);
-  app.useGlobalInterceptors(new OwnerInterceptor(invitationService));
+  app.useGlobalInterceptors(new OwnerInterceptor());
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

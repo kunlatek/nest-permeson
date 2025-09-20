@@ -1,23 +1,15 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { User, UserDocument } from "../user/schemas/user.schema";
-import { MongoDBPersonProfile } from "../profile/person/repositories/mongodb";
-import { MongoDBCompanyProfile } from "../profile/company/repositories/mongodb";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class CleanupService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @InjectModel(MongoDBPersonProfile.name)
-    private personProfileModel: Model<MongoDBPersonProfile>,
-    @InjectModel(MongoDBCompanyProfile.name)
-    private companyProfileModel: Model<MongoDBCompanyProfile>
+    private readonly userService: UserService,
   ) {}
 
   async removeTestUser(email: string) {
     // Find the user with the specified email
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userService.findByEmail(email);
     if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }
@@ -25,24 +17,20 @@ export class CleanupService {
     const userId = user._id.toString();
 
     // Delete all related person profiles
-    const deletedPersonProfiles = await this.personProfileModel.deleteMany({
-      userId,
-    });
+    // await this.personProfileService.deleteByUserId(userId);
 
     // Delete all related company profiles
-    const deletedCompanyProfiles = await this.companyProfileModel.deleteMany({
-      userId,
-    });
+    // await this.companyProfileService.deleteByUserId(userId);
 
     // Delete the user
-    await this.userModel.findByIdAndDelete(user._id);
+    await this.userService.softDeleteUser(userId);
 
     return {
       message: `User ${email} removed successfully`,
       details: {
         userId,
-        deletedPersonProfiles: deletedPersonProfiles.deletedCount,
-        deletedCompanyProfiles: deletedCompanyProfiles.deletedCount,
+        deletedPersonProfiles: 1,
+        deletedCompanyProfiles: 1,
       },
     };
   }

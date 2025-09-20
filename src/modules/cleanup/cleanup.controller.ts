@@ -9,14 +9,8 @@ export class CleanupController {
 
   @Post("remove-test-user")
   @ApiOperation({ summary: "Remove test user and related profiles" })
-  @ApiResponse({
-    status: 200,
-    description: "Test user and all related profiles removed successfully",
-  })
-  @ApiResponse({
-    status: 404,
-    description: "Test user not found",
-  })
+  @ApiResponse({ status: 200, description: "Test user and all related profiles removed successfully" })
+  @ApiResponse({ status: 404, description: "Test user not found" })
   async removeTestUser() {
     return this.cleanupService.removeTestUser("zeninguem@email.com");
   }

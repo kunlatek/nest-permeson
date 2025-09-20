@@ -1,5 +1,103 @@
 {
-  "translation": {
-    "hello": "Hello World!"
+  "hello": "Hello World!",
+  "auth": {
+    "user-not-found": "User not found",
+    "invalid-token": "Invalid token",
+    "invalid-credentials": "Invalid credentials",
+    "account-not-verified": "Account not verified",
+    "reset-password-request": {
+      "error": "Error sending reset password email",
+      "success": "Reset password email sent successfully"
+    },
+    "reset-password": {
+      "success": "Password reset successfully",
+      "error": "Error resetting password" 
+    },
+    "signup": {
+      "error": "Signup error",
+      "success": "User registered successfully",
+      "email-and-token-dont-match": "Invalid email",
+      "email-already-in-use": "Email already in use",
+      "invalid-email": "Please provide a valid email address",
+      "email-must-be-string": "Email must be a string",
+      "password-must-be-string": "Password must be a string",
+      "password-min-length": "Password must be at least 6 characters long",
+      "token-must-be-string": "Registration token must be a string"
+    },
+    "login": {
+      "error": "Login error",
+      "success": "Login successful",
+      "invalid-email": "Invalid email",
+      "email-required": "Email is required",
+      "password-required": "Password is required",
+      "password-min-length": "Password must be at least 8 characters long",
+      "password-must-be-a-string": "Password must be a string"
+    }
+  },
+  "account": {
+    "verify-email-sent": "Verify email sent",
+    "email-and-token-dont-match": "Invalid email",
+    "error-updating-user": "Error updating user",
+    "error-getting-user": "Error getting user",
+    "verified": "Account verified",
+    "account-status": "Account status"
+  },
+  "profile": {
+    "invalid-profile-type": "Invalid profile type",
+    "person-profile-found": "Person profile found",
+    "person-profile-not-found": "Person profile not found",
+    "company-profile-found": "Company profile found",
+    "company-profile-not-found": "Company profile not found",
+    "person-profile-updated": "Person profile updated",
+    "company-profile-updated": "Company profile updated",
+    "person-profile-update-error": "Error updating person profile",
+    "company-profile-update-error": "Error updating company profile",
+    "profiles-found": "Profiles found successfully"
+  },
+  "workspace": {
+    "error-creating-workspace": "Error creating workspace",
+    "error-updating-workspace": "Error updating workspace",
+    "error-deleting-workspace": "Error deleting workspace",
+    "error-finding-workspace": "Error finding workspace",
+    "error-finding-workspaces-by-owner": "Error finding workspaces by owner",
+    "error-finding-workspaces-by-team-user": "Error finding workspaces by team user",
+    "error-adding-team-user": "Error adding team user",
+    "workspace-not-found": "Workspace not found",
+    "workspace-found": "Workspace found",
+    "team-user-added": "Team user added",
+    "team-user-removed": "Team user removed",
+    "error-removing-team-user": "Error removing team user",
+    "my-workspaces-found": "My workspaces found",
+    "error-finding-my-workspaces": "Error finding my workspaces",
+    "user-not-in-workspace": "User not in workspace",
+    "error-finding-workspace-token": "Error finding workspace token",
+    "workspace-token-found": "Workspace token found"
+  },
+  "person-profile": {
+    "person-profile-create-error": "Error creating person profile",
+    "person-profile-found": "Person profile found",
+    "person-profile-not-found": "Person profile not found",
+    "person-profile-updated": "Person profile updated",
+    "person-profile-update-error": "Error updating person profile"
+  },
+  "company-profile": {
+    "company-profile-create-error": "Error creating company profile",
+    "company-profile-found": "Company profile found",
+    "company-profile-not-found": "Company profile not found",
+    "company-profile-updated": "Company profile updated",
+    "company-profile-update-error": "Error updating company profile"
+  },
+  "posts": {
+    "post-created": "Post created successfully",
+    "posts-found": "Posts found successfully",
+    "post-found": "Post found successfully",
+    "post-not-found": "Post not found",
+    "post-updated": "Post updated successfully",
+    "post-deleted": "Post deleted successfully",
+    "error-creating-post": "Error creating post",
+    "error-finding-posts": "Error finding posts",
+    "error-finding-post": "Error finding post",
+    "error-updating-post": "Error updating post",
+    "error-deleting-post": "Error deleting post"
   }
 }
