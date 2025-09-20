@@ -6,19 +6,19 @@ export type PostDocument = MongoDBPost & Document;
 @Schema({ timestamps: true, collection: 'Post' })
 export class MongoDBPost extends Document {
   @Prop({ required: true })
-  titulo: string;
+  title: string;
 
   @Prop({ required: true })
-  conteudo: string;
+  content: string;
 
   @Prop({ required: true, type: Date })
-  dataPublicacao: Date;
+  publishedAt: Date;
 
   @Prop({ required: true, type: Number })
-  tempoLeitura: number;
+  readingTime: number;
 
   @Prop({ required: true })
-  autor: string;
+  author: string;
 
   @Prop({ required: true })
   workspace: string;

@@ -15,7 +15,7 @@ export class PostsMongoDBRepository implements PostsRepository {
   async create(postDto: CreatePostDto, workspace: string, createdBy: string): Promise<PostResponseDto> {
     const postData = {
       ...postDto,
-      dataPublicacao: new Date(postDto.dataPublicacao),
+      publishedAt: new Date(postDto.publishedAt),
       workspace,
       createdBy: postDto.createdBy || createdBy,
     };
@@ -61,8 +61,8 @@ export class PostsMongoDBRepository implements PostsRepository {
     }
 
     const updateData: any = { ...postDto };
-    if (updateData.dataPublicacao) {
-      updateData.dataPublicacao = new Date(updateData.dataPublicacao);
+    if (updateData.publishedAt) {
+      updateData.publishedAt = new Date(updateData.publishedAt);
     }
 
     const updatedPost = await this.postModel.findByIdAndUpdate(id, updateData, { new: true }).lean();
@@ -84,9 +84,9 @@ export class PostsMongoDBRepository implements PostsRepository {
     const responseData = {
       ...post,
       _id: post._id.toString(),
-      dataPublicacao: post.dataPublicacao instanceof Date 
-        ? post.dataPublicacao.toISOString() 
-        : post.dataPublicacao,
+      publishedAt: post.publishedAt instanceof Date 
+        ? post.publishedAt.toISOString() 
+        : post.publishedAt,
       createdAt: post.createdAt instanceof Date 
         ? post.createdAt.toISOString() 
         : post.createdAt,

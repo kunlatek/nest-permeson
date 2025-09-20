@@ -3,44 +3,44 @@ import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional } from "class-
 
 export class CreatePostDto {
   @ApiProperty({
-    example: 'Meu primeiro post',
-    description: 'Título do post',
+    example: 'My first post',
+    description: 'Post title',
   })
   @IsNotEmpty()
   @IsString()
-  titulo: string;
+  title: string;
 
   @ApiProperty({
-    example: 'Este é o conteúdo do meu post...',
-    description: 'Conteúdo do post',
+    example: 'This is the content of my post...',
+    description: 'Post content',
   })
   @IsNotEmpty()
   @IsString()
-  conteudo: string;
+  content: string;
 
   @ApiProperty({
     example: '2024-01-15',
-    description: 'Data da publicação',
+    description: 'Publication date',
   })
   @IsNotEmpty()
   @IsDateString()
-  dataPublicacao: string;
+  publishedAt: string;
 
   @ApiProperty({
     example: 5,
-    description: 'Tempo de leitura em minutos',
+    description: 'Reading time in minutes',
   })
   @IsNotEmpty()
   @IsNumber()
-  tempoLeitura: number;
+  readingTime: number;
 
   @ApiProperty({
-    example: 'João Silva',
-    description: 'Autor do post',
+    example: 'John Silva',
+    description: 'Post author',
   })
   @IsNotEmpty()
   @IsString()
-  autor: string;
+  author: string;
 
   @ApiPropertyOptional({
     example: 'user123',
