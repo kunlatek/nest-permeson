@@ -15,6 +15,7 @@ import { AuthLoginResponseDto } from "./dto/auth-response.dto";
 import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
 import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
 import { IHttpResponse } from "src/interfaces";
+import { WorkspaceService } from "../workspace/workspace.service";
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
     private readonly i18n: I18nService,
+    private readonly workspaceService: WorkspaceService,
   ) { }
 
   async validateUser(email: string, password: string, lang: string = "en"): Promise<UserResponseDto> {
@@ -60,7 +62,8 @@ export class AuthService {
     const { email, password } = loginDto;
     const user = await this.validateUser(email, password, lang);
     const { _id: sub } = user;
-    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email })));
+    const workspaceId = await this.workspaceService.findWorkspacesByOwner(sub, lang);
+    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId.data._id })));
   }
 
   async resetPasswordRequest(email: string, lang: string = "en"): Promise<IResetPasswordHttpResponse> {
