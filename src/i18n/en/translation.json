@@ -86,5 +86,18 @@
     "company-profile-not-found": "Company profile not found",
     "company-profile-updated": "Company profile updated",
     "company-profile-update-error": "Error updating company profile"
+  },
+  "posts": {
+    "post-created": "Post created successfully",
+    "posts-found": "Posts found successfully",
+    "post-found": "Post found successfully",
+    "post-not-found": "Post not found",
+    "post-updated": "Post updated successfully",
+    "post-deleted": "Post deleted successfully",
+    "error-creating-post": "Error creating post",
+    "error-finding-posts": "Error finding posts",
+    "error-finding-post": "Error finding post",
+    "error-updating-post": "Error updating post",
+    "error-deleting-post": "Error deleting post"
   }
 }

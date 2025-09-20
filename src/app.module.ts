@@ -10,6 +10,7 @@ import { RequestLoggerModule } from "./common/middleware/request-logger.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
 import { AccountModule } from "./modules/account/account.module";
 import { WorkspaceModule } from "./modules/workspace/workspace.module";
+import { PostsModule } from "./modules/posts/posts.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 
 // SQL Modules
@@ -17,6 +18,7 @@ import { PersonProfileSQLModule } from "./modules/person-profile/repositories/sq
 import { CompanyProfileSQLModule } from "./modules/company-profile/repositories/sql/company-profile.sql.module";
 import { UserSQLModule } from "./modules/user/repositories/sql/user.sql.module";
 import { WorkspaceSQLModule } from "./modules/workspace/repositories/sql/workspace.sql.module";
+import { PostsSQLModule } from "./modules/posts/repositories/sql/posts.sql.module";
 
 import { DATABASE } from "./common/constants/database.constant";
 import { getDatabaseConfig } from "./utils/database.utils";
@@ -37,6 +39,7 @@ import * as path from "path";
     CompanyProfileSQLModule,
     UserSQLModule,
     WorkspaceSQLModule,
+    PostsSQLModule,
     
     I18nModule.forRoot({
       fallbackLanguage: "en",
@@ -53,6 +56,7 @@ import * as path from "path";
     AccountModule,
     ProfileModule,
     WorkspaceModule,
+    PostsModule,
     
     CommonModule,
     LoggingModule,

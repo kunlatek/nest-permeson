@@ -85,5 +85,18 @@
     "company-profile-not-found": "Perfil de empresa não encontrado",
     "company-profile-updated": "Perfil de empresa atualizado",
     "company-profile-update-error": "Erro ao atualizar o perfil de empresa"
+  },
+  "posts": {
+    "post-created": "Post criado com sucesso",
+    "posts-found": "Posts encontrados com sucesso",
+    "post-found": "Post encontrado com sucesso",
+    "post-not-found": "Post não encontrado",
+    "post-updated": "Post atualizado com sucesso",
+    "post-deleted": "Post deletado com sucesso",
+    "error-creating-post": "Erro ao criar o post",
+    "error-finding-posts": "Erro ao encontrar os posts",
+    "error-finding-post": "Erro ao encontrar o post",
+    "error-updating-post": "Erro ao atualizar o post",
+    "error-deleting-post": "Erro ao deletar o post"
   }
 }
