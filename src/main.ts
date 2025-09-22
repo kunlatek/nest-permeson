@@ -7,11 +7,18 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 // import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { OwnerInterceptor } from './common/interceptors/owner.interceptor';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Configure static file serving for public folder
+  app.useStaticAssets(join(process.cwd(), 'public'), {
+    prefix: '/public/',
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({

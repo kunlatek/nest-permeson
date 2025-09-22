@@ -403,3 +403,7 @@ dist
 .audit.json
 
 db.sqlite
+
+public/uploads/*
+!public/uploads/upload
+

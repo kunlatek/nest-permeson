@@ -9,7 +9,6 @@ import { WorkspaceModule } from '../workspace/workspace.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '../../common/common.module';
 import { EmailService } from './services/email.service';
-import { DATABASE } from 'src/common/constants/database.constant';
 
 /**
  * Module responsible for handling authentication strategies,

@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CascadeService } from 'src/common/services/cascade.service';
 import { ErrorService } from 'src/common/services/error.service';
-import { ErrorCode } from 'src/common/constants/error-code.enum';
+import { ErrorCodeEnum } from 'src/enums/error-code.enum';
 import { UserRepository } from './user.repository.interface';
 import { UserResponseDto } from './dto';
 
@@ -24,7 +24,7 @@ export class UserService {
     const existingUser = await this.userRepository.findByEmail(payload.email);
     if (existingUser) {
       throw new UnauthorizedException(
-        this.errorService.getErrorMessage(ErrorCode.EMAIL_IN_USE),
+        this.errorService.getErrorMessage(ErrorCodeEnum.EMAIL_IN_USE),
       );
     }
 

@@ -109,7 +109,7 @@ export class AuthService {
 
       if (!email || !providerId) {
         throw new UnauthorizedException(
-          this.errorService.getErrorMessage(ErrorCode.UNAUTHORIZED)
+          this.errorService.getErrorMessage(ErrorCodeEnum.UNAUTHORIZED)
         );
       }
 
@@ -129,7 +129,7 @@ export class AuthService {
       console.error("❌ Failed to validate Google ID token:", error.message);
 
       throw new UnauthorizedException(
-        this.errorService.getErrorMessage(ErrorCode.INVALID_CREDENTIALS)
+        this.errorService.getErrorMessage(ErrorCodeEnum.INVALID_CREDENTIALS)
       );
     }
   }
@@ -141,7 +141,7 @@ export class AuthService {
 
       if (!kid) {
         throw new UnauthorizedException(
-          this.errorService.getErrorMessage(ErrorCode.INVALID_CREDENTIALS)
+          this.errorService.getErrorMessage(ErrorCodeEnum.INVALID_CREDENTIALS)
         );
       }
 
@@ -160,7 +160,7 @@ export class AuthService {
 
       if (!email || !providerId) {
         throw new UnauthorizedException(
-          this.errorService.getErrorMessage(ErrorCode.UNAUTHORIZED)
+          this.errorService.getErrorMessage(ErrorCodeEnum.UNAUTHORIZED)
         );
       }
 
@@ -179,7 +179,7 @@ export class AuthService {
       console.error("❌ Failed to validate Apple ID token:", error.message);
 
       throw new UnauthorizedException(
-        this.errorService.getErrorMessage(ErrorCode.INVALID_CREDENTIALS)
+        this.errorService.getErrorMessage(ErrorCodeEnum.INVALID_CREDENTIALS)
       );
     }
   }*/

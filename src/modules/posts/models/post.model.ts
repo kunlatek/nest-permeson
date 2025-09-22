@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional } from "class-validator";
+import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { UploadFile } from "../../../common/models";
 
 export class Post {
   @ApiProperty({
@@ -57,6 +59,15 @@ export class Post {
   @IsNotEmpty()
   @IsString()
   createdBy: string;
+
+  @ApiProperty({
+    type: [UploadFile],
+    description: 'Post cover images',
+  })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => UploadFile)
+  cover?: UploadFile[];
 
   @ApiProperty({
     example: '2024-01-15T10:30:00Z',
