@@ -36,10 +36,6 @@ export class UploadService implements UploadServiceInterface {
     fileNames?: string[],
     keepFiles?: string[]
   ): Promise<string[]> {
-    if (!files || files.length === 0) {
-      throw new Error("No files provided for upload.");
-    }
-
     try {
       // Normaliza o path removendo barras extras e garantindo que termine com /
       const normalizedPath = path.replace(/^\/+|\/+$/g, "");
@@ -51,14 +47,14 @@ export class UploadService implements UploadServiceInterface {
 
       // Lista arquivos existentes na pasta
       const existingFiles = await this.listFiles(normalizedPath);
-      
+
       // Deleta apenas os arquivos que não estão na lista de arquivos para manter
       if (existingFiles.length > 0) {
         for (const existingFile of existingFiles) {
           // Se não há lista de arquivos para manter, deleta todos
           // Se há lista, deleta apenas os que não estão na lista
           const shouldKeep = keepFiles && keepFiles.includes(existingFile);
-          
+
           if (!shouldKeep) {
             await this.deleteFile(normalizedPath, existingFile);
             this.logger.log(`Existing file ${existingFile} deleted before upload`);
@@ -69,49 +65,51 @@ export class UploadService implements UploadServiceInterface {
       const uploadedUrls: string[] = [];
 
       // Upload de cada arquivo
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileName = fileNames && fileNames[i] ? fileNames[i] : file.originalname.replace(/\s+/g, "_");
-        const destination = normalizedPath ? `${normalizedPath}/${fileName}` : fileName;
+      if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const fileName = fileNames && fileNames[i] ? fileNames[i] : file.originalname.replace(/\s+/g, "_");
+          const destination = normalizedPath ? `${normalizedPath}/${fileName}` : fileName;
 
-        const blob = bucket.file(destination);
-        const blobStream = blob.createWriteStream({
-          resumable: false,
-          contentType: file.mimetype,
-        });
-
-        // Upload do arquivo individual
-        await new Promise<void>((resolve, reject) => {
-          blobStream.on("error", (err) => {
-            this.logger.error(`GCS Upload Error for ${fileName}: ${err.message}`, err.stack);
-            reject(`Unable to upload file ${fileName}, please try again later.`);
+          const blob = bucket.file(destination);
+          const blobStream = blob.createWriteStream({
+            resumable: false,
+            contentType: file.mimetype,
           });
 
-          blobStream.on("finish", async () => {
-            this.logger.log(`File ${fileName} uploaded to ${bucketName}/${normalizedPath}`);
+          // Upload do arquivo individual
+          await new Promise<void>((resolve, reject) => {
+            blobStream.on("error", (err) => {
+              this.logger.error(`GCS Upload Error for ${fileName}: ${err.message}`, err.stack);
+              reject(`Unable to upload file ${fileName}, please try again later.`);
+            });
 
-            // If the bucket is public, make the file publicly readable
-            if (isPublic) {
-              try {
-                await blob.makePublic();
-              } catch (e) {
-                this.logger.error(
-                  `Failed to make file public: ${e.message}`,
-                  e.stack
-                );
-                // Even if it fails to be made public, we can still continue
+            blobStream.on("finish", async () => {
+              this.logger.log(`File ${fileName} uploaded to ${bucketName}/${normalizedPath}`);
+
+              // If the bucket is public, make the file publicly readable
+              if (isPublic) {
+                try {
+                  await blob.makePublic();
+                } catch (e) {
+                  this.logger.error(
+                    `Failed to make file public: ${e.message}`,
+                    e.stack
+                  );
+                  // Even if it fails to be made public, we can still continue
+                }
               }
-            }
 
-            resolve();
+              resolve();
+            });
+
+            blobStream.end(file.buffer);
           });
 
-          blobStream.end(file.buffer);
-        });
-
-        // Gera a URL pública
-        const publicUrl = `https://storage.googleapis.com/${bucketName}/${destination}`;
-        uploadedUrls.push(publicUrl);
+          // Gera a URL pública
+          const publicUrl = `https://storage.googleapis.com/${bucketName}/${destination}`;
+          uploadedUrls.push(publicUrl);
+        }
       }
 
       return uploadedUrls;
@@ -144,7 +142,7 @@ export class UploadService implements UploadServiceInterface {
         this.logger.warn(`File not found for deletion: ${fileName} in path: ${path}`);
         return; // Arquivo não existe, não é um erro crítico
       }
-      
+
       this.logger.error(`Failed to delete file: ${error.message}`, error.stack);
       throw new Error("Unable to delete file, please try again later.");
     }

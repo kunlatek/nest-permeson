@@ -143,10 +143,6 @@ export class PostsController {
     @I18nLang() lang?: string
   ): Promise<IPostHttpResponse> {
     const workspaceId = req.user.workspaceId;
-    
-    if (!files || files.length === 0) {
-      throw new Error('No files provided');
-    }
 
     const keepFilesArray = JSON.parse(keepFilesString || '[]');
     const keepFiles = keepFilesArray

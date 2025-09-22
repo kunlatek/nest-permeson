@@ -11,7 +11,7 @@ export class UploadService implements UploadServiceInterface {
   private readonly baseUrl: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.publicPath = join(process.cwd(), "public");
+    this.publicPath = join(process.cwd(), "public", "uploads");
     this.baseUrl = this.configService.get<string>("API_BASE_URL") || "http://localhost:3000";
   }
 
@@ -21,10 +21,6 @@ export class UploadService implements UploadServiceInterface {
     fileNames?: string[],
     keepFiles?: string[]
   ): Promise<string[]> {
-    if (!files || files.length === 0) {
-      throw new Error("No files provided for upload.");
-    }
-
     try {
       // Normaliza o path removendo barras extras e garantindo que termine com /
       const normalizedPath = path.replace(/^\/+|\/+$/g, "");
@@ -53,6 +49,7 @@ export class UploadService implements UploadServiceInterface {
       const uploadedUrls: string[] = [];
 
       // Upload de cada arquivo
+      if (files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const fileName = fileNames && fileNames[i] ? fileNames[i] : file.originalname;
@@ -65,8 +62,9 @@ export class UploadService implements UploadServiceInterface {
 
         // Gera a URL pública
         const publicPath = normalizedPath ? `${normalizedPath}/${fileName}` : fileName;
-        const fileUrl = `${this.baseUrl}/public/uploads/${publicPath}`;
-        uploadedUrls.push(fileUrl);
+          const fileUrl = `${this.baseUrl}/public/uploads/${publicPath}`;
+          uploadedUrls.push(fileUrl);
+        }
       }
 
       return uploadedUrls;
