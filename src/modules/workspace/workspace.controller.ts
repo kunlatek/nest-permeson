@@ -64,7 +64,7 @@ export class WorkspaceController {
     return this.workspaceService.getMyWorkspaces(req.user.userId, lang);
   }
 
-  @Get('token/:workspaceId')
+  @Get(':workspaceId/token')
   @ApiSecurity('jwt')
   @ApiOperation({ summary: 'Get workspace token' })
   @ApiResponse({ status: 200, description: 'Workspace token retrieved successfully', type: IWorkspaceTokenHttpResponse })

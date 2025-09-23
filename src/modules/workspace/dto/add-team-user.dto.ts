@@ -12,6 +12,14 @@ export class UpdateWorkspaceTeamDto {
 
   @ApiProperty({
     example: '123456',
+    description: 'ID do workspace',
+  })
+  @IsString()
+  @IsNotEmpty()
+  workspaceId: string;
+
+  @ApiProperty({
+    example: '123456',
     description: 'ID do owner do workspace',
   })
   @IsString()
