@@ -9,6 +9,7 @@ import { WorkspaceModule } from '../workspace/workspace.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '../../common/common.module';
 import { EmailService } from './services/email.service';
+import { ProfileModule } from '../profile/profile.module';
 
 /**
  * Module responsible for handling authentication strategies,
@@ -39,6 +40,7 @@ import { EmailService } from './services/email.service';
     CommonModule,
     UserModule,
     WorkspaceModule,
+    ProfileModule,
   ],
   providers: [AuthService, JwtStrategy, EmailService],
   controllers: [AuthController],

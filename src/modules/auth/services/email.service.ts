@@ -20,29 +20,6 @@ export class EmailService {
     });
   }
 
-  async sendRegisterEmail(email: string) {
-    const baseUrl = this.configService.get("API_BASE_URL");
-
-    const token = this.jwtService.sign({ email }, { expiresIn: "24h" });
-
-    const url = `${baseUrl}/account/verify?token=${token}&email=${email}`;
-
-    await this.transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to: email,
-      subject: "Bem vindo",
-      html: `
-        <h1>Bem vindo!</h1>
-        <p>Clique no link abaixo para verificar seu email:</p>
-        <a href="${url}">Verificar email</a>
-        <p>Este link expira em 24 horas.</p>
-      `,
-    });
-
-    return {
-      message: "Email de registro enviado com sucesso",
-    };
-  }
 
   async sendResetPasswordEmail(email: string) {
     const baseUrl = this.configService.get("BASE_URL");
@@ -60,6 +37,29 @@ export class EmailService {
 
     return {
       message: "Email de recuperação de senha enviado com sucesso",
+    };
+  }
+
+  async sendPreSignupEmail(email: string, token: string) {
+    const frontendUrl = this.configService.get("BASE_URL");
+    
+    const url = `${frontendUrl}/auth/register?email=${encodeURIComponent(email)}&token=${token}`;
+
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Finalize seu cadastro",
+      html: `
+        <h1>Bem-vindo!</h1>
+        <p>Para finalizar seu cadastro, clique no link abaixo:</p>
+        <a href="${url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Finalizar Cadastro</a>
+        <p>Este link expira em 24 horas.</p>
+        <p>Se você não solicitou este cadastro, pode ignorar este email.</p>
+      `,
+    });
+
+    return {
+      message: "Email de pre-cadastro enviado com sucesso",
     };
   }
 }

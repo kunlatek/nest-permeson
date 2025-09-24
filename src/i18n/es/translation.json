@@ -12,6 +12,10 @@
     "reset-password": {
       "success": "Contraseña restablecida correctamente"
     },
+    "presignup": {
+      "error": "Error al enviar email de pre-registro",
+      "success": "Email de pre-registro enviado correctamente"
+    },
     "signup": {
       "error": "Error no registro",
       "email-and-token-dont-match": "Email inválido",
@@ -30,14 +34,6 @@
       "password-min-length": "La contraseña debe tener al menos 8 caracteres",
       "password-must-be-a-string": "La contraseña debe ser una cadena"
     }
-  },
-  "account": {
-    "verify-email-sent": "Email de verificación enviado",
-    "email-and-token-dont-match": "Email inválido",
-    "error-updating-user": "Error al actualizar el usuario",
-    "error-getting-user": "Error al obtener el usuario",
-    "verified": "Cuenta verificada",
-    "account-status": "Estado de la cuenta"
   },
   "profile": {
     "invalid-profile-type": "Tipo de perfil inválido",

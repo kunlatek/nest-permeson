@@ -13,6 +13,10 @@
       "success": "Password reset successfully",
       "error": "Error resetting password" 
     },
+    "presignup": {
+      "error": "Error sending pre-signup email",
+      "success": "Pre-signup email sent successfully"
+    },
     "signup": {
       "error": "Signup error",
       "success": "User registered successfully",
@@ -33,14 +37,6 @@
       "password-min-length": "Password must be at least 8 characters long",
       "password-must-be-a-string": "Password must be a string"
     }
-  },
-  "account": {
-    "verify-email-sent": "Verify email sent",
-    "email-and-token-dont-match": "Invalid email",
-    "error-updating-user": "Error updating user",
-    "error-getting-user": "Error getting user",
-    "verified": "Account verified",
-    "account-status": "Account status"
   },
   "profile": {
     "invalid-profile-type": "Invalid profile type",

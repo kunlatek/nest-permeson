@@ -8,7 +8,6 @@ import { CommonModule } from "./common/common.module";
 import { LoggingModule } from "./common/logging/logging.module";
 import { RequestLoggerModule } from "./common/middleware/request-logger.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
-import { AccountModule } from "./modules/account/account.module";
 import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { PostsModule } from "./modules/posts/posts.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
@@ -53,7 +52,6 @@ import * as path from "path";
       ],
     }),
     AuthModule,
-    AccountModule,
     ProfileModule,
     WorkspaceModule,
     PostsModule,

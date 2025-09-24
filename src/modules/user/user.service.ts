@@ -32,6 +32,7 @@ export class UserService {
     const newUser = await this.userRepository.create({
       ...payload,
       password: hashedPassword,
+      verified: true,
     });
 
     return newUser;

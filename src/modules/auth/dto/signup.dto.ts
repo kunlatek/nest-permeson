@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from "class-validator";
+import { IsEmail, IsString, MinLength, IsNotEmpty } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class SignupDto {
@@ -17,4 +17,12 @@ export class SignupDto {
   @IsString()
   @MinLength(6)
   password: string;
+
+  @ApiProperty({
+    description: "JWT token received from pre-signup email",
+    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  })
+  @IsString()
+  @IsNotEmpty()
+  token: string;
 }

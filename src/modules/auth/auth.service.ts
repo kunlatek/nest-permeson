@@ -7,7 +7,7 @@ import {
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
-import { SignupDto, ResetPasswordDto, LoginDto } from "./dto";
+import { SignupDto, ResetPasswordDto, LoginDto, PreSignupDto } from "./dto";
 import { EmailService } from "./services/email.service";
 import { UserResponseDto } from "../user/dto/user-response.dto";
 import { I18nService } from "nestjs-i18n";
@@ -16,6 +16,7 @@ import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
 import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
 import { IHttpResponse } from "src/interfaces";
 import { WorkspaceService } from "../workspace/workspace.service";
+import { ProfileService } from "../profile/profile.service";
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
     private readonly emailService: EmailService,
     private readonly i18n: I18nService,
     private readonly workspaceService: WorkspaceService,
+    private readonly profileService: ProfileService,
   ) { }
 
   async validateUser(email: string, password: string, lang: string = "en"): Promise<UserResponseDto> {
@@ -38,21 +40,51 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
 
-    if (!user.verified) throw new UnauthorizedException(this.i18n.t("translation.auth.account-not-verified", { lang }));
-
     return user;
   }
 
-  async signup(signupDto: SignupDto, lang: string = "en"): Promise<IHttpResponse> {
-    if (await this.userService.findByEmail(signupDto.email)) {
+  async preSignup(preSignupDto: PreSignupDto, lang: string = "en"): Promise<IHttpResponse> {
+    const { email } = preSignupDto;
+    
+    if (await this.userService.findByEmail(email)) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.email-already-in-use", { lang }));
     }
 
     try {
-      const { email, password } = signupDto;
-      await this.userService.createUser({ email, password });
-      await this.emailService.sendRegisterEmail(email);
-      return new IHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }));
+      const token = this.jwtService.sign({ email }, { expiresIn: "24h" });
+      await this.emailService.sendPreSignupEmail(email, token);
+      
+      return new IHttpResponse(200, this.i18n.t("translation.auth.presignup.success", { lang }));
+    } catch (error) {
+      throw new BadRequestException(this.i18n.t("translation.auth.presignup.error", { lang }));
+    }
+  }
+
+  async signup(signupDto: SignupDto, lang: string = "en"): Promise<ILoginHttpResponse> {
+    const { email, password, token } = signupDto;
+
+    if (await this.userService.findByEmail(email)) {
+      throw new BadRequestException(this.i18n.t("translation.auth.signup.email-already-in-use", { lang }));
+    }
+
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(token);
+    } catch (error) {
+      throw new BadRequestException(this.i18n.t("translation.auth.invalid-token", { lang }));
+    }
+
+    if (payload.email !== email) {
+      throw new BadRequestException(this.i18n.t("translation.auth.signup.email-and-token-dont-match", { lang }));
+    }
+
+    try {
+      const user = await this.userService.createUser({ email, password });
+      const { _id: sub } = user;
+      
+      const workspaceId = await this.workspaceService.createWorkspace({ owner: sub, team: [sub] }, lang);
+      await this.profileService.createProfiles(user._id, email.split('@')[0], lang);
+      return new ILoginHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId._id })));
     } catch (error) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
     }
