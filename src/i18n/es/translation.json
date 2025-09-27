@@ -91,6 +91,8 @@
     "error-finding-posts": "Error al encontrar los posts",
     "error-finding-post": "Error al encontrar el post",
     "error-updating-post": "Error al actualizar el post",
-    "error-deleting-post": "Error al eliminar el post"
+    "error-deleting-post": "Error al eliminar el post",
+    "insufficient-permissions": "Permisos insuficientes. Debes ser el creador del post o el propietario del workspace",
+    "error-checking-permissions": "Error al verificar permisos"
   }
 }

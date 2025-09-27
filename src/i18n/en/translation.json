@@ -94,6 +94,8 @@
     "error-finding-posts": "Error finding posts",
     "error-finding-post": "Error finding post",
     "error-updating-post": "Error updating post",
-    "error-deleting-post": "Error deleting post"
+    "error-deleting-post": "Error deleting post",
+    "insufficient-permissions": "Insufficient permissions. You must be the post creator or workspace owner",
+    "error-checking-permissions": "Error checking permissions"
   }
 }

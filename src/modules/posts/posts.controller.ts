@@ -74,6 +74,7 @@ export class PostsController {
   @ApiSecurity('jwt')
   @ApiOperation({ summary: 'Update post by ID' })
   @ApiResponse({ status: 200, description: 'Post updated successfully', type: IPostHttpResponse })
+  @ApiResponse({ status: 403, description: 'Insufficient permissions - user must be post creator or workspace owner' })
   async update(
     @Req() req: any,
     @Param('id') id: string,
@@ -81,7 +82,8 @@ export class PostsController {
     @I18nLang() lang?: string
   ): Promise<IPostHttpResponse> {
     const workspaceId = req.user.workspaceId;
-    return this.postsService.update(id, body, workspaceId, lang);
+    const userId = req.user.userId;
+    return this.postsService.update(id, body, workspaceId, userId, lang);
   }
 
   @Delete(':id')
@@ -89,13 +91,15 @@ export class PostsController {
   @ApiSecurity('jwt')
   @ApiOperation({ summary: 'Delete post by ID' })
   @ApiResponse({ status: 204, description: 'Post deleted successfully' })
+  @ApiResponse({ status: 403, description: 'Insufficient permissions - user must be post creator or workspace owner' })
   async delete(
     @Req() req: any,
     @Param('id') id: string,
     @I18nLang() lang?: string
   ): Promise<IHttpResponse> {
     const workspaceId = req.user.workspaceId;
-    return this.postsService.delete(id, workspaceId, lang);
+    const userId = req.user.userId;
+    return this.postsService.delete(id, workspaceId, userId, lang);
   }
 
   @Post(':id/upload/:field')
@@ -143,6 +147,7 @@ export class PostsController {
     @I18nLang() lang?: string
   ): Promise<IPostHttpResponse> {
     const workspaceId = req.user.workspaceId;
+    const userId = req.user.userId;
 
     const keepFilesArray = JSON.parse(keepFilesString || '[]');
     const keepFiles = keepFilesArray
@@ -170,6 +175,6 @@ export class PostsController {
 
     const updateData = { [field]: [...(keepFilesArray || []), ...fileData] };
 
-    return this.postsService.update(id, updateData, workspaceId, lang);
+    return this.postsService.update(id, updateData, workspaceId, userId, lang);
   }
 }

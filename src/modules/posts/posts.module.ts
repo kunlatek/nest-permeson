@@ -11,6 +11,8 @@ import { PostsMongoDBModule } from "./repositories/mongodb";
 import { PostsService } from "./posts.service";
 import { PostsController } from "./posts.controller";
 
+import { WorkspaceModule } from "../workspace/workspace.module";
+
 @Module({
   imports: [
     getDatabaseModule(DATABASE, [
@@ -37,6 +39,8 @@ import { PostsController } from "./posts.controller";
         };
       },
     }),
+
+    WorkspaceModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],
