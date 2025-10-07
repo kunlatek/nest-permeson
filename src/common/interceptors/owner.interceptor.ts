@@ -24,7 +24,7 @@ export class OwnerInterceptor implements NestInterceptor {
       
       // Por padrão, ownerId é o mesmo que createdBy
       // Se precisar de lógica específica para invitation, isso deve ser feito no controller
-      body.ownerId = user.userId;
+      // body.ownerId = user.userId;
       
       // Adiciona workspaceId do token para uso nos controllers
       body.workspaceId = user.workspaceId;
