@@ -1,17 +1,17 @@
 import { IHttpResponse } from "src/interfaces/http-response.interface";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsObject } from "class-validator";
-import { PersonProfileResponseDto } from "../dto";
+import { PersonProfile } from "../models";
 
 export class IPersonProfileHttpResponse extends IHttpResponse {
     @ApiProperty({
         description: 'Person profile',
-        type: PersonProfileResponseDto,
+        type: PersonProfile,
     })
     @IsObject()
-    data: PersonProfileResponseDto;
+    data: PersonProfile;
 
-    constructor(statusCode: number, message: string, data: PersonProfileResponseDto) {
+    constructor(statusCode: number, message: string, data: PersonProfile) {
         super(statusCode, message);
         this.data = data;
     }

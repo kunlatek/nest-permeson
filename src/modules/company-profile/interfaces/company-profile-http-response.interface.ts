@@ -1,17 +1,17 @@
 import { IHttpResponse, IHttpResponsePaginated } from "src/interfaces/http-response.interface";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsObject } from "class-validator";
-import { CompanyProfileResponseDto } from "../../company-profile/dto/company-profile-response.dto";
+import { CompanyProfile } from "../models";
 
 export class ICompanyProfileHttpResponse extends IHttpResponse {
     @ApiProperty({
         description: 'Company profile',
-        type: CompanyProfileResponseDto,
+        type: CompanyProfile,
     })
     @IsObject()
-    data: any;
+    data: CompanyProfile;
 
-    constructor(statusCode: number, message: string, data: any) {
+    constructor(statusCode: number, message: string, data: CompanyProfile) {
         super(statusCode, message);
         this.data = data;
     }
