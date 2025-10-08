@@ -181,11 +181,6 @@ export class CompanyProfile {
   @IsString()
   createdBy: string;
 
-  @ApiProperty({ example: 'userId', readOnly: true })
-  @IsNotEmpty()
-  @IsString()
-  ownerId: string;
-
   constructor(data: Partial<CompanyProfile>) {
     Object.assign(this, data);
   }

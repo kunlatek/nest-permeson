@@ -29,9 +29,6 @@ export class PostEntity {
   @Column({ nullable: false })
   createdBy: string;
 
-  @Column({ nullable: false })
-  ownerId: string;
-
   @Column({ type: 'simple-json', nullable: true })
   cover?: { name: string; url: string }[];
 

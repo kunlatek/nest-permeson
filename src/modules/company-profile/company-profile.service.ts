@@ -15,7 +15,7 @@ export class CompanyProfileService {
 
     async createCompanyProfile(userId: string, userName: string, lang: string): Promise<void> {
         try {   
-            await this.companyProfileRepository.create({ userId, userName, createdBy: userId, ownerId: userId })
+            await this.companyProfileRepository.create({ userId, userName, createdBy: userId })
         } catch (error) {
             throw new Error(this.i18n.t('translation.company-profile.company-profile-create-error', { lang }))
         }

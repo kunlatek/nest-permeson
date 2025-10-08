@@ -111,9 +111,6 @@ export class CompanyProfileEntity {
   @Column({ nullable: false })
   createdBy: string;
 
-  @Column({ nullable: false })
-  ownerId: string;
-
   // Timestamps
   @CreateDateColumn()
   createdAt: Date;

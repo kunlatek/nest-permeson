@@ -15,7 +15,7 @@ export class PersonProfileService {
 
     async createPersonProfile(userId: string, userName: string, lang: string): Promise<void> {
         try {
-            await this.personProfileRepository.create({ userId, userName, createdBy: userId, ownerId: userId });
+            await this.personProfileRepository.create({ userId, userName, createdBy: userId });
         } catch (error) {
             throw new Error(this.i18n.t('translation.person-profile.person-profile-create-error', { lang }))
         }

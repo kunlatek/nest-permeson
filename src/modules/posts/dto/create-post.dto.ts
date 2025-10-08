@@ -65,14 +65,6 @@ export class CreatePostDto {
 
   @ApiPropertyOptional({
     example: 'user123',
-    description: 'ID do owner (preenchido automaticamente pelo sistema)',
-  })
-  @IsOptional()
-  @IsString()
-  ownerId?: string;
-
-  @ApiPropertyOptional({
-    example: 'user123',
     description: 'ID do usuário criador (preenchido automaticamente pelo sistema)',
   })
   @IsOptional()

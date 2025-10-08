@@ -26,9 +26,6 @@ export class MongoDBPost extends Document {
   @Prop({ required: true })
   createdBy: string;
 
-  @Prop({ required: true })
-  ownerId: string;
-
   @Prop({ type: [Object], required: false })
   cover?: { name: string; url: string }[];
 

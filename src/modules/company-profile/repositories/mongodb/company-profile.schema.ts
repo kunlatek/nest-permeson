@@ -129,9 +129,6 @@ export class MongoDBCompanyProfile extends Document {
 
   @Prop({ required: true })
   createdBy: string;
-
-  @Prop({ required: true })
-  ownerId: string;
 }
 
 export const CompanyProfileSchema = SchemaFactory.createForClass(MongoDBCompanyProfile);

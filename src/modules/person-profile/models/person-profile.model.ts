@@ -350,13 +350,6 @@ export class PersonProfile {
   })
   @IsString()
   createdBy: string;
-  
-  @ApiProperty({
-    example: '123456',
-    description: 'ID do usuário',
-  })
-  @IsString()
-  ownerId: string;
 
   constructor(data: Partial<PersonProfile>) {
     Object.assign(this, data);
