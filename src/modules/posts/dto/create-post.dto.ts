@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional } from "class-validator";
+import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional, IsArray, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { CoAuthor } from "../models";
 
 export class CreatePostDto {
   @ApiProperty({
@@ -41,6 +43,25 @@ export class CreatePostDto {
   @IsNotEmpty()
   @IsString()
   author: string;
+
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['technology', 'programming', 'nestjs'],
+    description: 'Post tags',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @ApiPropertyOptional({
+    type: [CoAuthor],
+    description: 'Post coauthors',
+  })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CoAuthor)
+  coauthors?: CoAuthor[];
 
   @ApiPropertyOptional({
     example: 'user123',

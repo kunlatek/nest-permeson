@@ -1,7 +1,41 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsString, IsDateString, IsNumber, IsOptional, ValidateNested, IsArray } from "class-validator";
 import { Type } from "class-transformer";
 import { UploadFile } from "../../../common/models";
+
+export class CoAuthor {
+  @ApiProperty({
+    example: 'Jane Doe',
+    description: 'Coauthor name',
+  })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @ApiProperty({
+    example: 'Subject matter expert',
+    description: 'Coauthor subject',
+  })
+  @IsNotEmpty()
+  @IsString()
+  subject: string;
+
+  @ApiProperty({
+    example: 'https://example.com/jane-doe',
+    description: 'Coauthor link',
+  })
+  @IsOptional()
+  @IsString()
+  link?: string;
+
+  @ApiProperty({
+    example: '+1234567890',
+    description: 'Coauthor phone',
+  })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+}
 
 export class Post {
   @ApiProperty({
@@ -68,6 +102,25 @@ export class Post {
   @ValidateNested({ each: true })
   @Type(() => UploadFile)
   cover?: UploadFile[];
+
+  @ApiProperty({
+    type: [String],
+    example: ['technology', 'programming', 'nestjs'],
+    description: 'Post tags',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @ApiProperty({
+    type: [CoAuthor],
+    description: 'Post coauthors',
+  })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CoAuthor)
+  coauthors?: CoAuthor[];
 
   @ApiProperty({
     example: '2024-01-15T10:30:00Z',

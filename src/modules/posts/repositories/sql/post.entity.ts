@@ -35,6 +35,12 @@ export class PostEntity {
   @Column({ type: 'simple-json', nullable: true })
   cover?: { name: string; url: string }[];
 
+  @Column({ type: 'simple-json', nullable: true })
+  tags?: string[];
+
+  @Column({ type: 'simple-json', nullable: true })
+  coauthors?: { name: string; subject: string; link?: string; phone?: string }[];
+
   @CreateDateColumn()
   createdAt: Date;
 
