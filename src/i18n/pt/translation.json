@@ -35,7 +35,9 @@
       "password-required": "Senha é obrigatória",
       "password-min-length": "A senha deve ter pelo menos 8 caracteres",
       "password-must-be-a-string": "A senha deve ser uma string"
-    }
+    },
+    "account-deleted": "Conta deletada com sucesso",
+    "error-deleting-account": "Erro ao deletar conta"
   },
   "profile": {
     "invalid-profile-type": "Tipo de perfil inválido",

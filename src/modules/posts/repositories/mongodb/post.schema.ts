@@ -34,6 +34,9 @@ export class MongoDBPost extends Document {
 
   @Prop({ type: [Object], required: false })
   coauthors?: { name: string; subject: string; link?: string; phone?: string }[];
+
+  @Prop({ type: [String], required: false })
+  relatedPosts?: string[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(MongoDBPost);

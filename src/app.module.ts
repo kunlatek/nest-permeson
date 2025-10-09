@@ -10,6 +10,7 @@ import { RequestLoggerModule } from "./common/middleware/request-logger.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
 import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { PostsModule } from "./modules/posts/posts.module";
+import { CleanupModule } from "./modules/cleanup/cleanup.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 
 // SQL Modules
@@ -55,6 +56,7 @@ import * as path from "path";
     ProfileModule,
     WorkspaceModule,
     PostsModule,
+    CleanupModule,
     
     CommonModule,
     LoggingModule,

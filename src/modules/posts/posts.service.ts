@@ -27,10 +27,7 @@ export class PostsService {
       }
 
       try {
-        const workspace = await this.workspaceService.findWorkspacesByOwner(userId, lang);
-        if (workspace && workspace.data && workspace.data._id === workspaceId) {
-          return;
-        }
+        await this.workspaceService.findWorkspacesByOwner(userId, lang);
       } catch (error) {
         // Se não encontrou workspace por owner, continua para verificar outras permissões
       }
@@ -54,13 +51,13 @@ export class PostsService {
     }
   }
 
-  async findAll(workspace: string, lang: string, page?: number, limit?: number): Promise<IPostsPaginatedHttpResponse | IPostsHttpResponse> {
+  async findAll(workspace: string, lang: string, page?: number, limit?: number, title?: string): Promise<IPostsPaginatedHttpResponse | IPostsHttpResponse> {
     try {
       if (page !== undefined && limit !== undefined) {
-        const result = await this.postsRepository.findAll(workspace, page, limit);
+        const result = await this.postsRepository.findAll(workspace, page, limit, title);
         return new IPostsPaginatedHttpResponse(200, this.i18n.t('translation.posts.posts-found', { lang }), result.posts, result.total, page, limit);
       } else {
-        const result = await this.postsRepository.findAll(workspace);
+        const result = await this.postsRepository.findAll(workspace, undefined, undefined, title);
         return new IPostsHttpResponse(200, this.i18n.t('translation.posts.posts-found', { lang }), result.posts);
       }
     } catch (error) {

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, Like } from "typeorm";
 import { PostEntity } from "./post.entity";
 import { CreatePostDto, UpdatePostDto, PostResponseDto } from "../../dto";
 import { PostsRepository } from "../../posts.repository.interface";
@@ -24,8 +24,13 @@ export class PostsSQLRepository implements PostsRepository {
     return this.findById(savedPost.id.toString(), workspace);
   }
 
-  async findAll(workspace: string, page?: number, limit?: number): Promise<{ posts: PostResponseDto[], total: number }> {
-    const whereCondition = { workspace };
+  async findAll(workspace: string, page?: number, limit?: number, title?: string): Promise<{ posts: PostResponseDto[], total: number }> {
+    const whereCondition: any = { workspace };
+    
+    // Add title filter if provided
+    if (title) {
+      whereCondition.title = Like(`%${title}%`);
+    }
     
     // Get total count
     const total = await this.postRepository.count({ where: whereCondition });

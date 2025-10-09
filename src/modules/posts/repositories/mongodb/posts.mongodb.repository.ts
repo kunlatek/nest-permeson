@@ -25,8 +25,13 @@ export class PostsMongoDBRepository implements PostsRepository {
     return this.transformDocumentToResponse(savedPost);
   }
 
-  async findAll(workspace: string, page?: number, limit?: number): Promise<{ posts: PostResponseDto[], total: number }> {
-    const query = { workspace };
+  async findAll(workspace: string, page?: number, limit?: number, title?: string): Promise<{ posts: PostResponseDto[], total: number }> {
+    const query: any = { workspace };
+    
+    // Add title filter if provided (case-insensitive)
+    if (title) {
+      query.title = { $regex: title, $options: 'i' };
+    }
     
     // Get total count
     const total = await this.postModel.countDocuments(query);

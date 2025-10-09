@@ -36,7 +36,9 @@
       "password-required": "Password is required",
       "password-min-length": "Password must be at least 8 characters long",
       "password-must-be-a-string": "Password must be a string"
-    }
+    },
+    "account-deleted": "Account deleted successfully",
+    "error-deleting-account": "Error deleting account"
   },
   "profile": {
     "invalid-profile-type": "Invalid profile type",

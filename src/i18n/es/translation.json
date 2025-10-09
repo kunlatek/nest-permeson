@@ -33,7 +33,9 @@
       "password-required": "Contraseña es requerida",
       "password-min-length": "La contraseña debe tener al menos 8 caracteres",
       "password-must-be-a-string": "La contraseña debe ser una cadena"
-    }
+    },
+    "account-deleted": "Cuenta eliminada correctamente",
+    "error-deleting-account": "Error al eliminar la cuenta"
   },
   "profile": {
     "invalid-profile-type": "Tipo de perfil inválido",

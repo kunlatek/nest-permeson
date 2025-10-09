@@ -64,6 +64,16 @@ export class CreatePostDto {
   coauthors?: CoAuthor[];
 
   @ApiPropertyOptional({
+    type: [String],
+    example: ['post_id_1', 'post_id_2', 'post_id_3'],
+    description: 'IDs de posts relacionados',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  relatedPosts?: string[];
+
+  @ApiPropertyOptional({
     example: 'user123',
     description: 'ID do usuário criador (preenchido automaticamente pelo sistema)',
   })

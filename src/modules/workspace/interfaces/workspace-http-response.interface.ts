@@ -1,15 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IHttpResponse } from "src/interfaces/http-response.interface";
 import { Workspace } from "../models";
+import { WorkspaceResponseDto } from "../dto";
 
 export class IWorkspaceHttpResponse extends IHttpResponse {
     @ApiProperty({
         description: 'Data',
         type: Workspace,
     })
-    data: Workspace;
+    data: WorkspaceResponseDto;
 
-    constructor(statusCode: number, message: string, data: Workspace) {
+    constructor(statusCode: number, message: string, data: WorkspaceResponseDto) {
         super(statusCode, message);
         this.data = data;
     }
@@ -20,9 +21,9 @@ export class IMyWorkspacesHttpResponse extends IHttpResponse {
         description: 'Data',
         type: [Workspace],
     })
-    data: Workspace[];
+    data: WorkspaceResponseDto[];
 
-    constructor(statusCode: number, message: string, data: Workspace[]) {
+    constructor(statusCode: number, message: string, data: WorkspaceResponseDto[]) {
         super(statusCode, message);
         this.data = data;
     }

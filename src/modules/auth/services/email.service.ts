@@ -62,4 +62,26 @@ export class EmailService {
       message: "Email de pre-cadastro enviado com sucesso",
     };
   }
+
+  async sendAccountDeletionWarning(email: string, daysRemaining: number) {
+    const frontendUrl = this.configService.get("BASE_URL");
+    
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Aviso: Sua conta será deletada em breve",
+      html: `
+        <h1>Aviso Importante</h1>
+        <p>Sua conta está agendada para ser deletada permanentemente.</p>
+        <p><strong>Tempo restante: ${daysRemaining} dias</strong></p>
+        <p>Se você deseja manter sua conta ativa, por favor faça login antes do prazo final.</p>
+        <a href="${frontendUrl}/auth/login" style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reativar Minha Conta</a>
+        <p>Após a deleção permanente, todos os seus dados serão removidos e não poderão ser recuperados.</p>
+      `,
+    });
+
+    return {
+      message: "Email de aviso de deleção enviado com sucesso",
+    };
+  }
 }

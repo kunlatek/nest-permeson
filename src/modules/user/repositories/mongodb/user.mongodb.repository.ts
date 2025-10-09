@@ -37,4 +37,9 @@ export class UserMongoDBRepository implements UserRepository {
   async delete(id: string): Promise<void> {
     await this.userModel.updateOne({ _id: id }, { deletedAt: new Date() }).lean();
   }
+
+  async findUsersWithDeletedAt(): Promise<UserResponseDto[]> {
+    const users = await this.userModel.find({ deletedAt: { $ne: null } }).lean();
+    return users.map(user => new UserResponseDto(user));
+  }
 }

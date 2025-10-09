@@ -131,6 +131,15 @@ export class AuthService {
     return new IResetPasswordHttpResponse(200, this.i18n.t("translation.auth.reset-password.success", { lang }), this.i18n.t("translation.auth.reset-password.success", { lang }));
   }
 
+  async deleteAccount(userId: string, lang: string = "en"): Promise<IHttpResponse> {
+    try {
+      await this.userService.softDeleteUser(userId);
+      return new IHttpResponse(200, this.i18n.t("translation.auth.account-deleted", { lang }));
+    } catch (error) {
+      throw new BadRequestException(this.i18n.t("translation.auth.error-deleting-account", { lang }));
+    }
+  }
+
   /*async googleLogin(idToken: string) {
     try {
       const response = await axios.get(

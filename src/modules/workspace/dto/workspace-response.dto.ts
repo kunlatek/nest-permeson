@@ -13,6 +13,6 @@ export class WorkspaceResponseDto extends Workspace {
 
   constructor(data: Partial<WorkspaceResponseDto>) {
     super(data);
-    this._id = data._id.toString();
+    this._id = data._id?.toString();
   }
 }

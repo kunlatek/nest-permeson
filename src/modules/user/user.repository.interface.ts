@@ -10,4 +10,6 @@ export interface UserRepository {
   update(id: string, userDto: Partial<UpdateUserDto>): Promise<UserResponseDto>;
   
   delete(id: string): Promise<void>;
+
+  findUsersWithDeletedAt(): Promise<UserResponseDto[]>;
 }

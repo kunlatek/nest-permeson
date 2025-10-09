@@ -47,6 +47,7 @@ export class PostsController {
   @ApiOperation({ summary: 'Get all posts from workspace' })
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number for pagination' })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page' })
+  @ApiQuery({ name: 'title', required: false, type: String, description: 'Filter posts by title (case-insensitive partial match)' })
   @ApiResponse({ status: 200, description: 'Posts retrieved successfully', type: IPostsPaginatedHttpResponse })
   async findAll(
     @Req() req: any,
@@ -54,7 +55,7 @@ export class PostsController {
     @I18nLang() lang?: string
   ): Promise<IPostsPaginatedHttpResponse | IPostsHttpResponse> {
     const workspaceId = req.user.workspaceId;
-    return this.postsService.findAll(workspaceId, lang, query.page, query.limit);
+    return this.postsService.findAll(workspaceId, lang, query.page, query.limit, query.title);
   }
 
   @Get(':id')

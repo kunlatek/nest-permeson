@@ -64,6 +64,15 @@ export class UserSQLRepository implements UserRepository {
     return users.map(user => this.transformEntityToResponse(user));
   }
 
+  async findUsersWithDeletedAt(): Promise<UserResponseDto[]> {
+    const users = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.deletedAt IS NOT NULL')
+      .getMany();
+
+    return users.map(user => this.transformEntityToResponse(user));
+  }
+
   private transformEntityToResponse(user: UserEntity): UserResponseDto {
     const responseData = {
       ...user,

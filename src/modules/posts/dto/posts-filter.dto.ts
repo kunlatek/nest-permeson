@@ -33,4 +33,12 @@ export class PostsFilterDto {
   @IsString()
   @IsOptional()
   lang?: string = 'en';
+
+  @ApiPropertyOptional({
+    description: 'Filter posts by title (case-insensitive partial match)',
+    example: 'primeiro post',
+  })
+  @IsString()
+  @IsOptional()
+  title?: string;
 }

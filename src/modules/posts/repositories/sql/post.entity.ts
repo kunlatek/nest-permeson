@@ -38,6 +38,9 @@ export class PostEntity {
   @Column({ type: 'simple-json', nullable: true })
   coauthors?: { name: string; subject: string; link?: string; phone?: string }[];
 
+  @Column({ type: 'simple-json', nullable: true })
+  relatedPosts?: string[];
+
   @CreateDateColumn()
   createdAt: Date;
 

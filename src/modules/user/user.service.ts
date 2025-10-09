@@ -83,19 +83,10 @@ export class UserService {
 
     // Cascade soft delete to all related documents
     await this.cascadeService.cascadeSoftDelete(id);
+  }
 
-    // Schedule hard delete after 90 days if user remains soft deleted
-    setTimeout(async () => {
-      const user = await this.userRepository.findById(id);
-      if (user?.deletedAt) {
-        const daysSinceDelete = Math.floor(
-          (Date.now() - user.deletedAt.getTime()) / (1000 * 60 * 60 * 24)
-        );
-        if (daysSinceDelete >= this.DAYS_UNTIL_HARD_DELETE) {
-          await this.hardDeleteUser(id);
-        }
-      }
-    }, this.DAYS_UNTIL_HARD_DELETE * 24 * 60 * 60 * 1000);
+  async findUsersWithDeletedAt(): Promise<UserResponseDto[]> {
+    return this.userRepository.findUsersWithDeletedAt();
   }
 
   async hardDeleteUser(id: string): Promise<void> {

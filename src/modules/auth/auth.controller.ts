@@ -1,11 +1,12 @@
-import { Controller, Post, Req, Body, UseGuards, HttpCode } from "@nestjs/common";
+import { Controller, Post, Delete, Req, Body, UseGuards, HttpCode } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiSecurity } from "@nestjs/swagger";
 import { LoginDto, SignupDto, ResetPasswordDto, ResetPasswordRequestDto, PreSignupDto } from "./dto";
 import { I18nLang } from "nestjs-i18n";
 import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
 import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
 import { IHttpResponse } from "src/interfaces";
+import { AuthGuard } from "@nestjs/passport";
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -71,6 +72,21 @@ export class AuthController {
     @I18nLang() lang?: string
   ): Promise<IResetPasswordHttpResponse> {
     return this.authService.resetPassword(resetPasswordDto, lang);
+  }
+
+  @Delete("account")
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiSecurity('jwt')
+  @ApiOperation({ summary: "Delete user account (soft delete)" })
+  @ApiResponse({ status: 200, description: "Account deleted successfully", type: IHttpResponse })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  async deleteAccount(
+    @Req() req: any,
+    @I18nLang() lang?: string
+  ): Promise<IHttpResponse> {
+    return this.authService.deleteAccount(req.user.userId, lang);
   }
 
   /*@Post("google/login")

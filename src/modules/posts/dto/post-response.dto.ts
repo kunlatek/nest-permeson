@@ -13,6 +13,6 @@ export class PostResponseDto extends Post {
 
   constructor(data: Partial<PostResponseDto>) {
     super(data);
-    this._id = data._id.toString();
+    this._id = data._id?.toString();
   }
 }
