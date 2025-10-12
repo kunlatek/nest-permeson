@@ -31,10 +31,10 @@ export class Workspace {
     example: [
       {
         userId: '123456',
-        role: 'admin',
+        roleId: '507f1f77bcf86cd799439011',
       },
     ],
-    description: 'ACL do workspace',
+    description: 'ACL do workspace - lista de usuários e seus roles',
   })
   @IsArray()
   @IsObject({ each: true })

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from "@nestjs/common";
 import { WorkspaceRepository } from "./workspace.repository.interface";
 import { CreateWorkspaceDto, WorkspaceResponseDto } from "./dto";
 import { I18nService } from "nestjs-i18n";
@@ -6,6 +6,7 @@ import { IMyWorkspacesHttpResponse, IWorkspaceHttpResponse, IWorkspaceTokenHttpR
 import { IHttpResponse } from "src/interfaces/http-response.interface";
 import { ProfileService } from "../profile/profile.service";
 import { JwtService } from "@nestjs/jwt";
+import { RolesService } from "../roles/roles.service";
 
 @Injectable()
 export class WorkspaceService {
@@ -15,6 +16,8 @@ export class WorkspaceService {
     private readonly profileService: ProfileService,
     private readonly i18n: I18nService,
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => RolesService))
+    private readonly rolesService: RolesService,
   ) {}
 
   async createWorkspace(workspaceDto: CreateWorkspaceDto, lang: string): Promise<WorkspaceResponseDto> {
@@ -34,14 +37,30 @@ export class WorkspaceService {
     }
   }
 
-  async addTeamUser(owner: string, userId: string, lang: string): Promise<IHttpResponse> {
+  async addTeamUser(owner: string, userId: string, roleId: string | undefined, lang: string): Promise<IHttpResponse> {
     try {
       const workspace = await this.workspaceRepository.findByOwner(owner);
       if (!workspace) throw new NotFoundException(this.i18n.t('translation.workspace.workspace-not-found', { lang }));
       
+      // Adiciona usuário ao team
       await this.workspaceRepository.addTeamUser(workspace._id, userId);
+      
+      // Se roleId foi fornecido, adiciona ao ACL
+      if (roleId) {
+        // Verifica se o role existe
+        const roleExists = await this.rolesService.findById(roleId, owner, lang);
+        if (!roleExists) {
+          throw new NotFoundException(this.i18n.t('translation.workspace.role-not-found', { lang }));
+        }
+        
+        await this.workspaceRepository.addAcl(workspace._id, { userId, roleId });
+      }
+      
       return new IHttpResponse(204, this.i18n.t('translation.workspace.team-user-added', { lang }));
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException(this.i18n.t('translation.workspace.error-adding-team-user', { lang }));
     }
   }
@@ -51,9 +70,21 @@ export class WorkspaceService {
       const workspace = await this.workspaceRepository.findByOwner(owner);
       if (!workspace) throw new NotFoundException(this.i18n.t('translation.workspace.workspace-not-found', { lang }));
 
+      // Remove usuário do team
       await this.workspaceRepository.removeTeamUser(workspace._id, userId);
+      
+      // Remove usuário do ACL também (se existir)
+      try {
+        await this.workspaceRepository.removeAcl(workspace._id, userId);
+      } catch (error) {
+        // Ignora erro se usuário não estiver no ACL
+      }
+      
       return new IHttpResponse(204, this.i18n.t('translation.workspace.team-user-removed', { lang }));
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException(this.i18n.t('translation.workspace.error-removing-team-user', { lang }));
     }
   }
@@ -90,6 +121,29 @@ export class WorkspaceService {
       return this.workspaceRepository.delete(id);
     } catch (error) {
       throw new BadRequestException(this.i18n.t('translation.workspace.error-deleting-workspace', { lang }));
+    }
+  }
+
+  async updateAcl(owner: string, userId: string, roleId: string, lang: string): Promise<IHttpResponse> {
+    try {
+      // Verifica se o role existe
+      const roleExists = await this.rolesService.findById(roleId, owner, lang);
+      if (!roleExists) {
+        throw new NotFoundException(this.i18n.t('translation.workspace.role-not-found', { lang }));
+      }
+
+      const workspace = await this.workspaceRepository.findByOwner(owner);
+      if (!workspace) {
+        throw new NotFoundException(this.i18n.t('translation.workspace.workspace-not-found', { lang }));
+      }
+
+      await this.workspaceRepository.updateAcl(workspace._id, userId, roleId);
+      return new IHttpResponse(200, this.i18n.t('translation.workspace.acl-user-updated', { lang }));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(this.i18n.t('translation.workspace.error-updating-acl-user', { lang }));
     }
   }
 }

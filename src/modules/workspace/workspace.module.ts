@@ -1,6 +1,7 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { WorkspaceService } from "./workspace.service";
 import { ProfileModule } from "../profile/profile.module";
+import { RolesModule } from "../roles/roles.module";
 import { WorkspaceController } from "./workspace.controller";
 
 import { DatabaseEnum } from "src/enums/database.enum";
@@ -38,7 +39,8 @@ import { JwtModule } from "@nestjs/jwt";
         };
       },
     }),
-    ProfileModule
+    ProfileModule,
+    forwardRef(() => RolesModule),
   ],
   controllers: [WorkspaceController],
   providers: [WorkspaceService],

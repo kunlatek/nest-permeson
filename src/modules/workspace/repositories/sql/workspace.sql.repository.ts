@@ -4,6 +4,7 @@ import { Repository, In, Like } from "typeorm";
 import { WorkspaceEntity } from "./workspace.entity";
 import { CreateWorkspaceDto, UpdateWorkspaceDto, WorkspaceResponseDto } from "../../dto";
 import { WorkspaceRepository } from "../../workspace.repository.interface";
+import { ACL } from "../../models";
 
 @Injectable()
 export class WorkspaceSQLRepository implements WorkspaceRepository {
@@ -83,6 +84,73 @@ export class WorkspaceSQLRepository implements WorkspaceRepository {
     const currentTeam = workspace.team || [];
     const updatedTeam = currentTeam.filter(id => id !== userId);
     await this.workspaceRepository.update(parseInt(workspaceId), { team: updatedTeam });
+
+    return this.findById(workspaceId);
+  }
+
+  async addAcl(workspaceId: string, acl: ACL): Promise<WorkspaceResponseDto> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: parseInt(workspaceId) }
+    });
+
+    if (!workspace) {
+      throw new Error(`Workspace with id ${workspaceId} not found`);
+    }
+
+    const currentAcl = workspace.acl || [];
+    
+    // Verifica se o usuário já está no ACL
+    const existingAclIndex = currentAcl.findIndex(item => item.userId === acl.userId);
+    
+    if (existingAclIndex >= 0) {
+      // Atualiza o role do usuário existente
+      currentAcl[existingAclIndex].roleId = acl.roleId;
+    } else {
+      // Adiciona novo usuário ao ACL
+      currentAcl.push(acl);
+    }
+
+    await this.workspaceRepository.update(parseInt(workspaceId), { acl: currentAcl });
+
+    return this.findById(workspaceId);
+  }
+
+  async removeAcl(workspaceId: string, userId: string): Promise<WorkspaceResponseDto> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: parseInt(workspaceId) }
+    });
+
+    if (!workspace) {
+      throw new Error(`Workspace with id ${workspaceId} not found`);
+    }
+
+    const currentAcl = workspace.acl || [];
+    const updatedAcl = currentAcl.filter(item => item.userId !== userId);
+    
+    await this.workspaceRepository.update(parseInt(workspaceId), { acl: updatedAcl });
+
+    return this.findById(workspaceId);
+  }
+
+  async updateAcl(workspaceId: string, userId: string, roleId: string): Promise<WorkspaceResponseDto> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: parseInt(workspaceId) }
+    });
+
+    if (!workspace) {
+      throw new Error(`Workspace with id ${workspaceId} not found`);
+    }
+
+    const currentAcl = workspace.acl || [];
+    const aclIndex = currentAcl.findIndex(item => item.userId === userId);
+
+    if (aclIndex < 0) {
+      throw new Error(`User ${userId} not found in workspace ACL`);
+    }
+
+    currentAcl[aclIndex].roleId = roleId;
+    
+    await this.workspaceRepository.update(parseInt(workspaceId), { acl: currentAcl });
 
     return this.findById(workspaceId);
   }

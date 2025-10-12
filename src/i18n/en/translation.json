@@ -69,7 +69,14 @@
     "error-finding-my-workspaces": "Error finding my workspaces",
     "user-not-in-workspace": "User not in workspace",
     "error-finding-workspace-token": "Error finding workspace token",
-    "workspace-token-found": "Workspace token found"
+    "workspace-token-found": "Workspace token found",
+    "role-not-found": "Role not found",
+    "acl-user-added": "User added to workspace ACL successfully",
+    "acl-user-removed": "User removed from workspace ACL successfully",
+    "acl-user-updated": "User role updated in workspace ACL successfully",
+    "error-adding-acl-user": "Error adding user to workspace ACL",
+    "error-removing-acl-user": "Error removing user from workspace ACL",
+    "error-updating-acl-user": "Error updating user role in workspace ACL"
   },
   "person-profile": {
     "person-profile-create-error": "Error creating person profile",
@@ -98,6 +105,21 @@
     "error-updating-post": "Error updating post",
     "error-deleting-post": "Error deleting post",
     "insufficient-permissions": "Insufficient permissions. You must be the post creator or workspace owner",
+    "error-checking-permissions": "Error checking permissions"
+  },
+  "roles": {
+    "role-created": "Role created successfully",
+    "roles-found": "Roles found successfully",
+    "role-found": "Role found successfully",
+    "role-not-found": "Role not found",
+    "role-updated": "Role updated successfully",
+    "role-deleted": "Role deleted successfully",
+    "error-creating-role": "Error creating role",
+    "error-finding-roles": "Error finding roles",
+    "error-finding-role": "Error finding role",
+    "error-updating-role": "Error updating role",
+    "error-deleting-role": "Error deleting role",
+    "insufficient-permissions": "Insufficient permissions. You must be the role creator or workspace owner",
     "error-checking-permissions": "Error checking permissions"
   }
 }

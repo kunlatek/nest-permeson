@@ -10,6 +10,7 @@ import { RequestLoggerModule } from "./common/middleware/request-logger.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
 import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { PostsModule } from "./modules/posts/posts.module";
+import { RolesModule } from "./modules/roles/roles.module";
 import { CleanupModule } from "./modules/cleanup/cleanup.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 
@@ -19,6 +20,7 @@ import { CompanyProfileSQLModule } from "./modules/company-profile/repositories/
 import { UserSQLModule } from "./modules/user/repositories/sql/user.sql.module";
 import { WorkspaceSQLModule } from "./modules/workspace/repositories/sql/workspace.sql.module";
 import { PostsSQLModule } from "./modules/posts/repositories/sql/posts.sql.module";
+import { RolesSQLModule } from "./modules/roles/repositories/sql/roles.sql.module";
 
 import { DATABASE } from "./common/constants/database.constant";
 import { getDatabaseConfig } from "./utils/database.utils";
@@ -40,6 +42,7 @@ import * as path from "path";
     UserSQLModule,
     WorkspaceSQLModule,
     PostsSQLModule,
+    RolesSQLModule,
     
     I18nModule.forRoot({
       fallbackLanguage: "en",
@@ -56,6 +59,7 @@ import * as path from "path";
     ProfileModule,
     WorkspaceModule,
     PostsModule,
+    RolesModule,
     CleanupModule,
     
     CommonModule,

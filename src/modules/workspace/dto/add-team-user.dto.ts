@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsOptional } from "class-validator";
 
 export class UpdateWorkspaceTeamDto {
   @ApiProperty({
@@ -25,4 +25,12 @@ export class UpdateWorkspaceTeamDto {
   @IsString()
   @IsNotEmpty()
   createdBy: string;
+
+  @ApiPropertyOptional({
+    example: '507f1f77bcf86cd799439011',
+    description: 'ID do role a ser atribuído ao usuário (opcional)',
+  })
+  @IsString()
+  @IsOptional()
+  roleId?: string;
 }

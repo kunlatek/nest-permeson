@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, HttpCode, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { Param } from "@nestjs/common";
-import { UpdateWorkspaceTeamDto } from "./dto";
+import { UpdateWorkspaceTeamDto, AddAclDto } from "./dto";
 import { WorkspaceService } from "./workspace.service";
 import { AuthGuard } from "@nestjs/passport";
 import { I18nLang } from "nestjs-i18n";
@@ -31,19 +31,21 @@ export class WorkspaceController {
   @Post('team-user')
   @HttpCode(200)
   @ApiSecurity('jwt')
-  @ApiOperation({ summary: 'Add team user' })
+  @ApiOperation({ summary: 'Add team user with optional role' })
   @ApiResponse({ status: 204, description: 'Team user added successfully' })
+  @ApiResponse({ status: 404, description: 'Workspace or role not found' })
   async addTeamUser(
     @Req() req: any,
     @Body() body: UpdateWorkspaceTeamDto,
     @I18nLang() lang?: string
   ): Promise<IHttpResponse> {
-    return this.workspaceService.addTeamUser(req.user.userId, body.userId, lang);
+    return this.workspaceService.addTeamUser(req.user.userId, body.userId, body.roleId, lang);
   }
 
   @Delete('team-user')
+  @HttpCode(204)
   @ApiSecurity('jwt')
-  @ApiOperation({ summary: 'Remove team user' })
+  @ApiOperation({ summary: 'Remove team user (also removes from ACL)' })
   @ApiResponse({ status: 204, description: 'Team user removed successfully' })
   async removeTeamUser(
     @Req() req: any,
@@ -74,5 +76,19 @@ export class WorkspaceController {
     @I18nLang() lang?: string
   ): Promise<IWorkspaceTokenHttpResponse> {
     return this.workspaceService.getWorkspaceToken(req.user.userId, workspaceId, lang);
+  }
+
+  @Put('acl')
+  @HttpCode(200)
+  @ApiSecurity('jwt')
+  @ApiOperation({ summary: 'Update user role in workspace ACL' })
+  @ApiResponse({ status: 200, description: 'User role updated successfully' })
+  @ApiResponse({ status: 404, description: 'Role, user or workspace not found' })
+  async updateAcl(
+    @Req() req: any,
+    @Body() body: AddAclDto,
+    @I18nLang() lang?: string
+  ): Promise<IHttpResponse> {
+    return this.workspaceService.updateAcl(req.user.workspaceId, body.userId, body.roleId, lang);
   }
 }
