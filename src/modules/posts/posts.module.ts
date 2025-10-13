@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { DatabaseEnum } from "src/enums/database.enum";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -12,8 +12,6 @@ import { PostsService } from "./posts.service";
 import { PostsController } from "./posts.controller";
 
 import { WorkspaceModule } from "../workspace/workspace.module";
-import { AclModule } from "src/common/middleware/acl.module";
-import { AclMiddleware } from "src/common/middleware/acl.middleware";
 
 @Module({
   imports: [
@@ -43,16 +41,9 @@ import { AclMiddleware } from "src/common/middleware/acl.middleware";
     }),
 
     WorkspaceModule,
-    AclModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],
   exports: [PostsService],
 })
-export class PostsModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AclMiddleware)
-      .forRoutes({ path: 'posts*', method: RequestMethod.ALL });
-  }
-}
+export class PostsModule {}

@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
-import { ACL } from "../../models";
 
 export type WorkspaceDocument = MongoDBWorkspace & Document;
 
@@ -11,9 +10,6 @@ export class MongoDBWorkspace extends Document {
 
   @Prop({ type: [String] })
   team: string[];
-
-  @Prop({ type: [Object] })
-  acl: ACL[];
 }
 
 export const WorkspaceSchema = SchemaFactory.createForClass(MongoDBWorkspace);

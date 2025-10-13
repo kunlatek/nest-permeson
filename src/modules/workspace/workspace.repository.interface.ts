@@ -1,5 +1,4 @@
 import { CreateWorkspaceDto, UpdateWorkspaceDto, WorkspaceResponseDto } from "./dto";
-import { ACL } from "./models";
 
 export interface WorkspaceRepository {
   create(workspaceDto: CreateWorkspaceDto): Promise<WorkspaceResponseDto>;
@@ -17,10 +16,4 @@ export interface WorkspaceRepository {
   addTeamUser(workspaceId: string, userId: string): Promise<WorkspaceResponseDto>;
 
   removeTeamUser(workspaceId: string, userId: string): Promise<WorkspaceResponseDto>;
-
-  addAcl(workspaceId: string, acl: ACL): Promise<WorkspaceResponseDto>;
-
-  removeAcl(workspaceId: string, userId: string): Promise<WorkspaceResponseDto>;
-
-  updateAcl(workspaceId: string, userId: string, roleId: string): Promise<WorkspaceResponseDto>;
 }

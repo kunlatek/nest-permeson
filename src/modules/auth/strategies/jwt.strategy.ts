@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserRole } from 'src/enums/user-role.enum';
 
 /**
  * JWT authentication strategy using Passport.
