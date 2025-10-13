@@ -7,11 +7,9 @@ import { ProfileModule } from "./modules/profile/profile.module";
 import { CommonModule } from "./common/common.module";
 import { LoggingModule } from "./common/logging/logging.module";
 import { RequestLoggerModule } from "./common/middleware/request-logger.module";
-import { AclModule } from "./common/middleware/acl.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
 import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { PostsModule } from "./modules/posts/posts.module";
-import { RolesModule } from "./modules/roles/roles.module";
 import { CleanupModule } from "./modules/cleanup/cleanup.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 
@@ -44,13 +42,11 @@ import * as path from "path";
     ProfileModule,
     WorkspaceModule,
     PostsModule,
-    RolesModule,
     CleanupModule,
     
     CommonModule,
     LoggingModule,
     RequestLoggerModule,
-    AclModule,
     OwnerModule,
   ],
   controllers: [AppController],

@@ -14,10 +14,6 @@ export class WorkspaceEntity {
   @Column({ type: 'simple-array', nullable: true })
   team?: string[];
 
-  // ACL as JSON
-  @Column({ type: 'simple-json', nullable: true })
-  acl?: any[];
-
   // Timestamps
   @CreateDateColumn()
   createdAt: Date;

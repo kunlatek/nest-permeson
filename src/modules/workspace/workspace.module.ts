@@ -1,7 +1,6 @@
-import { Module, forwardRef, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { WorkspaceService } from "./workspace.service";
 import { ProfileModule } from "../profile/profile.module";
-import { RolesModule } from "../roles/roles.module";
 import { WorkspaceController } from "./workspace.controller";
 
 import { DatabaseEnum } from "src/enums/database.enum";
@@ -12,7 +11,6 @@ import { WorkspaceSQLModule } from "./repositories/sql";
 
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
-import { AclMiddleware } from "src/common/middleware/acl.middleware";
 
 @Module({
   imports: [
@@ -21,7 +19,6 @@ import { AclMiddleware } from "src/common/middleware/acl.middleware";
       { database: DatabaseEnum.POSTGRES, module: WorkspaceSQLModule },
       { database: DatabaseEnum.SQLITE, module: WorkspaceSQLModule },
     ]),
-
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -36,21 +33,14 @@ import { AclMiddleware } from "src/common/middleware/acl.middleware";
 
         return {
           secret: jwtSecret,
-          signOptions: { expiresIn: '24h' },
+          signOptions: { expiresIn: '7d' },
         };
       },
     }),
     ProfileModule,
-    forwardRef(() => RolesModule),
   ],
   controllers: [WorkspaceController],
   providers: [WorkspaceService],
   exports: [WorkspaceService],
 })
-export class WorkspaceModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AclMiddleware)
-      .forRoutes({ path: 'workspaces*', method: RequestMethod.ALL });
-  }
-}
+export class WorkspaceModule {}

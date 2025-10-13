@@ -5,7 +5,6 @@ import { MongoDBWorkspace } from "./workspace.schema";
 import { WorkspaceRepository } from "../../workspace.repository.interface";
 import { Injectable } from "@nestjs/common";
 import { CreateWorkspaceDto, UpdateWorkspaceDto, WorkspaceResponseDto } from "../../dto";
-import { ACL } from "../../models";
 
 @Injectable()
 export class WorkspaceMongoDBRepository implements WorkspaceRepository {
@@ -73,64 +72,6 @@ export class WorkspaceMongoDBRepository implements WorkspaceRepository {
         const currentTeam = workspace.team || [];
         const updatedTeam = currentTeam.filter(id => id !== userId);
         await this.workspaceModel.findByIdAndUpdate(workspaceId, { team: updatedTeam });
-
-        return this.findById(workspaceId);
-    }
-
-    async addAcl(workspaceId: string, acl: ACL): Promise<WorkspaceResponseDto> {
-        const workspace = await this.workspaceModel.findById(workspaceId);
-        if (!workspace) {
-            throw new Error(`Workspace with id ${workspaceId} not found`);
-        }
-
-        const currentAcl = workspace.acl || [];
-        
-        // Verifica se o usuário já está no ACL
-        const existingAclIndex = currentAcl.findIndex(item => item.userId === acl.userId);
-        
-        if (existingAclIndex >= 0) {
-            // Atualiza o role do usuário existente
-            currentAcl[existingAclIndex].roleId = acl.roleId;
-        } else {
-            // Adiciona novo usuário ao ACL
-            currentAcl.push(acl);
-        }
-
-        await this.workspaceModel.findByIdAndUpdate(workspaceId, { acl: currentAcl });
-
-        return this.findById(workspaceId);
-    }
-
-    async removeAcl(workspaceId: string, userId: string): Promise<WorkspaceResponseDto> {
-        const workspace = await this.workspaceModel.findById(workspaceId);
-        if (!workspace) {
-            throw new Error(`Workspace with id ${workspaceId} not found`);
-        }
-
-        const currentAcl = workspace.acl || [];
-        const updatedAcl = currentAcl.filter(item => item.userId !== userId);
-        
-        await this.workspaceModel.findByIdAndUpdate(workspaceId, { acl: updatedAcl });
-
-        return this.findById(workspaceId);
-    }
-
-    async updateAcl(workspaceId: string, userId: string, roleId: string): Promise<WorkspaceResponseDto> {
-        const workspace = await this.workspaceModel.findById(workspaceId);
-        if (!workspace) {
-            throw new Error(`Workspace with id ${workspaceId} not found`);
-        }
-
-        const currentAcl = workspace.acl || [];
-        const aclIndex = currentAcl.findIndex(item => item.userId === userId);
-
-        if (aclIndex < 0) {
-            throw new Error(`User ${userId} not found in workspace ACL`);
-        }
-
-        currentAcl[aclIndex].roleId = roleId;
-        
-        await this.workspaceModel.findByIdAndUpdate(workspaceId, { acl: currentAcl });
 
         return this.findById(workspaceId);
     }
