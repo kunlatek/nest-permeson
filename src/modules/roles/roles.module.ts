@@ -1,4 +1,4 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { Module, forwardRef, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
 import { DatabaseEnum } from "src/enums/database.enum";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -12,6 +12,7 @@ import { RolesService } from "./roles.service";
 import { RolesController } from "./roles.controller";
 
 import { WorkspaceModule } from "../workspace/workspace.module";
+import { AclMiddleware } from "src/common/middleware/acl.middleware";
 
 @Module({
   imports: [
@@ -46,5 +47,11 @@ import { WorkspaceModule } from "../workspace/workspace.module";
   providers: [RolesService],
   exports: [RolesService],
 })
-export class RolesModule {}
+export class RolesModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AclMiddleware)
+      .forRoutes({ path: 'roles*', method: RequestMethod.ALL });
+  }
+}
 

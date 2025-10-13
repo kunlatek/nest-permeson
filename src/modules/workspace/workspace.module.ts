@@ -1,4 +1,4 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { Module, forwardRef, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
 import { WorkspaceService } from "./workspace.service";
 import { ProfileModule } from "../profile/profile.module";
 import { RolesModule } from "../roles/roles.module";
@@ -12,6 +12,7 @@ import { WorkspaceSQLModule } from "./repositories/sql";
 
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
+import { AclMiddleware } from "src/common/middleware/acl.middleware";
 
 @Module({
   imports: [
@@ -46,4 +47,10 @@ import { JwtModule } from "@nestjs/jwt";
   providers: [WorkspaceService],
   exports: [WorkspaceService],
 })
-export class WorkspaceModule { }
+export class WorkspaceModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AclMiddleware)
+      .forRoutes({ path: 'workspaces*', method: RequestMethod.ALL });
+  }
+}

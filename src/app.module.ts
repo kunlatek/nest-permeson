@@ -7,6 +7,7 @@ import { ProfileModule } from "./modules/profile/profile.module";
 import { CommonModule } from "./common/common.module";
 import { LoggingModule } from "./common/logging/logging.module";
 import { RequestLoggerModule } from "./common/middleware/request-logger.module";
+import { AclModule } from "./common/middleware/acl.module";
 import { OwnerModule } from "./common/interceptors/owner.module";
 import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { PostsModule } from "./modules/posts/posts.module";
@@ -65,6 +66,7 @@ import * as path from "path";
     CommonModule,
     LoggingModule,
     RequestLoggerModule,
+    AclModule,
     OwnerModule,
   ],
   controllers: [AppController],
