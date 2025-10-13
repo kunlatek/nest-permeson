@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 @Injectable()
 export class CascadeService {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) { }
+  constructor(@Optional() @InjectDataSource() private readonly dataSource?: DataSource) { }
 
   async findEntitiesWithCreatedBy(): Promise<string[]> {
+    if (!this.dataSource) {
+      console.warn('CascadeService: DataSource not available (using MongoDB?)');
+      return [];
+    }
+    
     const entities = this.dataSource.entityMetadatas;
     const entitiesWithCreatedBy: string[] = [];
 
@@ -21,6 +26,11 @@ export class CascadeService {
   }
 
   async cascadeSoftDeleteByEntity(userId: string): Promise<void> {
+    if (!this.dataSource) {
+      console.warn('CascadeService: DataSource not available (using MongoDB?)');
+      return;
+    }
+    
     const entities = this.dataSource.entityMetadatas;
 
     for (const entity of entities) {
@@ -48,6 +58,11 @@ export class CascadeService {
   }
 
   async cascadeHardDeleteByEntity(userId: string): Promise<void> {
+    if (!this.dataSource) {
+      console.warn('CascadeService: DataSource not available (using MongoDB?)');
+      return;
+    }
+    
     const entities = this.dataSource.entityMetadatas;
 
     for (const entity of entities) {
@@ -65,6 +80,11 @@ export class CascadeService {
   }
 
   async cascadeRestoreByEntity(userId: string): Promise<void> {
+    if (!this.dataSource) {
+      console.warn('CascadeService: DataSource not available (using MongoDB?)');
+      return;
+    }
+    
     const entities = this.dataSource.entityMetadatas;
 
     for (const entity of entities) {
