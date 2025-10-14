@@ -13,6 +13,7 @@ import { WorkspaceModule } from "./modules/workspace/workspace.module";
 import { PostsModule } from "./modules/posts/posts.module";
 import { RolesModule } from "./modules/roles/roles.module";
 import { CleanupModule } from "./modules/cleanup/cleanup.module";
+import { InvitationsModule } from "./modules/invitations/invitations.module";
 import { I18nModule, AcceptLanguageResolver, QueryResolver } from "nestjs-i18n";
 
 import { DATABASE } from "./common/constants/database.constant";
@@ -46,6 +47,7 @@ import * as path from "path";
     PostsModule,
     RolesModule,
     CleanupModule,
+    InvitationsModule,
     
     CommonModule,
     LoggingModule,

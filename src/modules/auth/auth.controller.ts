@@ -1,7 +1,7 @@
 import { Controller, Post, Delete, Req, Body, UseGuards, HttpCode } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiSecurity } from "@nestjs/swagger";
-import { LoginDto, SignupDto, ResetPasswordDto, ResetPasswordRequestDto, PreSignupDto } from "./dto";
+import { LoginDto, SignupDto, ResetPasswordDto, ResetPasswordRequestDto } from "./dto";
 import { I18nLang } from "nestjs-i18n";
 import { ILoginHttpResponse } from "./interfaces/login-http-response.interface";
 import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-response.interface";
@@ -14,18 +14,6 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
   ) { }
-
-  @Post("presignup")
-  @HttpCode(200)
-  @ApiOperation({ summary: "Pre-register a new user - sends email with signup link" })
-  @ApiBody({ type: PreSignupDto })
-  @ApiResponse({ status: 200, description: "Pre-signup email sent successfully", type: IHttpResponse })
-  async preSignup(
-    @Body() preSignupDto: PreSignupDto,
-    @I18nLang() lang?: string
-  ): Promise<IHttpResponse> {
-    return await this.authService.preSignup(preSignupDto, lang);
-  }
 
   @Post("signup")
   @HttpCode(200)

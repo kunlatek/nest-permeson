@@ -40,29 +40,6 @@ export class EmailService {
     };
   }
 
-  async sendPreSignupEmail(email: string, token: string) {
-    const frontendUrl = this.configService.get("BASE_URL");
-    
-    const url = `${frontendUrl}/auth/register?email=${encodeURIComponent(email)}&token=${token}`;
-
-    await this.transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to: email,
-      subject: "Finalize seu cadastro",
-      html: `
-        <h1>Bem-vindo!</h1>
-        <p>Para finalizar seu cadastro, clique no link abaixo:</p>
-        <a href="${url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Finalizar Cadastro</a>
-        <p>Este link expira em 24 horas.</p>
-        <p>Se você não solicitou este cadastro, pode ignorar este email.</p>
-      `,
-    });
-
-    return {
-      message: "Email de pre-cadastro enviado com sucesso",
-    };
-  }
-
   async sendAccountDeletionWarning(email: string, daysRemaining: number) {
     const frontendUrl = this.configService.get("BASE_URL");
     
@@ -82,6 +59,54 @@ export class EmailService {
 
     return {
       message: "Email de aviso de deleção enviado com sucesso",
+    };
+  }
+
+  async sendInvitationEmail(email: string, token: string, workspaceId: string, roleId: string) {
+    const frontendUrl = this.configService.get("BASE_URL");
+    
+    const url = `${frontendUrl}/auth/register?email=${encodeURIComponent(email)}&token=${token}`;
+
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Você foi convidado para participar de um workspace",
+      html: `
+        <h1>Convite para Workspace</h1>
+        <p>Você foi convidado para fazer parte de um workspace!</p>
+        <p>Para aceitar o convite e criar sua conta, clique no link abaixo:</p>
+        <a href="${url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Aceitar Convite</a>
+        <p>Este link expira em 7 dias.</p>
+        <p>Se você não esperava este convite, pode ignorar este email.</p>
+      `,
+    });
+
+    return {
+      message: "Email de convite enviado com sucesso",
+    };
+  }
+
+  async sendAdminInvitationEmail(email: string, token: string) {
+    const frontendUrl = this.configService.get("BASE_URL");
+    
+    const url = `${frontendUrl}/auth/register?email=${encodeURIComponent(email)}&token=${token}`;
+
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: "Convite para cadastro na plataforma",
+      html: `
+        <h1>Bem-vindo!</h1>
+        <p>Você foi convidado para criar uma conta na nossa plataforma!</p>
+        <p>Para finalizar seu cadastro, clique no link abaixo:</p>
+        <a href="${url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Criar Conta</a>
+        <p>Este link expira em 7 dias.</p>
+        <p>Se você não solicitou este convite, pode ignorar este email.</p>
+      `,
+    });
+
+    return {
+      message: "Email de convite admin enviado com sucesso",
     };
   }
 }

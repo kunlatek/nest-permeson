@@ -7,7 +7,7 @@ import {
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
-import { SignupDto, ResetPasswordDto, LoginDto, PreSignupDto } from "./dto";
+import { SignupDto, ResetPasswordDto, LoginDto } from "./dto";
 import { EmailService } from "./services/email.service";
 import { UserResponseDto } from "../user/dto/user-response.dto";
 import { I18nService } from "nestjs-i18n";
@@ -17,6 +17,7 @@ import { IResetPasswordHttpResponse } from "./interfaces/reset-pass-http-respons
 import { IHttpResponse } from "src/interfaces";
 import { WorkspaceService } from "../workspace/workspace.service";
 import { ProfileService } from "../profile/profile.service";
+import { InvitationsService } from "../invitations/invitations.service";
 
 @Injectable()
 export class AuthService {
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly i18n: I18nService,
     private readonly workspaceService: WorkspaceService,
     private readonly profileService: ProfileService,
+    private readonly invitationsService: InvitationsService,
   ) { }
 
   async validateUser(email: string, password: string, lang: string = "en"): Promise<UserResponseDto> {
@@ -41,23 +43,6 @@ export class AuthService {
     if (!isPasswordValid) throw new UnauthorizedException(this.i18n.t("translation.auth.invalid-credentials", { lang }));
 
     return user;
-  }
-
-  async preSignup(preSignupDto: PreSignupDto, lang: string = "en"): Promise<IHttpResponse> {
-    const { email } = preSignupDto;
-    
-    if (await this.userService.findByEmail(email)) {
-      throw new BadRequestException(this.i18n.t("translation.auth.signup.email-already-in-use", { lang }));
-    }
-
-    try {
-      const token = this.jwtService.sign({ email }, { expiresIn: "24h" });
-      await this.emailService.sendPreSignupEmail(email, token);
-      
-      return new IHttpResponse(200, this.i18n.t("translation.auth.presignup.success", { lang }));
-    } catch (error) {
-      throw new BadRequestException(this.i18n.t("translation.auth.presignup.error", { lang }));
-    }
   }
 
   async signup(signupDto: SignupDto, lang: string = "en"): Promise<ILoginHttpResponse> {
@@ -78,14 +63,58 @@ export class AuthService {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.email-and-token-dont-match", { lang }));
     }
 
+    // Extrai workspaceId e roleId do token (token de convite)
+    const { workspaceId, roleId } = payload;
+
     try {
+      // Cria o usuário
       const user = await this.userService.createUser({ email, password });
       const { _id: sub } = user;
       
-      const workspaceId = await this.workspaceService.createWorkspace({ owner: sub, team: [sub] }, lang);
-      await this.profileService.createProfiles(user._id, email.split('@')[0], lang);
-      return new ILoginHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId._id })));
+      // Se o token tem workspaceId (convite), adiciona usuário ao workspace existente
+      if (workspaceId && roleId) {
+        // Busca workspace para obter o owner
+        const workspace = await this.workspaceService.findWorkspaceById(workspaceId, lang);
+        
+        // Adiciona ao team do workspace com a role
+        await this.workspaceService.addTeamUser(workspace.data.owner, sub, roleId, lang);
+        
+        // Cria perfis do usuário
+        await this.profileService.createProfiles(user._id, email.split('@')[0], lang);
+        
+        // Marca o convite como aceito
+        try {
+          const invitations = await this.invitationsService.findAll(workspaceId, lang, undefined, undefined, email, false);
+          if (invitations.data && invitations.data.length > 0) {
+            const invitation: any = invitations.data[0];
+            await this.invitationsService.update(invitation._id, { accepted: true }, workspaceId, sub, lang);
+          }
+        } catch (error) {
+          console.error('Error updating invitation status:', error);
+          // Não falha o signup se não conseguir marcar o convite
+        }
+        
+        return new ILoginHttpResponse(
+          200, 
+          this.i18n.t("translation.auth.signup.success", { lang }), 
+          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId }))
+        );
+      } else {
+        // Fluxo antigo: cria novo workspace (caso não tenha workspaceId no token)
+        const workspace = await this.workspaceService.createWorkspace({ owner: sub, team: [sub] }, lang);
+        await this.profileService.createProfiles(user._id, email.split('@')[0], lang);
+        
+        return new ILoginHttpResponse(
+          200, 
+          this.i18n.t("translation.auth.signup.success", { lang }), 
+          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspace._id }))
+        );
+      }
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error('Signup error:', error);
       throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
     }
   }
@@ -94,8 +123,25 @@ export class AuthService {
     const { email, password } = loginDto;
     const user = await this.validateUser(email, password, lang);
     const { _id: sub } = user;
-    const workspaceId = await this.workspaceService.findWorkspacesByOwner(sub, lang);
-    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId.data._id })));
+    
+    // Tenta buscar workspace do owner primeiro
+    const workspaceResponse = await this.workspaceService.findWorkspacesByOwner(sub, lang);
+    let workspaceId: string;
+    
+    // Se não é owner, busca pelos workspaces onde é membro do team
+    if (!workspaceResponse.data || !workspaceResponse.data._id) {
+      const myWorkspaces = await this.workspaceService.getMyWorkspaces(sub, lang);
+      if (myWorkspaces.data && myWorkspaces.data.length > 0) {
+        // Usa o primeiro workspace da lista
+        workspaceId = myWorkspaces.data[0]._id;
+      } else {
+        throw new NotFoundException(this.i18n.t("translation.workspace.workspace-not-found", { lang }));
+      }
+    } else {
+      workspaceId = workspaceResponse.data._id;
+    }
+    
+    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId })));
   }
 
   async resetPasswordRequest(email: string, lang: string = "en"): Promise<IResetPasswordHttpResponse> {

@@ -12,10 +12,6 @@
     "reset-password": {
       "success": "Senha resetada com sucesso"
     },
-    "presignup": {
-      "error": "Erro ao enviar email de pré-cadastro",
-      "success": "Email de pré-cadastro enviado com sucesso"
-    },
     "signup": {
       "error": "Erro no registro",
       "success": "Usuário registrado com sucesso",
@@ -120,5 +116,25 @@
     "error-deleting-role": "Erro ao deletar o role",
     "insufficient-permissions": "Permissões insuficientes. Você deve ser o criador do role ou o proprietário do workspace",
     "error-checking-permissions": "Erro ao verificar permissões"
+  },
+  "invitations": {
+    "invitation-created": "Convite criado com sucesso",
+    "invitations-found": "Convites encontrados com sucesso",
+    "invitation-found": "Convite encontrado com sucesso",
+    "invitation-not-found": "Convite não encontrado",
+    "invitation-updated": "Convite atualizado com sucesso",
+    "invitation-deleted": "Convite deletado com sucesso",
+    "invitation-resent": "Email de convite reenviado com sucesso",
+    "error-creating-invitation": "Erro ao criar o convite",
+    "error-finding-invitations": "Erro ao encontrar os convites",
+    "error-finding-invitation": "Erro ao encontrar o convite",
+    "error-updating-invitation": "Erro ao atualizar o convite",
+    "error-deleting-invitation": "Erro ao deletar o convite",
+    "error-resending-invitation": "Erro ao reenviar o email de convite",
+    "invitation-already-accepted": "O convite já foi aceito",
+    "insufficient-permissions": "Permissões insuficientes. Você deve ser o criador do convite ou o proprietário do workspace",
+    "error-checking-permissions": "Erro ao verificar permissões",
+    "invitation-already-exists": "Já existe um convite para este email neste workspace",
+    "user-already-registered": "Este usuário já possui uma conta. Por favor, adicione-o ao seu workspace ao invés de enviar um convite"
   }
 }

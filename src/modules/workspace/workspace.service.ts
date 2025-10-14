@@ -31,9 +31,27 @@ export class WorkspaceService {
   async findWorkspacesByOwner(owner: string, lang: string): Promise<IWorkspaceHttpResponse> {
     try {
       const workspace = await this.workspaceRepository.findByOwner(owner);
+      if (!workspace) {
+        return new IWorkspaceHttpResponse(200, this.i18n.t('translation.workspace.workspace-found', { lang }), null);
+      }
       return new IWorkspaceHttpResponse(200, this.i18n.t('translation.workspace.workspace-found', { lang }), new WorkspaceResponseDto(workspace));
     } catch (error) {
       throw new BadRequestException(this.i18n.t('translation.workspace.error-finding-workspaces-by-owner', { lang }));
+    }
+  }
+
+  async findWorkspaceById(workspaceId: string, lang: string): Promise<IWorkspaceHttpResponse> {
+    try {
+      const workspace = await this.workspaceRepository.findById(workspaceId);
+      if (!workspace) {
+        throw new NotFoundException(this.i18n.t('translation.workspace.workspace-not-found', { lang }));
+      }
+      return new IWorkspaceHttpResponse(200, this.i18n.t('translation.workspace.workspace-found', { lang }), new WorkspaceResponseDto(workspace));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(this.i18n.t('translation.workspace.error-finding-workspace', { lang }));
     }
   }
 

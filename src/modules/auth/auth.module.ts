@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '../../common/common.module';
 import { EmailService } from './services/email.service';
 import { ProfileModule } from '../profile/profile.module';
+import { InvitationsModule } from '../invitations/invitations.module';
 
 /**
  * Module responsible for handling authentication strategies,
@@ -41,6 +42,7 @@ import { ProfileModule } from '../profile/profile.module';
     UserModule,
     WorkspaceModule,
     ProfileModule,
+    forwardRef(() => InvitationsModule),
   ],
   providers: [AuthService, JwtStrategy, EmailService],
   controllers: [AuthController],

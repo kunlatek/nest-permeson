@@ -12,10 +12,6 @@
     "reset-password": {
       "success": "Contraseña restablecida correctamente"
     },
-    "presignup": {
-      "error": "Error al enviar email de pre-registro",
-      "success": "Email de pre-registro enviado correctamente"
-    },
     "signup": {
       "error": "Error no registro",
       "email-and-token-dont-match": "Email inválido",
@@ -118,5 +114,25 @@
     "error-deleting-role": "Error al eliminar el rol",
     "insufficient-permissions": "Permisos insuficientes. Debes ser el creador del rol o el propietario del workspace",
     "error-checking-permissions": "Error al verificar permisos"
+  },
+  "invitations": {
+    "invitation-created": "Invitación creada exitosamente",
+    "invitations-found": "Invitaciones encontradas exitosamente",
+    "invitation-found": "Invitación encontrada exitosamente",
+    "invitation-not-found": "Invitación no encontrada",
+    "invitation-updated": "Invitación actualizada exitosamente",
+    "invitation-deleted": "Invitación eliminada exitosamente",
+    "invitation-resent": "Email de invitación reenviado exitosamente",
+    "error-creating-invitation": "Error al crear la invitación",
+    "error-finding-invitations": "Error al encontrar las invitaciones",
+    "error-finding-invitation": "Error al encontrar la invitación",
+    "error-updating-invitation": "Error al actualizar la invitación",
+    "error-deleting-invitation": "Error al eliminar la invitación",
+    "error-resending-invitation": "Error al reenviar el email de invitación",
+    "invitation-already-accepted": "La invitación ya ha sido aceptada",
+    "insufficient-permissions": "Permisos insuficientes. Debes ser el creador de la invitación o el propietario del workspace",
+    "error-checking-permissions": "Error al verificar permisos",
+    "invitation-already-exists": "Ya existe una invitación para este email en este workspace",
+    "user-already-registered": "Este usuario ya tiene una cuenta. Por favor, agrégalo a tu workspace en lugar de enviar una invitación"
   }
 }

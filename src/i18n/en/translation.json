@@ -13,10 +13,6 @@
       "success": "Password reset successfully",
       "error": "Error resetting password" 
     },
-    "presignup": {
-      "error": "Error sending pre-signup email",
-      "success": "Pre-signup email sent successfully"
-    },
     "signup": {
       "error": "Signup error",
       "success": "User registered successfully",
@@ -121,5 +117,25 @@
     "error-deleting-role": "Error deleting role",
     "insufficient-permissions": "Insufficient permissions. You must be the role creator or workspace owner",
     "error-checking-permissions": "Error checking permissions"
+  },
+  "invitations": {
+    "invitation-created": "Invitation created successfully",
+    "invitations-found": "Invitations found successfully",
+    "invitation-found": "Invitation found successfully",
+    "invitation-not-found": "Invitation not found",
+    "invitation-updated": "Invitation updated successfully",
+    "invitation-deleted": "Invitation deleted successfully",
+    "invitation-resent": "Invitation email resent successfully",
+    "error-creating-invitation": "Error creating invitation",
+    "error-finding-invitations": "Error finding invitations",
+    "error-finding-invitation": "Error finding invitation",
+    "error-updating-invitation": "Error updating invitation",
+    "error-deleting-invitation": "Error deleting invitation",
+    "error-resending-invitation": "Error resending invitation email",
+    "invitation-already-accepted": "Invitation has already been accepted",
+    "insufficient-permissions": "Insufficient permissions. You must be the invitation creator or workspace owner",
+    "error-checking-permissions": "Error checking permissions",
+    "invitation-already-exists": "An invitation for this email already exists in this workspace",
+    "user-already-registered": "This user already has an account. Please add them to your workspace instead of sending an invitation"
   }
 }
