@@ -65,11 +65,10 @@ export class InvitationsService {
         try {
           const token = this.jwtService.sign({ 
             email: invitationDto.email, 
-            workspaceId, 
-            roleId: invitationDto.roleId 
+            workspaceId,
           }, { expiresIn: "7d" });
           
-          await this.emailService.sendInvitationEmail(invitationDto.email, token, workspaceId, invitationDto.roleId);
+          await this.emailService.sendInvitationEmail(invitationDto.email, token);
           
           return new IInvitationHttpResponse(200, this.i18n.t('translation.invitations.invitation-resent', { lang }), existingInvitation);
         } catch (error) {
@@ -86,10 +85,9 @@ export class InvitationsService {
         const token = this.jwtService.sign({ 
           email: invitationDto.email, 
           workspaceId, 
-          roleId: invitationDto.roleId 
         }, { expiresIn: "7d" });
         
-        await this.emailService.sendInvitationEmail(invitationDto.email, token, workspaceId, invitationDto.roleId);
+        await this.emailService.sendInvitationEmail(invitationDto.email, token);
       } catch (error) {
         console.error('Error sending invitation email:', error);
         // Continua mesmo se o email falhar
@@ -115,12 +113,11 @@ export class InvitationsService {
 
       const invitation = await this.invitationsRepository.create({
         email: invitationDto.email,
-        roleId: null,
         workspaceId: null,
         createdBy: null,
       }, null, null);
 
-      // Envia email de convite admin (sem workspace e role no token)
+      // Envia email de convite admin (sem workspace no token)
       try {
         const token = this.jwtService.sign({ 
           email: invitationDto.email,
@@ -225,10 +222,9 @@ export class InvitationsService {
         const token = this.jwtService.sign({ 
           email: invitation.email, 
           workspaceId: invitation.workspaceId, 
-          roleId: invitation.roleId 
         }, { expiresIn: "7d" });
         
-        await this.emailService.sendInvitationEmail(invitation.email, token, invitation.workspaceId, invitation.roleId);
+        await this.emailService.sendInvitationEmail(invitation.email, token);
       } catch (error) {
         console.error('Error resending invitation email:', error);
         throw new BadRequestException(this.i18n.t('translation.invitations.error-resending-invitation', { lang }));

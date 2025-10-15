@@ -15,9 +15,6 @@ export class InvitationEntity {
   accepted: boolean;
 
   @Column({ nullable: true })
-  roleId: string;
-
-  @Column({ nullable: true })
   workspaceId: string;
 
   @Column({ nullable: true })

@@ -10,14 +10,6 @@ export class CreateInvitationDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({
-    example: 'role123',
-    description: 'ID da role associada ao convite',
-  })
-  @IsNotEmpty()
-  @IsString()
-  roleId: string;
-
   @ApiPropertyOptional({
     example: 'workspace123',
     description: 'ID do workspace (preenchido automaticamente pelo sistema)',

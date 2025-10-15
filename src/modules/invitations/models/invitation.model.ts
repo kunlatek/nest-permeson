@@ -18,15 +18,6 @@ export class Invitation {
   accepted: boolean;
 
   @ApiProperty({
-    example: 'role123',
-    description: 'ID da role associada ao convite',
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  roleId?: string;
-
-  @ApiProperty({
     example: 'workspace123',
     description: 'ID do workspace',
     required: false,

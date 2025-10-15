@@ -17,13 +17,5 @@ export class UpdateInvitationDto {
   @IsOptional()
   @IsBoolean()
   accepted?: boolean;
-
-  @ApiPropertyOptional({
-    example: 'role123',
-    description: 'ID da role associada ao convite',
-  })
-  @IsOptional()
-  @IsString()
-  roleId?: string;
 }
 

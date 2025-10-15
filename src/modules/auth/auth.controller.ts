@@ -30,7 +30,7 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({ summary: "Local login with email/password" })
   @ApiBody({ type: LoginDto })
-  @ApiResponse({ status: 200, description: "Returns JWT access token on successful login with available roles", type: ILoginHttpResponse })
+  @ApiResponse({ status: 200, description: "Returns JWT access token on successful login", type: ILoginHttpResponse })
   async login(
     @Body() loginDto: LoginDto,
     @I18nLang() lang?: string

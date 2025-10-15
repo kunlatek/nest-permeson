@@ -62,7 +62,7 @@ export class EmailService {
     };
   }
 
-  async sendInvitationEmail(email: string, token: string, workspaceId: string, roleId: string) {
+  async sendInvitationEmail(email: string, token: string) {
     const frontendUrl = this.configService.get("BASE_URL");
     
     const url = `${frontendUrl}/auth/register?email=${encodeURIComponent(email)}&token=${token}`;

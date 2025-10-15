@@ -64,14 +64,7 @@
     "error-finding-my-workspaces": "Erro ao encontrar os workspaces",
     "user-not-in-workspace": "Usuário não está no workspace",
     "error-finding-workspace-token": "Erro ao encontrar o token do workspace",
-    "workspace-token-found": "Token do workspace encontrado",
-    "role-not-found": "Role não encontrado",
-    "acl-user-added": "Usuário adicionado ao ACL do workspace com sucesso",
-    "acl-user-removed": "Usuário removido do ACL do workspace com sucesso",
-    "acl-user-updated": "Role do usuário atualizado no ACL do workspace com sucesso",
-    "error-adding-acl-user": "Erro ao adicionar usuário ao ACL do workspace",
-    "error-removing-acl-user": "Erro ao remover usuário do ACL do workspace",
-    "error-updating-acl-user": "Erro ao atualizar role do usuário no ACL do workspace"
+    "workspace-token-found": "Token do workspace encontrado"
   },
   "person-profile": {
     "person-profile-create-error": "Erro ao criar o perfil de pessoa",
@@ -100,21 +93,6 @@
     "error-updating-post": "Erro ao atualizar o post",
     "error-deleting-post": "Erro ao deletar o post",
     "insufficient-permissions": "Permissões insuficientes. Você deve ser o criador do post ou o proprietário do workspace",
-    "error-checking-permissions": "Erro ao verificar permissões"
-  },
-  "roles": {
-    "role-created": "Role criado com sucesso",
-    "roles-found": "Roles encontrados com sucesso",
-    "role-found": "Role encontrado com sucesso",
-    "role-not-found": "Role não encontrado",
-    "role-updated": "Role atualizado com sucesso",
-    "role-deleted": "Role deletado com sucesso",
-    "error-creating-role": "Erro ao criar o role",
-    "error-finding-roles": "Erro ao encontrar os roles",
-    "error-finding-role": "Erro ao encontrar o role",
-    "error-updating-role": "Erro ao atualizar o role",
-    "error-deleting-role": "Erro ao deletar o role",
-    "insufficient-permissions": "Permissões insuficientes. Você deve ser o criador do role ou o proprietário do workspace",
     "error-checking-permissions": "Erro ao verificar permissões"
   },
   "invitations": {

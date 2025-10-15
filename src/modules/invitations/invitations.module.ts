@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer, RequestMethod, forwardRef } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { DatabaseEnum } from "src/enums/database.enum";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -14,8 +14,6 @@ import { InvitationsController } from "./invitations.controller";
 import { WorkspaceModule } from "../workspace/workspace.module";
 import { UserModule } from "../user/user.module";
 import { AuthModule } from "../auth/auth.module";
-import { AclModule } from "src/common/middleware/acl.module";
-import { AclMiddleware } from "src/common/middleware/acl.middleware";
 
 @Module({
   imports: [
@@ -47,17 +45,10 @@ import { AclMiddleware } from "src/common/middleware/acl.middleware";
     WorkspaceModule,
     UserModule,
     forwardRef(() => AuthModule),
-    AclModule,
   ],
   controllers: [InvitationsController],
   providers: [InvitationsService],
   exports: [InvitationsService],
 })
-export class InvitationsModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AclMiddleware)
-      .forRoutes({ path: 'invitations*', method: RequestMethod.ALL });
-  }
-}
+export class InvitationsModule {}
 

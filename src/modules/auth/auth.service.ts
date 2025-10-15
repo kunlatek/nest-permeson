@@ -63,8 +63,8 @@ export class AuthService {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.email-and-token-dont-match", { lang }));
     }
 
-    // Extrai workspaceId e roleId do token (token de convite)
-    const { workspaceId, roleId } = payload;
+    // Extrai workspaceId do token (token de convite)
+    const { workspaceId } = payload;
 
     try {
       // Cria o usuário
@@ -72,12 +72,12 @@ export class AuthService {
       const { _id: sub } = user;
       
       // Se o token tem workspaceId (convite), adiciona usuário ao workspace existente
-      if (workspaceId && roleId) {
+      if (workspaceId) {
         // Busca workspace para obter o owner
         const workspace = await this.workspaceService.findWorkspaceById(workspaceId, lang);
         
-        // Adiciona ao team do workspace com a role
-        await this.workspaceService.addTeamUser(workspace.data.owner, sub, roleId, lang);
+        // Adiciona ao team do workspace
+        await this.workspaceService.addTeamUser(workspace.data.owner, sub, lang);
         
         // Cria perfis do usuário
         await this.profileService.createProfiles(user._id, email.split('@')[0], lang);

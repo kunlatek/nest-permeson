@@ -12,9 +12,6 @@ export class MongoDBInvitation extends Document {
   accepted: boolean;
 
   @Prop({ required: false })
-  roleId: string;
-
-  @Prop({ required: false })
   workspaceId: string;
 
   @Prop({ required: false })
