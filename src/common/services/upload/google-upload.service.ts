@@ -5,28 +5,47 @@ import { UploadServiceInterface } from "./upload-service.interface";
 
 @Injectable()
 export class UploadService implements UploadServiceInterface {
-  private readonly storage: Storage;
+  private storage: Storage;
   private readonly publicBucketName: string;
-  private readonly privateBucketName: string;
   private readonly logger = new Logger(UploadService.name);
 
   constructor(private readonly configService: ConfigService) {
-    // Initialize Google Cloud Storage
-    // This assumes the GCS_CREDENTIALS environment variable is set with the JSON key file content
-    this.storage = new Storage();
+    // Initialize Google Cloud Storage with proper authentication
+    this.initializeStorage();
 
     this.publicBucketName = this.configService.get<string>(
       "GCS_PUBLIC_BUCKET_NAME"
     );
-    this.privateBucketName = this.configService.get<string>(
-      "GCS_PRIVATE_BUCKET_NAME"
-    );
 
-    if (!this.publicBucketName || !this.privateBucketName) {
+    if (!this.publicBucketName) {
       this.logger.error(
         "GCS bucket names are not configured in environment variables."
       );
       throw new Error("Google Cloud Storage is not properly configured.");
+    }
+  }
+
+  private initializeStorage(): void {
+    try {
+      const credentialsJson = this.configService.get<string>("GCS_CREDENTIALS");
+      const projectId = this.configService.get<string>("GCS_PROJECT_ID");
+
+      if (credentialsJson) {
+        const credentials = JSON.parse(credentialsJson);
+        this.storage = new Storage({
+          projectId: projectId || credentials.project_id,
+          credentials: credentials,
+        });
+        this.logger.log("Google Cloud Storage initialized with JSON credentials from environment");
+      } else {
+        this.storage = new Storage({
+          projectId,
+        });
+        this.logger.log("Google Cloud Storage initialized with default credentials");
+      }
+    } catch (error) {
+      this.logger.error(`Failed to initialize Google Cloud Storage: ${error.message}`, error.stack);
+      throw new Error("Failed to initialize Google Cloud Storage. Please check your credentials configuration.");
     }
   }
 
@@ -39,10 +58,7 @@ export class UploadService implements UploadServiceInterface {
     try {
       // Normaliza o path removendo barras extras e garantindo que termine com /
       const normalizedPath = path.replace(/^\/+|\/+$/g, "");
-      const isPublic = normalizedPath.startsWith("public/");
-      const bucketName = isPublic
-        ? this.publicBucketName
-        : this.privateBucketName;
+      const bucketName = this.publicBucketName;
       const bucket = this.storage.bucket(bucketName);
 
       // Lista arquivos existentes na pasta
@@ -87,17 +103,13 @@ export class UploadService implements UploadServiceInterface {
             blobStream.on("finish", async () => {
               this.logger.log(`File ${fileName} uploaded to ${bucketName}/${normalizedPath}`);
 
-              // If the bucket is public, make the file publicly readable
-              if (isPublic) {
-                try {
-                  await blob.makePublic();
-                } catch (e) {
-                  this.logger.error(
-                    `Failed to make file public: ${e.message}`,
-                    e.stack
-                  );
-                  // Even if it fails to be made public, we can still continue
-                }
+              try {
+                await blob.makePublic();
+              } catch (e) {
+                this.logger.error(
+                  `Failed to make file public: ${e.message}`,
+                  e.stack
+                );
               }
 
               resolve();
@@ -126,10 +138,7 @@ export class UploadService implements UploadServiceInterface {
 
     try {
       const normalizedPath = path.replace(/^\/+|\/+$/g, "");
-      const isPublic = normalizedPath.startsWith("public/");
-      const bucketName = isPublic
-        ? this.publicBucketName
-        : this.privateBucketName;
+      const bucketName = this.publicBucketName;
       const bucket = this.storage.bucket(bucketName);
 
       const destination = normalizedPath ? `${normalizedPath}/${fileName}` : fileName;
@@ -151,10 +160,7 @@ export class UploadService implements UploadServiceInterface {
   async listFiles(path: string = ""): Promise<string[]> {
     try {
       const normalizedPath = path.replace(/^\/+|\/+$/g, "");
-      const isPublic = normalizedPath.startsWith("public/");
-      const bucketName = isPublic
-        ? this.publicBucketName
-        : this.privateBucketName;
+      const bucketName = this.publicBucketName;
       const bucket = this.storage.bucket(bucketName);
 
       const prefix = normalizedPath ? `${normalizedPath}/` : "";
