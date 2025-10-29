@@ -37,5 +37,23 @@ export class InvitationsFilterDto {
   @Type(() => Boolean)
   @IsBoolean()
   accepted?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Sort by',
+    example: 'createdAt',
+    enum: ['createdAt', 'updatedAt'],
+  })
+  @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @ApiPropertyOptional({
+    description: 'Sort order',
+    example: 'desc',
+    enum: ['asc', 'desc'],
+  })
+  @IsOptional()
+  @IsString()
+  sortDir?: string;
 }
 
