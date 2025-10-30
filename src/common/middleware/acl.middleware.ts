@@ -26,6 +26,11 @@ export class AclMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    // Skip ACL check for invitations/admin, roles, workspaces, profile, person, company routes
+    if (req.path.includes('invitations/admin') || req.path.includes('roles') || req.path.includes('workspaces') || req.path.includes('profile') || req.path.includes('person') || req.path.includes('company')) {
+      return next();
+    }
+
     try {
       // Extract language from headers or use default
       const lang = req.headers['accept-language']?.split(',')[0]?.split('-')[0] || 'en';
@@ -106,7 +111,7 @@ export class AclMiddleware implements NestMiddleware {
         permission => permission.module.toLowerCase() === moduleName.toLowerCase()
       );
 
-      if (!modulePermissions && !['workspaces', 'roles', 'profiles'].includes(moduleName.toLowerCase())) {
+      if (!modulePermissions) {
         throw new ForbiddenException(
           this.i18n.t('translation.roles.insufficient-permissions', { lang })
         );
@@ -114,7 +119,7 @@ export class AclMiddleware implements NestMiddleware {
 
       // Check if user has required action permission
       const hasPermission = modulePermissions?.actionList?.includes(requiredAction as Action);
-      if (!hasPermission && !['workspaces', 'roles', 'profiles'].includes(moduleName.toLowerCase())) {
+      if (!hasPermission) {
         throw new ForbiddenException(
           this.i18n.t('translation.roles.insufficient-permissions', { lang })
         );
