@@ -84,7 +84,7 @@ export class AuthService {
       
       const workspaceId = await this.workspaceService.createWorkspace({ owner: sub, team: [sub] }, lang);
       await this.profileService.createProfiles(user._id, email.split('@')[0], lang);
-      return new ILoginHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId._id })));
+      return new ILoginHttpResponse(200, this.i18n.t("translation.auth.signup.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId._id, workspaceOwnerId: sub })));
     } catch (error) {
       throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
     }
@@ -95,7 +95,7 @@ export class AuthService {
     const user = await this.validateUser(email, password, lang);
     const { _id: sub } = user;
     const workspaceId = await this.workspaceService.findWorkspacesByOwner(sub, lang);
-    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId.data._id })));
+    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspaceId.data._id, workspaceOwnerId: sub })));
   }
 
   async resetPasswordRequest(email: string, lang: string = "en"): Promise<IResetPasswordHttpResponse> {
