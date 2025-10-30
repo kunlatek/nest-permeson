@@ -87,10 +87,9 @@ export class AuthService {
           const invitations = await this.invitationsService.findAll(workspaceId, lang, undefined, undefined, email, false);
           if (invitations.data && invitations.data.length > 0) {
             const invitation: any = invitations.data[0];
-            await this.invitationsService.update(invitation._id, { accepted: true }, workspaceId, sub, lang);
+            await this.invitationsService.updateAsSystem(invitation._id, { accepted: true }, workspaceId, lang);
           }
         } catch (error) {
-          console.error('Error updating invitation status:', error);
           // Não falha o signup se não conseguir marcar o convite
         }
         
@@ -114,7 +113,6 @@ export class AuthService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      console.error('Signup error:', error);
       throw new BadRequestException(this.i18n.t("translation.auth.signup.error", { lang }));
     }
   }
