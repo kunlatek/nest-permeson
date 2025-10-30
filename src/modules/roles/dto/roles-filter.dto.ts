@@ -30,5 +30,13 @@ export class RolesFilterDto {
   @IsOptional()
   @IsString()
   name?: string;
+
+  @ApiPropertyOptional({
+    example: '[{name: "admin" }]',
+    description: 'Filters',
+  })
+  @IsOptional()
+  @IsString()
+  filters?: string;
 }
 

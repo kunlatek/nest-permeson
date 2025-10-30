@@ -36,7 +36,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Get all roles from workspace' })
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number for pagination' })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page' })
-  @ApiQuery({ name: 'name', required: false, type: String, description: 'Filter roles by name (case-insensitive partial match)' })
+  @ApiQuery({ name: 'filters', required: false, type: String, description: 'Filters' })
   @ApiResponse({ status: 200, description: 'Roles retrieved successfully', type: IRolesPaginatedHttpResponse })
   async findAll(
     @Req() req: any,
@@ -44,7 +44,7 @@ export class RolesController {
     @I18nLang() lang?: string
   ): Promise<IRolesPaginatedHttpResponse | IRolesHttpResponse> {
     const workspaceId = req.user.workspaceId;
-    return this.rolesService.findAll(workspaceId, lang, query.page, query.limit, query.name);
+    return this.rolesService.findAll(workspaceId, lang, query.page, query.limit, query.filters);
   }
 
   @Get(':id')

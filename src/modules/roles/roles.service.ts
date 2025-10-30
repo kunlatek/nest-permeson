@@ -52,16 +52,18 @@ export class RolesService {
     }
   }
 
-  async findAll(workspace: string, lang: string, page?: number, limit?: number, name?: string): Promise<IRolesPaginatedHttpResponse | IRolesHttpResponse> {
+  async findAll(workspace: string, lang: string, page?: number, limit?: number, filters?: string): Promise<IRolesPaginatedHttpResponse | IRolesHttpResponse> {
     try {
+      const filtersObject = JSON.parse(filters || '[]');
       if (page !== undefined && limit !== undefined) {
-        const result = await this.rolesRepository.findAll(workspace, page, limit, name);
+        const result = await this.rolesRepository.findAll(workspace, page, limit, filtersObject);
         return new IRolesPaginatedHttpResponse(200, this.i18n.t('translation.roles.roles-found', { lang }), result.roles, result.total, page, limit);
       } else {
-        const result = await this.rolesRepository.findAll(workspace, undefined, undefined, name);
+        const result = await this.rolesRepository.findAll(workspace, undefined, undefined, filtersObject);
         return new IRolesHttpResponse(200, this.i18n.t('translation.roles.roles-found', { lang }), result.roles);
       }
     } catch (error) {
+      console.error(error);
       throw new BadRequestException(this.i18n.t('translation.roles.error-finding-roles', { lang }));
     }
   }
