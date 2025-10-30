@@ -26,12 +26,12 @@ export class AclMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    // Skip ACL check for invitations/admin, roles, workspaces, profile, person, company routes
+    if (req.path.includes('invitations/admin') || req.path.includes('roles') || req.path.includes('workspaces') || req.path.includes('profile') || req.path.includes('person') || req.path.includes('company')) {
+      return next();
+    }
+
     try {
-      // Skip ACL check for invitations/admin, roles, workspaces, profile, person, company routes
-      if (req.path.includes('invitations/admin') || req.path.includes('roles') || req.path.includes('workspaces') || req.path.includes('profile') || req.path.includes('person') || req.path.includes('company')) {
-        return next();
-      }
-      
       // Extract language from headers or use default
       const lang = req.headers['accept-language']?.split(',')[0]?.split('-')[0] || 'en';
 
@@ -54,7 +54,7 @@ export class AclMiddleware implements NestMiddleware {
       const userId = payload.sub;
       const workspaceId = payload.workspaceId;
 
-      if (!userId) {
+      if (!userId || !workspaceId) {
         throw new UnauthorizedException(this.i18n.t('translation.auth.invalid-token', { lang }));
       }
 
@@ -118,7 +118,7 @@ export class AclMiddleware implements NestMiddleware {
       }
 
       // Check if user has required action permission
-      const hasPermission = modulePermissions.actionList.includes(requiredAction as Action);
+      const hasPermission = modulePermissions?.actionList?.includes(requiredAction as Action);
       if (!hasPermission) {
         throw new ForbiddenException(
           this.i18n.t('translation.roles.insufficient-permissions', { lang })

@@ -16,9 +16,8 @@ export class OwnerInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest<Request>();
     const user = request.user as any;
 
+    const body = request.body;
     if ((request.method === 'POST' || request.method === 'DELETE') && user) {
-      const body = request.body;
-
       // Sempre define createdBy como o userId do usuário logado
       body.createdBy = user.userId;
       
@@ -29,6 +28,9 @@ export class OwnerInterceptor implements NestInterceptor {
       // Adiciona workspaceId do token para uso nos controllers
       body.workspaceId = user.workspaceId;
     }
+    
+    // Adiciona o ownerId do workspace do token para uso nos controllers
+    if(request.user) request.user['workspaceOwnerId'] = user.workspaceOwnerId;
 
     return next.handle();
   }
