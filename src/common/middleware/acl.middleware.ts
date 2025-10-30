@@ -106,15 +106,15 @@ export class AclMiddleware implements NestMiddleware {
         permission => permission.module.toLowerCase() === moduleName.toLowerCase()
       );
 
-      if (!modulePermissions) {
+      if (!modulePermissions && !['workspaces', 'roles', 'profiles'].includes(moduleName.toLowerCase())) {
         throw new ForbiddenException(
           this.i18n.t('translation.roles.insufficient-permissions', { lang })
         );
       }
 
       // Check if user has required action permission
-      const hasPermission = modulePermissions.actionList.includes(requiredAction as Action);
-      if (!hasPermission) {
+      const hasPermission = modulePermissions?.actionList?.includes(requiredAction as Action);
+      if (!hasPermission && !['workspaces', 'roles', 'profiles'].includes(moduleName.toLowerCase())) {
         throw new ForbiddenException(
           this.i18n.t('translation.roles.insufficient-permissions', { lang })
         );
