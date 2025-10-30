@@ -29,12 +29,16 @@ export class RolesMongoDBRepository implements RolesRepository {
     workspace: string,
     page?: number,
     limit?: number,
-    name?: string,
+    filters?: any[],
   ): Promise<{ roles: RoleResponseDto[]; total: number }> {
     const query: any = { workspace };
 
-    if (name) {
-      query.name = { $regex: name, $options: 'i' };
+    if (filters) {
+      filters.forEach(filter => {
+        const key = Object.keys(filter)[0];
+        const value = filter[key];
+        query[key] = { $regex: value, $options: 'i' };
+      });
     }
 
     if (page !== undefined && limit !== undefined) {

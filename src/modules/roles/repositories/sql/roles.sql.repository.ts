@@ -29,12 +29,16 @@ export class RolesSQLRepository implements RolesRepository {
     workspace: string,
     page?: number,
     limit?: number,
-    name?: string,
+    filters?: any[],
   ): Promise<{ roles: RoleResponseDto[]; total: number }> {
     const whereConditions: any = { workspace };
 
-    if (name) {
-      whereConditions.name = Like(`%${name}%`);
+    if (filters) {
+      filters.forEach(filter => {
+        const key = Object.keys(filter)[0];
+        const value = filter[key];
+        whereConditions[key] = Like(`%${value}%`);
+      });
     }
 
     if (page !== undefined && limit !== undefined) {
