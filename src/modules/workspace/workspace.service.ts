@@ -106,7 +106,7 @@ export class WorkspaceService {
       const userIsInWorkspaceTeam = workspace.team.includes(userId);
       if (!userIsInWorkspaceTeam) throw new NotFoundException(this.i18n.t('translation.workspace.user-not-in-workspace', { lang }));
 
-      const token = this.jwtService.sign({ sub: userId, workspaceId });
+      const token = this.jwtService.sign({ sub: userId, workspaceId, workspaceOwnerId: workspace.owner });
       return new IWorkspaceTokenHttpResponse(200, this.i18n.t('translation.workspace.workspace-token-found', { lang }), token);
     } catch (error) {
       throw new BadRequestException(this.i18n.t('translation.workspace.error-finding-workspace-token', { lang }));

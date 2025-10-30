@@ -25,7 +25,7 @@ export class WorkspaceController {
     @Req() req: any,
     @I18nLang() lang?: string
   ): Promise<IWorkspaceHttpResponse> {
-    return this.workspaceService.findWorkspacesByOwner(req.user.userId || req.user.workspaceId, lang);
+    return this.workspaceService.findWorkspacesByOwner(req.user.workspaceOwnerId, lang);
   }
 
   @Post('team-user')
