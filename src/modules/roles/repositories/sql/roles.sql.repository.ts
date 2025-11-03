@@ -67,7 +67,19 @@ export class RolesSQLRepository implements RolesRepository {
     };
   }
 
-  async findById(id: string, workspace: string): Promise<RoleResponseDto | null> {
+  async findById(id: string): Promise<RoleResponseDto | null> {
+    const role = await this.roleRepository.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!role) {
+      return null;
+    }
+
+    return this.mapToRoleResponseDto(role);
+  }
+  
+  async findByIdAndWorkspace(id: string, workspace: string): Promise<RoleResponseDto | null> {
     const role = await this.roleRepository.findOne({
       where: [
         { id: parseInt(id), workspace },

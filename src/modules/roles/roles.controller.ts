@@ -57,7 +57,7 @@ export class RolesController {
     @I18nLang() lang?: string
   ): Promise<IRoleHttpResponse> {
     const workspaceId = req.user.workspaceId;
-    return this.rolesService.findById(id, workspaceId, lang);
+    return this.rolesService.findById(id, lang);
   }
 
   @Put(':id')
