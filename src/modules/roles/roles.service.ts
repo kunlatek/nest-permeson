@@ -18,7 +18,7 @@ export class RolesService {
 
   private async checkUserPermissions(userId: string, workspaceId: string, roleId: string, lang: string): Promise<void> {
     try {
-      const role = await this.rolesRepository.findById(roleId, workspaceId);
+      const role = await this.rolesRepository.findByIdAndWorkspace(roleId, workspaceId);
       if (!role) {
         throw new NotFoundException(this.i18n.t('translation.roles.role-not-found', { lang }));
       }
@@ -68,9 +68,9 @@ export class RolesService {
     }
   }
 
-  async findById(id: string, workspace: string, lang: string): Promise<IRoleHttpResponse> {
+  async findById(id: string, lang: string): Promise<IRoleHttpResponse> {
     try {
-      const role = await this.rolesRepository.findById(id, workspace);
+      const role = await this.rolesRepository.findById(id);
       if (!role) {
         throw new NotFoundException(this.i18n.t('translation.roles.role-not-found', { lang }));
       }

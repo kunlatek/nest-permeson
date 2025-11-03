@@ -52,12 +52,10 @@ export class RolesController {
   @ApiOperation({ summary: 'Get role by ID' })
   @ApiResponse({ status: 200, description: 'Role retrieved successfully', type: IRoleHttpResponse })
   async findById(
-    @Req() req: any,
     @Param('id') id: string,
     @I18nLang() lang?: string
   ): Promise<IRoleHttpResponse> {
-    const workspaceId = req.user.workspaceId;
-    return this.rolesService.findById(id, workspaceId, lang);
+    return this.rolesService.findById(id, lang);
   }
 
   @Put(':id')
