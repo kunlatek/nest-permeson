@@ -48,7 +48,7 @@ export class WorkspaceService {
       // Se roleId foi fornecido, adiciona ao ACL
       if (roleId) {
         // Verifica se o role existe
-        const roleExists = await this.rolesService.findById(roleId, owner, lang);
+        const roleExists = await this.rolesService.findById(roleId, lang);
         if (!roleExists) {
           throw new NotFoundException(this.i18n.t('translation.workspace.role-not-found', { lang }));
         }
@@ -127,7 +127,7 @@ export class WorkspaceService {
   async updateAcl(owner: string, userId: string, roleId: string, lang: string): Promise<IHttpResponse> {
     try {
       // Verifica se o role existe
-      const roleExists = await this.rolesService.findById(roleId, owner, lang);
+      const roleExists = await this.rolesService.findById(roleId, lang);
       if (!roleExists) {
         throw new NotFoundException(this.i18n.t('translation.workspace.role-not-found', { lang }));
       }

@@ -82,6 +82,21 @@ export class RolesService {
       throw new BadRequestException(this.i18n.t('translation.roles.error-finding-role', { lang }));
     }
   }
+  
+  async findByIdAndWorkspace(id: string, workspace: string, lang: string): Promise<IRoleHttpResponse> {
+    try {
+      const role = await this.rolesRepository.findByIdAndWorkspace(id, workspace);
+      if (!role) {
+        throw new NotFoundException(this.i18n.t('translation.roles.role-not-found', { lang }));
+      }
+      return new IRoleHttpResponse(200, this.i18n.t('translation.roles.role-found', { lang }), role);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(this.i18n.t('translation.roles.error-finding-role', { lang }));
+    }
+  }
 
   async update(id: string, roleDto: UpdateRoleDto, workspace: string, userId: string, lang: string): Promise<IRoleHttpResponse> {
     try {

@@ -96,7 +96,7 @@ export class AclMiddleware implements NestMiddleware {
       }
 
       // Get role and check permissions
-      const roleResponse = await this.rolesService.findById(userAcl.roleId, workspaceId, lang);
+      const roleResponse = await this.rolesService.findByIdAndWorkspace(userAcl.roleId, workspaceId, lang);
       if (!roleResponse || !roleResponse.data || !roleResponse.data.role) {
         throw new ForbiddenException(this.i18n.t('translation.roles.role-not-found', { lang }));
       }
