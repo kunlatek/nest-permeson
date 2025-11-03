@@ -96,7 +96,7 @@ export class AuthService {
         return new ILoginHttpResponse(
           200, 
           this.i18n.t("translation.auth.signup.success", { lang }), 
-          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId }))
+          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId, workspaceOwnerId: workspace.data.owner }))
         );
       } else {
         // Fluxo antigo: cria novo workspace (caso não tenha workspaceId no token)
@@ -106,7 +106,7 @@ export class AuthService {
         return new ILoginHttpResponse(
           200, 
           this.i18n.t("translation.auth.signup.success", { lang }), 
-          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspace._id }))
+          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspace._id, workspaceOwnerId: workspace.owner }))
         );
       }
     } catch (error) {
@@ -139,7 +139,7 @@ export class AuthService {
       workspaceId = workspaceResponse.data._id;
     }
     
-    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId })));
+    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId, workspaceOwnerId: workspaceResponse.data.owner })));
   }
 
   async resetPasswordRequest(email: string, lang: string = "en"): Promise<IResetPasswordHttpResponse> {
