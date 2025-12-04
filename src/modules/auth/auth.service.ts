@@ -87,7 +87,7 @@ export class AuthService {
           const invitations = await this.invitationsService.findAll(workspaceId, lang, undefined, undefined, email, false);
           if (invitations.data && invitations.data.length > 0) {
             const invitation: any = invitations.data[0];
-            await this.invitationsService.update(invitation._id, { accepted: true }, workspaceId, sub, lang);
+            await this.invitationsService.updateAsSystem(invitation._id, { accepted: true }, workspaceId, lang);
           }
         } catch (error) {
           console.error('Error updating invitation status:', error);
@@ -97,7 +97,7 @@ export class AuthService {
         return new ILoginHttpResponse(
           200, 
           this.i18n.t("translation.auth.signup.success", { lang }), 
-          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId }))
+          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId, workspaceOwnerId: workspace.data.owner }))
         );
       } else {
         // Fluxo antigo: cria novo workspace (caso não tenha workspaceId no token)
@@ -107,7 +107,7 @@ export class AuthService {
         return new ILoginHttpResponse(
           200, 
           this.i18n.t("translation.auth.signup.success", { lang }), 
-          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspace._id }))
+          new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId: workspace._id, workspaceOwnerId: sub }))
         );
       }
     } catch (error) {
@@ -141,7 +141,7 @@ export class AuthService {
       workspaceId = workspaceResponse.data._id;
     }
     
-    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId })));
+    return new ILoginHttpResponse(200, this.i18n.t("translation.auth.login.success", { lang }), new AuthLoginResponseDto(this.jwtService.sign({ sub, email, workspaceId, workspaceOwnerId: sub })));
   }
 
   async resetPasswordRequest(email: string, lang: string = "en"): Promise<IResetPasswordHttpResponse> {

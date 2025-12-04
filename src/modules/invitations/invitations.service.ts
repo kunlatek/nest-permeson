@@ -186,6 +186,22 @@ export class InvitationsService {
     }
   }
 
+  // Atualiza convite sem checar permissões (uso interno - ex.: fluxo de signup)
+  async updateAsSystem(id: string, invitationDto: UpdateInvitationDto, workspaceId: string, lang: string): Promise<IInvitationHttpResponse> {
+    try {
+      const invitation = await this.invitationsRepository.update(id, invitationDto, workspaceId);
+      return new IInvitationHttpResponse(200, this.i18n.t('translation.invitations.invitation-updated', { lang }), invitation);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      if (error.message?.includes('not found')) {
+        throw new NotFoundException(this.i18n.t('translation.invitations.invitation-not-found', { lang }));
+      }
+      throw new BadRequestException(this.i18n.t('translation.invitations.error-updating-invitation', { lang }));
+    }
+  }
+
   async delete(id: string, workspaceId: string, userId: string, lang: string): Promise<IHttpResponse> {
     try {
       await this.checkUserPermissions(userId, workspaceId, id, lang);
