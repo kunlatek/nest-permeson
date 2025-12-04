@@ -15,6 +15,13 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.enableCors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
+    credentials: true,
+  });
+
   // Configure static file serving for public folder
   app.useStaticAssets(join(process.cwd(), 'public'), {
     prefix: '/public/',
