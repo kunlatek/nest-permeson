@@ -58,6 +58,9 @@ export class ProfileService {
     }
 
     async getProfileUserNamesByUserIds(userIds: string[], lang: string): Promise<{userId: string, userName: string}[]> {
+        if (!userIds || userIds.length === 0) {
+            return [];
+        }
         const personUserNames = await this.personProfileService.getPersonProfileUserNamesByUserIds(userIds, lang)
         const companyUserNames = await this.companyProfileService.getCompanyProfileUserNamesByUserIds(userIds, lang)
         return [...personUserNames, ...companyUserNames].map((profile) => ({userId: profile.userId, userName: `@${profile.userName}`}))

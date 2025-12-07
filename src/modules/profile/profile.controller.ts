@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Param, Put, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, Param, ParseArrayPipe, Put, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { ProfileTypesEnum } from "./enums/profile-types.enum";
@@ -60,9 +60,12 @@ export class ProfileController {
     @ApiOperation({ summary: 'Get profile user names by ids' })
     @ApiResponse({ status: 200, description: 'Profile user names found successfully' })
     async getProfileUserNamesByUserIds(
-        @Query('ids') ids: string[] = [],
+        @Query('ids', new ParseArrayPipe({ items: String, separator: ',', optional: true })) ids: string[] = [],
         @I18nLang() lang?: string
     ): Promise<{userId: string, userName: string}[]> {
+        if (!ids || ids.length === 0) {
+            return [];
+        }
         return this.profileService.getProfileUserNamesByUserIds(ids, lang);
     }
 
