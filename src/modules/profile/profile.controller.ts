@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Put, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, Param, Put, Query, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { ProfileTypesEnum } from "./enums/profile-types.enum";
@@ -54,13 +54,13 @@ export class ProfileController {
         return this.profileService.searchProfilesByUsername(finalUsername, page, limit, lang);
     }
 
-    @Get('id')
+    @Get(':id')
     @ApiSecurity('jwt')
     @HttpCode(200)
     @ApiOperation({ summary: 'Get profile by id' })
     @ApiResponse({ status: 200, description: 'Profile retrieved successfully', type: ProfileSearchResponseDto })
     async getProfileById(
-        @Query('id') id: string,
+        @Param('id') id: string,
         @I18nLang() lang?: string
     ): Promise<ProfileSearchResponseDto> {
         return this.profileService.getProfileById(id, lang);
