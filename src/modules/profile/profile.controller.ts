@@ -28,12 +28,30 @@ export class ProfileController {
     @ApiResponse({ status: 200, description: 'Profiles found successfully', type: ProfileSearchPaginatedResponseDto })
     async searchProfiles(
         @Query('username') username: string = '',
+        @Query('filters') filters?: string,
         @Query('ids') ids: string[] = [],
         @Query('page') page: number = 1,
         @Query('limit') limit: number = 10,
         @I18nLang() lang?: string
     ): Promise<ProfileSearchPaginatedResponseDto> {
-        return this.profileService.searchProfilesByUsername(username, page, limit, lang);
+        let finalUsername = username;
+        
+        if (!finalUsername && filters) {
+            try {
+                const decodedFilters = decodeURIComponent(filters);
+                const parsedFilters = JSON.parse(decodedFilters);
+                if (Array.isArray(parsedFilters)) {
+                    const userNameFilter = parsedFilters.find((filter: any) => filter.userName);
+                    if (userNameFilter?.userName) {
+                        finalUsername = userNameFilter.userName;
+                    }
+                }
+            } catch (error) {
+                console.error('Error parsing filters:', error);
+            }
+        }
+        
+        return this.profileService.searchProfilesByUsername(finalUsername, page, limit, lang);
     }
 
     @Get('ids')
