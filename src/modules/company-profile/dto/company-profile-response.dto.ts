@@ -13,6 +13,6 @@ export class CompanyProfileResponseDto extends CompanyProfile {
 
     constructor(data: Partial<CompanyProfileResponseDto>) {
         super(data);
-        this._id = data._id.toString();
+        this._id = data?._id?.toString() || "";
     }
 }
