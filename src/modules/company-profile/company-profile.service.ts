@@ -47,11 +47,16 @@ export class CompanyProfileService {
         return companyUserNames.map((profile) => ({userId: profile.userId, userName: profile.userName}))
     }
 
-    async findByUsernameLike(username: string, page: number, limit: number, lang: string): Promise<{ profiles: {userId: string, userName: string}[], total: number }> {
+    async findByUsernameLike(username: string, page: number, limit: number, lang: string): Promise<{ profiles: {_id: string, userId: string, userName: string}[], total: number }> {
         const result = await this.companyProfileRepository.findByUsernameLike(username, page, limit);
         return {
-            profiles: result.profiles.map((profile) => ({userId: profile.userId, userName: profile.userName})),
+            profiles: result.profiles.map((profile) => ({_id: profile._id, userId: profile.userId, userName: profile.userName})),
             total: result.total
         };
+    }
+
+    async findProfileById(id: string, lang: string): Promise<{_id: string, userId: string, userName: string}> {
+        const profile = await this.companyProfileRepository.findById(id)
+        return {_id: profile._id, userId: profile.userId, userName: profile.userName}
     }
 }
