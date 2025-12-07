@@ -71,10 +71,10 @@ export class ProfileService {
 
         const allProfiles = [...personResult.profiles, ...companyResult.profiles];
         
-        const uniqueProfilesMap = new Map<string, { userId: string, userName: string }>();
+        const uniqueProfilesMap = new Map<string, { _id: string, userId: string, userName: string }>();
         for (const profile of allProfiles) {
             if (!uniqueProfilesMap.has(profile.userId)) {
-                uniqueProfilesMap.set(profile.userId, { userId: profile.userId, userName: profile.userName });
+                uniqueProfilesMap.set(profile.userId, { _id: profile._id, userId: profile.userId, userName: profile.userName });
             }
         }
 
@@ -88,7 +88,7 @@ export class ProfileService {
         const paginatedProfiles = uniqueProfiles.slice(startIndex, endIndex);
 
         const profileDtos = paginatedProfiles.map(profile => 
-            new ProfileSearchResponseDto(profile.userId, profile.userName)
+            new ProfileSearchResponseDto(profile._id, profile.userId, profile.userName)
         );
 
         return new ProfileSearchPaginatedResponseDto(
@@ -99,5 +99,19 @@ export class ProfileService {
             page,
             limit
         );
+    }
+
+    async getProfileById(id: string, lang: string): Promise<ProfileSearchResponseDto> {
+        const personProfile = await this.personProfileService.findProfileById(id, lang)
+        const companyProfile = await this.companyProfileService.findProfileById(id, lang)
+        if (personProfile) {
+            return new ProfileSearchResponseDto(personProfile._id, personProfile.userId, personProfile.userName)
+        }
+
+        if (companyProfile) {
+            return new ProfileSearchResponseDto(companyProfile._id, companyProfile.userId, companyProfile.userName)
+        }
+
+        throw new Error(this.i18n.t('translation.profile.profile-not-found', { lang }))
     }
 }
