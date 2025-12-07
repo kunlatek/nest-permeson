@@ -69,17 +69,23 @@ export class ProfileService {
             this.companyProfileService.findByUsernameLike(username, page, limit, lang)
         ]);
 
-        // Combine results from both person and company profiles
         const allProfiles = [...personResult.profiles, ...companyResult.profiles];
-        const total = personResult.total + companyResult.total;
+        
+        const uniqueProfilesMap = new Map<string, { userId: string, userName: string }>();
+        for (const profile of allProfiles) {
+            if (!uniqueProfilesMap.has(profile.userId)) {
+                uniqueProfilesMap.set(profile.userId, { userId: profile.userId, userName: profile.userName });
+            }
+        }
 
-        // Sort by username for consistent ordering
-        allProfiles.sort((a, b) => a.userName.localeCompare(b.userName));
+        const uniqueProfiles = Array.from(uniqueProfilesMap.values());
+        const total = uniqueProfiles.length;
 
-        // Apply pagination to combined results
+        uniqueProfiles.sort((a, b) => a.userName.localeCompare(b.userName));
+
         const startIndex = (page - 1) * limit;
         const endIndex = startIndex + limit;
-        const paginatedProfiles = allProfiles.slice(startIndex, endIndex);
+        const paginatedProfiles = uniqueProfiles.slice(startIndex, endIndex);
 
         const profileDtos = paginatedProfiles.map(profile => 
             new ProfileSearchResponseDto(profile.userId, profile.userName)
