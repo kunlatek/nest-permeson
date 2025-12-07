@@ -12,7 +12,7 @@ import { PersonProfileResponseDto } from "../person-profile/dto/person-profile-r
 import { ICompanyProfileHttpResponse } from "../company-profile/interfaces";
 import { CompanyProfileResponseDto } from "../company-profile/dto/company-profile-response.dto";
 
-import { ProfileSearchPaginatedResponseDto } from "./dto";
+import { ProfileSearchPaginatedResponseDto, ProfileSearchResponseDto } from "./dto";
 
 @ApiTags('Profile')
 @ApiBearerAuth()
@@ -52,6 +52,18 @@ export class ProfileController {
         }
         
         return this.profileService.searchProfilesByUsername(finalUsername, page, limit, lang);
+    }
+
+    @Get('id')
+    @ApiSecurity('jwt')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Get profile by id' })
+    @ApiResponse({ status: 200, description: 'Profile retrieved successfully', type: ProfileSearchResponseDto })
+    async getProfileById(
+        @Query('id') id: string,
+        @I18nLang() lang?: string
+    ): Promise<ProfileSearchResponseDto> {
+        return this.profileService.getProfileById(id, lang);
     }
 
     @Get('ids')
