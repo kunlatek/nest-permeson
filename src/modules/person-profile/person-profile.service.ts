@@ -58,6 +58,7 @@ export class PersonProfileService {
 
     async findProfileById(id: string, lang: string): Promise<{_id: string, userId: string, userName: string}> {
         const profile = await this.personProfileRepository.findById(id)
+        if (!profile) return null
         return {_id: profile._id, userId: profile.userId, userName: profile.userName}
     }
 }
