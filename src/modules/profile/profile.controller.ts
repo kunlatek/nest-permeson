@@ -54,18 +54,6 @@ export class ProfileController {
         return this.profileService.searchProfilesByUsername(finalUsername, page, limit, lang);
     }
 
-    @Get(':id')
-    @ApiSecurity('jwt')
-    @HttpCode(200)
-    @ApiOperation({ summary: 'Get profile by id' })
-    @ApiResponse({ status: 200, description: 'Profile retrieved successfully', type: ProfileSearchResponseDto })
-    async getProfileById(
-        @Param('id') id: string,
-        @I18nLang() lang?: string
-    ): Promise<ProfileSearchResponseDto> {
-        return this.profileService.getProfileById(id, lang);
-    }
-
     @Get('ids')
     @ApiSecurity('jwt')
     @HttpCode(200)
@@ -134,5 +122,17 @@ export class ProfileController {
     ): Promise<ICompanyProfileHttpResponse | IPersonProfileHttpResponse> {
         if (!req.user?.userId) throw new UnauthorizedException('Invalid token');
         return this.profileService.updateProfileByUserId(req.user.userId, ProfileTypesEnum.COMPANY, req.body, lang)
+    }
+
+    @Get(':id')
+    @ApiSecurity('jwt')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Get profile by id' })
+    @ApiResponse({ status: 200, description: 'Profile retrieved successfully', type: ProfileSearchResponseDto })
+    async getProfileById(
+        @Param('id') id: string,
+        @I18nLang() lang?: string
+    ): Promise<ProfileSearchResponseDto> {
+        return this.profileService.getProfileById(id, lang);
     }
 }
