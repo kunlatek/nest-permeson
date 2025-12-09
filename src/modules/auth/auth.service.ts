@@ -125,8 +125,7 @@ export class AuthService {
     const user = await this.userService.findByEmail(payload.email);
     if (!user) throw new NotFoundException(this.i18n.t("translation.auth.user-not-found", { lang }));
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await this.userService.updateUser(user._id, { password: hashedPassword });
+    await this.userService.updateUser(user._id, { password });
 
     return new IResetPasswordHttpResponse(200, this.i18n.t("translation.auth.reset-password.success", { lang }), this.i18n.t("translation.auth.reset-password.success", { lang }));
   }
