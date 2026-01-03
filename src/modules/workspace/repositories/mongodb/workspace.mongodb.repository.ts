@@ -85,14 +85,11 @@ export class WorkspaceMongoDBRepository implements WorkspaceRepository {
 
         const currentAcl = workspace.acl || [];
         
-        // Verifica se o usuário já está no ACL
-        const existingAclIndex = currentAcl.findIndex(item => item.userId === acl.userId);
+        const existingAcl = currentAcl.find(
+            item => item.userId === acl.userId && item.roleId === acl.roleId
+        );
         
-        if (existingAclIndex >= 0) {
-            // Atualiza o role do usuário existente
-            currentAcl[existingAclIndex].roleId = acl.roleId;
-        } else {
-            // Adiciona novo usuário ao ACL
+        if (!existingAcl) {
             currentAcl.push(acl);
         }
 
