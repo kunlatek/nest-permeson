@@ -40,10 +40,10 @@ export class ProfileController {
             try {
                 const decodedFilters = decodeURIComponent(filters);
                 const parsedFilters = JSON.parse(decodedFilters);
-                if (Array.isArray(parsedFilters)) {
-                    const userNameFilter = parsedFilters.find((filter: any) => filter.userName);
-                    if (userNameFilter?.userName) {
-                        finalUsername = userNameFilter.userName;
+                if (Array.isArray(parsedFilters.or)) {
+                    const userNameFilter = parsedFilters.or.find((filter: any) => filter.field === 'userName');
+                    if (userNameFilter?.value) {
+                        finalUsername = userNameFilter.value;
                     }
                 }
             } catch (error) {
