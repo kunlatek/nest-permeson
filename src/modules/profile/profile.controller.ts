@@ -36,7 +36,7 @@ export class ProfileController {
     ): Promise<ProfileSearchPaginatedResponseDto> {
         let finalUsername = username;
         
-        if (!finalUsername && filters) {
+        if (!finalUsername && filters && !filters.includes('$or')) {
             try {
                 const decodedFilters = decodeURIComponent(filters);
                 const parsedFilters = JSON.parse(decodedFilters);
@@ -49,6 +49,11 @@ export class ProfileController {
             } catch (error) {
                 console.error('Error parsing filters:', error);
             }
+        }
+
+        if (filters && filters.includes('$or')) {
+            const usernameFilter = JSON.parse(filters).$or.find((filter: any) => Object.keys(filter).includes('userName'));
+            if (usernameFilter) finalUsername = usernameFilter['userName']?.$regex;
         }
         
         return this.profileService.searchProfilesByUsername(finalUsername, page, limit, lang);
