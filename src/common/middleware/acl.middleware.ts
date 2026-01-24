@@ -6,6 +6,10 @@ import { WorkspaceService } from 'src/modules/workspace/workspace.service';
 import { RolesService } from 'src/modules/roles/roles.service';
 import { Action } from 'src/modules/roles/models';
 
+const PUBLIC_ROUTES = [
+  /* RAPIDA: PUBLIC_ROUTES */
+]
+
 /**
  * Middleware for Access Control List (ACL) verification.
  * Validates user permissions based on workspace, role, and requested resource.
@@ -28,6 +32,11 @@ export class AclMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     // Skip ACL check for invitations/admin, roles, workspaces, profile, person, company routes
     if (req.path.includes('invitations/admin') || req.path.includes('roles') || req.path.includes('workspaces') || req.path.includes('profile') || req.path.includes('person') || req.path.includes('company')) {
+      return next();
+    }
+
+    // Skip ACL check for public routes
+    if (PUBLIC_ROUTES.some(route => req.path.includes(route.path) && route.methods.includes(req.method) && req.headers.origin?.includes(route.origin))) {
       return next();
     }
 
