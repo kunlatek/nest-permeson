@@ -36,7 +36,7 @@ export class AclMiddleware implements NestMiddleware {
     }
 
     // Skip ACL check for public routes
-    if (PUBLIC_ROUTES.some(route => req.path.includes(route.path) && route.methods.includes(req.method) && req.headers.origin?.includes(route.origin))) {
+    if (PUBLIC_ROUTES.some(route => req.path.includes(route.path) && route.methods.includes(req.method) && route.origins.includes(req.headers.origin))) {
       return next();
     }
 
